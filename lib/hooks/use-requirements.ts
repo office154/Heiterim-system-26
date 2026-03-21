@@ -1,0 +1,89 @@
+'use client'
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { createClient } from '@/lib/supabase/client'
+import type { StatusRequirement } from '@/types/database'
+import type { Database } from '@/types/database'
+
+type ReqInsert = Database['public']['Tables']['status_requirements']['Insert']
+type ReqUpdate = Database['public']['Tables']['status_requirements']['Update']
+
+export function useStatusRequirements(projectId: string) {
+  return useQuery({
+    queryKey: ['status-requirements', projectId],
+    queryFn: async () => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('status_requirements')
+        .select('*')
+        .eq('project_id', projectId)
+        .order('order_index')
+      if (error) throw error
+      return data as StatusRequirement[]
+    },
+    enabled: !!projectId,
+  })
+}
+
+export function useCreateRequirement() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (req: ReqInsert) => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('status_requirements')
+        .insert(req)
+        .select()
+        .single()
+      if (error) throw error
+      return data as StatusRequirement
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['status-requirements', variables.project_id],
+      })
+    },
+  })
+}
+
+export function useUpdateRequirement() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({
+      id,
+      projectId,
+      ...update
+    }: ReqUpdate & { id: string; projectId: string }) => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('status_requirements')
+        .update(update)
+        .eq('id', id)
+        .select()
+        .single()
+      if (error) throw error
+      return data as StatusRequirement
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['status-requirements', variables.projectId],
+      })
+    },
+  })
+}
+
+export function useDeleteRequirement() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, projectId }: { id: string; projectId: string }) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('status_requirements').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['status-requirements', variables.projectId],
+      })
+    },
+  })
+}

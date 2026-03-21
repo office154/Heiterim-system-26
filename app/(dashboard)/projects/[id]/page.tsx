@@ -1,0 +1,59 @@
+'use client'
+
+import { useParams } from 'next/navigation'
+import { useProject } from '@/lib/hooks/use-projects'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { GeneralInfoTab } from './_components/general-info-tab'
+import { StagesTab } from './_components/stages-tab'
+import { StatusTab } from './_components/status-tab'
+import { FilesTab } from './_components/files-tab'
+
+export default function ProjectDetailPage() {
+  const params = useParams()
+  const id = params.id as string
+  const { data: project, isLoading, error } = useProject(id)
+
+  if (isLoading) {
+    return <div className="py-12 text-center text-gray-400">טוען פרויקט...</div>
+  }
+
+  if (error || !project) {
+    return <div className="py-12 text-center text-red-500">שגיאה בטעינת הפרויקט</div>
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="print:hidden">
+        <h1 className="text-2xl font-bold text-gray-900">{project.title}</h1>
+        {project.location && (
+          <p className="mt-1 text-sm text-gray-500">{project.location}</p>
+        )}
+      </div>
+
+      <Tabs defaultValue="general" dir="rtl">
+        <TabsList className="w-full justify-start print:hidden">
+          <TabsTrigger value="general">מידע כללי</TabsTrigger>
+          <TabsTrigger value="stages">שלבים</TabsTrigger>
+          <TabsTrigger value="status">דוח סטטוס</TabsTrigger>
+          <TabsTrigger value="files">קבצים</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="general" className="mt-4">
+          <GeneralInfoTab project={project} />
+        </TabsContent>
+
+        <TabsContent value="stages" className="mt-4">
+          <StagesTab projectId={id} />
+        </TabsContent>
+
+        <TabsContent value="status" className="mt-4">
+          <StatusTab projectId={id} />
+        </TabsContent>
+
+        <TabsContent value="files" className="mt-4">
+          <FilesTab projectId={id} />
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
