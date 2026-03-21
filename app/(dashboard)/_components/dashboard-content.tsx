@@ -199,22 +199,36 @@ function ProjectCard({ proj }: { proj: ProjectProgress }) {
       )}
 
       {/* Progress bar */}
-      <div>
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[11px] text-gray-400">
-            {proj.completedStages}/{proj.totalStages} שלבים
-          </span>
-          <span className="text-[11px] font-semibold text-[#6366f1]">
-            {proj.progressPercent}%
-          </span>
-        </div>
-        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+      {proj.totalStages > 0 ? (
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[11px] text-gray-500">
+              {proj.completedStages}/{proj.totalStages} שלבים
+            </span>
+            <span className="text-[11px] font-bold text-[#6366f1]">
+              {proj.progressPercent}%
+            </span>
+          </div>
+          {/* Track: always visible, fill grows with progress */}
           <div
-            className="h-full bg-[#6366f1] rounded-full transition-all"
-            style={{ width: `${proj.progressPercent}%` }}
-          />
+            className="w-full overflow-hidden"
+            style={{ height: '6px', backgroundColor: '#e5e7eb', borderRadius: '3px' }}
+          >
+            <div
+              style={{
+                height: '6px',
+                width: `${proj.progressPercent}%`,
+                backgroundColor: '#6366f1',
+                borderRadius: '3px',
+                transition: 'width 0.4s ease',
+                minWidth: proj.progressPercent > 0 ? '6px' : '0px',
+              }}
+            />
+          </div>
         </div>
-      </div>
+      ) : (
+        <p className="text-[11px] text-gray-400 italic">אין שלבים מוגדרים</p>
+      )}
     </Link>
   )
 }
