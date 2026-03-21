@@ -7,6 +7,7 @@ import {
   useDashboardData,
   type AlertStageItem,
   type InactiveProjectItem,
+  type ProjectProgress,
 } from '@/lib/hooks/use-dashboard'
 import { CreateClientModal } from '@/components/create-client-modal'
 
@@ -15,89 +16,23 @@ interface DashboardContentProps {
   fullName: string
 }
 
-function formatCurrency(n: number) {
+// ─── Utilities ────────────────────────────────────────────────────────────────
+
+function fmt(n: number) {
   return '₪' + n.toLocaleString('he-IL')
 }
 
-// ─── Skeleton card ────────────────────────────────────────────────────────────
-function SkeletonCard({ wide }: { wide?: boolean }) {
-  return (
-    <div className={`bg-white rounded-xl border border-[#E5E7EB] p-5 animate-pulse ${wide ? '' : ''}`}>
-      <div className="h-3 w-28 rounded bg-[#E5E7EB] mb-3" />
-      <div className="h-8 w-20 rounded bg-[#F6F7F9]" />
-    </div>
-  )
+function hebrewDate() {
+  return new Date().toLocaleDateString('he-IL', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
 }
 
-// ─── KPI Card ─────────────────────────────────────────────────────────────────
-function KpiCard({
-  label,
-  value,
-  accent,
-  redTint,
-  amberTint,
-  loading,
-  onClick,
-  clickHint,
-}: {
-  label: string
-  value: string | number
-  accent?: boolean
-  redTint?: boolean
-  amberTint?: boolean
-  loading?: boolean
-  onClick?: () => void
-  clickHint?: string
-}) {
-  const base = 'rounded-xl border p-5 text-right transition-colors'
-  const style = redTint
-    ? 'bg-red-50 border-red-200 hover:bg-red-100'
-    : amberTint
-    ? 'bg-amber-50 border-amber-200 hover:bg-amber-100'
-    : 'bg-white border-[#E5E7EB]'
+// ─── Alert Modal ──────────────────────────────────────────────────────────────
 
-  const labelStyle = redTint
-    ? 'text-red-500'
-    : amberTint
-    ? 'text-amber-600'
-    : 'text-[#64748B]'
-
-  const valueStyle = accent
-    ? 'text-[#6366F1]'
-    : redTint
-    ? 'text-red-600'
-    : amberTint
-    ? 'text-amber-700'
-    : 'text-[#0F172A]'
-
-  if (loading) return <SkeletonCard />
-
-  const inner = (
-    <>
-      <p className={`text-[11px] font-semibold uppercase tracking-widest mb-2 ${labelStyle}`}>
-        {label}
-      </p>
-      <p className={`text-3xl font-bold tracking-tight ${valueStyle}`}>{value}</p>
-      {clickHint && (
-        <p className={`text-[11px] mt-2 ${redTint ? 'text-red-400' : 'text-amber-400'}`}>
-          {clickHint}
-        </p>
-      )}
-    </>
-  )
-
-  if (onClick) {
-    return (
-      <button className={`${base} ${style} w-full group`} onClick={onClick}>
-        {inner}
-      </button>
-    )
-  }
-
-  return <div className={`${base} ${style}`}>{inner}</div>
-}
-
-// ─── Alert modal (cards 5 & 6) ────────────────────────────────────────────────
 function AlertModal({
   title,
   items,
@@ -109,59 +44,48 @@ function AlertModal({
 }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-2xl rounded-xl bg-white shadow-2xl mx-4"
+        className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl mx-4 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-[#E5E7EB] px-6 py-4">
-          <h2 className="text-[15px] font-semibold text-[#0F172A]">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h2 className="text-[15px] font-bold text-gray-900">{title}</h2>
           <button
             onClick={onClose}
-            className="h-7 w-7 flex items-center justify-center rounded-md text-[#64748B] hover:text-[#0F172A] hover:bg-[#F6F7F9] transition-colors text-lg leading-none"
+            className="h-8 w-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors text-lg"
           >
             ✕
           </button>
         </div>
         <div className="max-h-[60vh] overflow-y-auto">
           <table className="w-full text-[13px]">
-            <thead className="sticky top-0 bg-white border-b border-[#E5E7EB]">
+            <thead className="sticky top-0 bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="px-5 py-3 text-right text-[11px] font-semibold text-[#64748B] uppercase tracking-wide">
-                  פרויקט
-                </th>
-                <th className="px-5 py-3 text-right text-[11px] font-semibold text-[#64748B] uppercase tracking-wide">
-                  לקוח
-                </th>
-                <th className="px-5 py-3 text-right text-[11px] font-semibold text-[#64748B] uppercase tracking-wide">
-                  שלב
-                </th>
-                <th className="px-5 py-3 text-[11px] font-semibold text-[#64748B] uppercase tracking-wide text-left">
-                  סכום
-                </th>
+                <th className="px-5 py-3 text-right font-semibold text-gray-500 text-[11px] uppercase tracking-wide">פרויקט</th>
+                <th className="px-5 py-3 text-right font-semibold text-gray-500 text-[11px] uppercase tracking-wide">לקוח</th>
+                <th className="px-5 py-3 text-right font-semibold text-gray-500 text-[11px] uppercase tracking-wide">שלב</th>
+                <th className="px-5 py-3 text-left font-semibold text-gray-500 text-[11px] uppercase tracking-wide">סכום</th>
               </tr>
             </thead>
             <tbody>
               {items.map((item, i) => (
-                <tr
-                  key={i}
-                  className="border-b border-[#F6F7F9] last:border-0 hover:bg-[#F6F7F9] transition-colors"
-                >
+                <tr key={i} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                   <td className="px-5 py-3">
                     <Link
                       href={`/projects/${item.projectId}`}
                       onClick={onClose}
-                      className="font-medium text-[#6366F1] hover:underline"
+                      className="font-semibold text-[#6366f1] hover:underline"
                     >
                       {item.projectTitle}
                     </Link>
                   </td>
-                  <td className="px-5 py-3 text-[#64748B]">{item.clientName}</td>
-                  <td className="px-5 py-3 text-[#0F172A]">{item.stageName}</td>
-                  <td className="px-5 py-3 font-medium text-[#0F172A] text-left" dir="ltr">
-                    {formatCurrency(item.amount)}
+                  <td className="px-5 py-3 text-gray-500">{item.clientName}</td>
+                  <td className="px-5 py-3 text-gray-700">{item.stageName}</td>
+                  <td className="px-5 py-3 font-semibold text-gray-900 text-left" dir="ltr">
+                    {fmt(item.amount)}
                   </td>
                 </tr>
               ))}
@@ -173,66 +97,209 @@ function AlertModal({
   )
 }
 
-// ─── Collapsible alert group ──────────────────────────────────────────────────
-function AlertGroup<T>({
-  icon,
-  title,
-  badgeBg,
-  items,
-  renderRow,
+// ─── KPI Card ─────────────────────────────────────────────────────────────────
+
+function KpiCard({
+  label,
+  value,
+  subtitle,
+  valueColor = 'text-gray-900',
+  bg = 'bg-white',
+  border = 'border-gray-200',
+  loading,
+  onClick,
 }: {
-  icon: string
-  title: string
-  badgeBg: string
-  items: T[]
-  renderRow: (item: T, i: number) => React.ReactNode
+  label: string
+  value: string | number
+  subtitle?: string
+  valueColor?: string
+  bg?: string
+  border?: string
+  loading?: boolean
+  onClick?: () => void
 }) {
-  const [open, setOpen] = useState(false)
-  if (items.length === 0) return null
-
-  return (
-    <div className="rounded-xl border border-[#E5E7EB] bg-white overflow-hidden">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-[#F6F7F9] transition-colors"
-      >
-        <span className="text-base leading-none">{icon}</span>
-        <span className="text-[13px] font-semibold text-[#0F172A] flex-1 text-right">{title}</span>
-        <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${badgeBg}`}>
-          {items.length}
-        </span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={`text-[#64748B] transition-transform ${open ? 'rotate-180' : ''}`}
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
-      </button>
-
-      {open && (
-        <div className="border-t border-[#E5E7EB]">
-          <table className="w-full text-[13px]">
-            <tbody>{items.map((item, i) => renderRow(item, i))}</tbody>
-          </table>
+  const body = (
+    <div className={`rounded-xl border p-5 h-full ${bg} ${border} ${onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}`}
+      style={{ borderWidth: '0.5px' }}
+    >
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">{label}</p>
+      {loading ? (
+        <div className="space-y-2 animate-pulse">
+          <div className="h-8 w-24 rounded-lg bg-gray-100" />
+          {subtitle !== undefined && <div className="h-3 w-32 rounded bg-gray-100" />}
         </div>
+      ) : (
+        <>
+          <p className={`text-3xl font-bold tracking-tight ${valueColor}`}>{value}</p>
+          {subtitle && <p className="text-[12px] text-gray-400 mt-1">{subtitle}</p>}
+        </>
       )}
     </div>
   )
+
+  if (onClick) {
+    return <button className="block w-full text-right h-full" onClick={onClick}>{body}</button>
+  }
+  return body
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Alert Row ────────────────────────────────────────────────────────────────
+
+function AlertRow({
+  href,
+  borderColor,
+  children,
+}: {
+  href: string
+  borderColor: string
+  children: React.ReactNode
+}) {
+  return (
+    <Link
+      href={href}
+      className={`flex items-center gap-4 px-4 py-3 bg-white rounded-lg border-l-4 border-r-0 border-t border-b border-gray-100 hover:bg-gray-50 transition-colors group ${borderColor}`}
+      style={{ borderTopWidth: '0.5px', borderBottomWidth: '0.5px', borderRightWidth: '0.5px' }}
+    >
+      {children}
+    </Link>
+  )
+}
+
+// ─── Project Card ─────────────────────────────────────────────────────────────
+
+function ProjectCard({ proj }: { proj: ProjectProgress }) {
+  return (
+    <Link
+      href={`/projects/${proj.id}`}
+      className="block bg-white rounded-xl p-5 hover:border-[#6366f1] hover:shadow-[0_0_0_2px_#6366f1] transition-all group"
+      style={{ border: '0.5px solid #e5e7eb' }}
+    >
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-gray-900 text-[14px] truncate group-hover:text-[#6366f1] transition-colors">
+            {proj.title}
+          </h3>
+          <p className="text-[12px] text-gray-400 mt-0.5 truncate">{proj.clientName}</p>
+        </div>
+        <span
+          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full shrink-0 mr-2 ${
+            proj.status === 'active'
+              ? 'bg-green-100 text-green-700'
+              : 'bg-yellow-100 text-yellow-700'
+          }`}
+        >
+          {proj.status === 'active' ? 'פעיל' : 'מושהה'}
+        </span>
+      </div>
+
+      {proj.currentStageName !== '—' && (
+        <p className="text-[12px] text-gray-500 mb-3 truncate">
+          <span className="text-gray-400">שלב נוכחי: </span>{proj.currentStageName}
+        </p>
+      )}
+
+      {/* Progress bar */}
+      <div>
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[11px] text-gray-400">
+            {proj.completedStages}/{proj.totalStages} שלבים
+          </span>
+          <span className="text-[11px] font-semibold text-[#6366f1]">
+            {proj.progressPercent}%
+          </span>
+        </div>
+        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-[#6366f1] rounded-full transition-all"
+            style={{ width: `${proj.progressPercent}%` }}
+          />
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+// ─── Dark Sidebar Widget ───────────────────────────────────────────────────────
+
+function SidebarWidget({
+  activeProjects,
+  loading,
+  onNewClient,
+}: {
+  activeProjects: { id: string; title: string }[]
+  loading: boolean
+  onNewClient: () => void
+}) {
+  const router = useRouter()
+
+  return (
+    <aside className="w-[220px] shrink-0 bg-[#1a1a2e] flex flex-col">
+      {/* Quick actions */}
+      <div className="p-5 border-b border-white/10">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40 mb-3">
+          פעולות מהירות
+        </p>
+        <div className="space-y-2">
+          <button
+            onClick={() => router.push('/projects/new')}
+            className="w-full bg-[#6366f1] hover:bg-[#4f46e5] text-white text-[13px] font-semibold px-3 py-2.5 rounded-lg transition-colors text-right"
+          >
+            + פרויקט חדש
+          </button>
+          <button
+            onClick={onNewClient}
+            className="w-full border border-white/20 hover:border-white/40 hover:bg-white/5 text-white/80 hover:text-white text-[13px] font-medium px-3 py-2.5 rounded-lg transition-colors text-right"
+          >
+            + לקוח חדש
+          </button>
+        </div>
+      </div>
+
+      {/* Active projects list */}
+      <div className="flex-1 flex flex-col min-h-0">
+        <div className="px-5 py-4 flex items-center justify-between">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">
+            פרויקטים פעילים
+          </p>
+          {!loading && (
+            <span className="text-[11px] font-bold text-[#6366f1]">{activeProjects.length}</span>
+          )}
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-3 pb-5 space-y-0.5">
+          {loading ? (
+            <div className="space-y-2 px-2 animate-pulse">
+              {[1, 2, 3, 4].map((n) => (
+                <div key={n} className="h-8 rounded-lg bg-white/5" />
+              ))}
+            </div>
+          ) : activeProjects.length === 0 ? (
+            <p className="text-[12px] text-white/30 italic px-2">אין פרויקטים פעילים</p>
+          ) : (
+            activeProjects.map((proj) => (
+              <Link
+                key={proj.id}
+                href={`/projects/${proj.id}`}
+                className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors group"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
+                <span className="text-[12px] text-white/70 group-hover:text-white truncate transition-colors">
+                  {proj.title}
+                </span>
+              </Link>
+            ))
+          )}
+        </div>
+      </div>
+    </aside>
+  )
+}
+
+// ─── Main Dashboard Component ─────────────────────────────────────────────────
+
 export function DashboardContent({ role, fullName }: DashboardContentProps) {
   const isAdmin = role === 'admin'
   const { data, isLoading } = useDashboardData()
-  const router = useRouter()
   const [clientModalOpen, setClientModalOpen] = useState(false)
   const [openModal, setOpenModal] = useState<'payment' | 'invoice' | null>(null)
 
@@ -245,91 +312,83 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
     data.inactiveProjects.length === 0
 
   return (
-    <div className="flex gap-6 items-start min-h-0">
-      {/* ══════════════════════════════════════════
-          MAIN CONTENT — appears on right in RTL
-         ══════════════════════════════════════════ */}
-      <div className="flex-1 min-w-0 space-y-6">
+    /* -m-8 escapes the layout's p-8, giving us full-bleed control */
+    <div className="flex -m-8 min-h-screen">
+
+      {/* ── MAIN CONTENT (right in RTL) ── */}
+      <div className="flex-1 bg-[#f5f4f0] p-8 overflow-y-auto space-y-7 min-w-0">
+
         {/* Greeting */}
         <div>
-          <h1 className="text-[20px] font-bold text-[#0F172A] tracking-tight">
+          <h1 className="text-[22px] font-bold text-gray-900 tracking-tight">
             שלום, {fullName} 👋
           </h1>
-          <p className="text-[13px] text-[#64748B] mt-1">ברוך הבא למערכת ניהול המשימות</p>
+          <p className="text-[13px] text-gray-400 mt-1">{hebrewDate()}</p>
         </div>
 
-        {/* ── SUMMARY CARDS ── */}
+        {/* ── KPI CARDS ── */}
         <div className="space-y-3">
-          {/* ── Row 1 ── */}
-          {isAdmin ? (
-            <div className="grid grid-cols-3 gap-3">
-              <KpiCard
-                label='סה"כ פרויקטים פעילים'
-                value={loading ? '—' : data.activeProjectsCount}
-                accent
-                loading={loading}
-              />
+          {/* Row 1 */}
+          <div className={`grid gap-3 ${isAdmin ? 'grid-cols-3' : 'grid-cols-2'}`}>
+            <KpiCard
+              label='פרויקטים פעילים'
+              value={loading ? '—' : data.activeProjectsCount}
+              valueColor="text-[#6366f1]"
+              loading={loading}
+            />
+            {isAdmin && (
               <KpiCard
                 label='סה"כ גבייה'
-                value={loading ? '—' : formatCurrency(data.totalPaid)}
+                value={loading ? '—' : fmt(data.totalPaid)}
+                subtitle={loading ? undefined : `מתוך ${fmt(data.totalContract)} חוזים`}
+                valueColor="text-green-600"
                 loading={loading}
               />
-              <KpiCard
-                label="לקוחות פעילים"
-                value={loading ? '—' : data.activeClientsCount}
-                loading={loading}
-              />
-            </div>
-          ) : (
-            /* Employee sees only cards 1 and 3 */
-            <div className="grid grid-cols-2 gap-3">
-              <KpiCard
-                label='סה"כ פרויקטים פעילים'
-                value={loading ? '—' : data.activeProjectsCount}
-                accent
-                loading={loading}
-              />
-              <KpiCard
-                label="לקוחות פעילים"
-                value={loading ? '—' : data.activeClientsCount}
-                loading={loading}
-              />
-            </div>
-          )}
+            )}
+            <KpiCard
+              label="לקוחות פעילים"
+              value={loading ? '—' : data.activeClientsCount}
+              loading={loading}
+            />
+          </div>
 
-          {/* ── Row 2 — admin only ── */}
+          {/* Row 2 — admin only */}
           {isAdmin && (
             <div className="grid grid-cols-3 gap-3">
               <KpiCard
                 label="יתרה לגבייה"
-                value={loading ? '—' : formatCurrency(data.totalPendingCollection)}
+                value={loading ? '—' : fmt(data.totalPendingCollection)}
                 loading={loading}
               />
               <KpiCard
-                label="🔴 ממתינים לתשלום"
+                label="ממתינים לתשלום"
                 value={loading ? '—' : data.waitingPaymentCount}
-                redTint
+                valueColor="text-red-600"
+                bg="bg-[#fff5f5]"
+                border="border-[#fecaca]"
                 loading={loading}
                 onClick={
                   !loading && data.waitingPaymentCount > 0
                     ? () => setOpenModal('payment')
                     : undefined
                 }
-                clickHint={
+                subtitle={
                   !loading && data.waitingPaymentCount > 0 ? 'לחץ לפרטים ←' : undefined
                 }
               />
               <KpiCard
-                label="🔶 ממתינים לחשבונית"
+                label="ממתינים לחשבונית"
                 value={loading ? '—' : data.waitingInvoiceCount}
-                amberTint
+                valueColor="text-orange-600"
+                bg="bg-[#fffbeb]"
+                border="border-[#fed7aa]"
                 loading={loading}
                 onClick={
                   !loading && data.waitingInvoiceCount > 0
                     ? () => setOpenModal('invoice')
                     : undefined
                 }
-                clickHint={
+                subtitle={
                   !loading && data.waitingInvoiceCount > 0 ? 'לחץ לפרטים ←' : undefined
                 }
               />
@@ -337,187 +396,117 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
           )}
         </div>
 
-        {/* ── ALERTS SECTION — admin only ── */}
+        {/* ── ALERTS — admin only ── */}
         {isAdmin && (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <h2 className="text-[13px] font-semibold text-[#0F172A]">דורש טיפול</h2>
-              {!loading && !allAlertsEmpty && (
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FEE2E2] text-red-600">
-                  {(data.notInvoicedStages.length +
-                    data.notPaidStages.length +
-                    data.inactiveProjects.length)}
-                </span>
-              )}
-            </div>
+          <div>
+            <h2 className="text-[13px] font-bold text-gray-500 uppercase tracking-widest mb-3">
+              דורש טיפול עכשיו
+            </h2>
 
             {loading ? (
-              <div className="rounded-xl border border-[#E5E7EB] bg-white px-5 py-4 animate-pulse">
-                <div className="h-4 w-40 rounded bg-[#E5E7EB]" />
+              <div className="space-y-2 animate-pulse">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="h-12 rounded-lg bg-white border border-gray-100" />
+                ))}
               </div>
             ) : allAlertsEmpty ? (
-              <div className="rounded-xl border border-[#D1FAE5] bg-[#F0FDF4] px-5 py-4">
-                <p className="text-[13px] font-medium text-green-700">אין פריטים דחופים ✓</p>
+              <div className="flex items-center gap-3 px-4 py-3 bg-green-50 rounded-lg border border-green-100"
+                style={{ borderWidth: '0.5px' }}>
+                <span className="text-green-600 text-base">✓</span>
+                <span className="text-[13px] font-semibold text-green-700">אין פריטים דחופים</span>
               </div>
             ) : (
               <div className="space-y-2">
-                {/* Group 1: בוצע ולא חויב */}
-                <AlertGroup<AlertStageItem>
-                  icon="🔴"
-                  title="בוצע ולא חויב"
-                  badgeBg="bg-red-100 text-red-700"
-                  items={data.notInvoicedStages}
-                  renderRow={(s, i) => (
-                    <tr
-                      key={i}
-                      className="border-b border-[#F6F7F9] last:border-0 hover:bg-[#F6F7F9] transition-colors"
-                    >
-                      <td className="px-5 py-2.5 w-[35%]">
-                        <Link
-                          href={`/projects/${s.projectId}`}
-                          className="font-medium text-[#6366F1] hover:underline"
-                        >
-                          {s.projectTitle}
-                        </Link>
-                      </td>
-                      <td className="px-5 py-2.5 text-[#64748B] w-[25%]">{s.clientName}</td>
-                      <td className="px-5 py-2.5 text-[#0F172A] w-[25%]">{s.stageName}</td>
-                      <td className="px-5 py-2.5 font-medium text-[#0F172A] text-left w-[15%]" dir="ltr">
-                        {formatCurrency(s.amount)}
-                      </td>
-                    </tr>
-                  )}
-                />
+                {/* 🔴 בוצע ולא חויב */}
+                {data.notInvoicedStages.map((s, i) => (
+                  <AlertRow key={`inv-${i}`} href={`/projects/${s.projectId}`} borderColor="border-l-red-500">
+                    <span className="text-[11px] font-bold text-red-500 uppercase tracking-wide shrink-0">
+                      לא חויב
+                    </span>
+                    <span className="font-semibold text-gray-800 text-[13px] truncate">
+                      {s.projectTitle}
+                    </span>
+                    <span className="text-gray-400 text-[13px] truncate">{s.stageName}</span>
+                    <span className="font-bold text-red-600 text-[13px] mr-auto shrink-0" dir="ltr">
+                      {fmt(s.amount)}
+                    </span>
+                  </AlertRow>
+                ))}
 
-                {/* Group 2: חויב ולא שולם */}
-                <AlertGroup<AlertStageItem>
-                  icon="🟠"
-                  title="חויב ולא שולם"
-                  badgeBg="bg-orange-100 text-orange-700"
-                  items={data.notPaidStages}
-                  renderRow={(s, i) => (
-                    <tr
-                      key={i}
-                      className="border-b border-[#F6F7F9] last:border-0 hover:bg-[#F6F7F9] transition-colors"
-                    >
-                      <td className="px-5 py-2.5 w-[35%]">
-                        <Link
-                          href={`/projects/${s.projectId}`}
-                          className="font-medium text-[#6366F1] hover:underline"
-                        >
-                          {s.projectTitle}
-                        </Link>
-                      </td>
-                      <td className="px-5 py-2.5 text-[#64748B] w-[25%]">{s.clientName}</td>
-                      <td className="px-5 py-2.5 text-[#0F172A] w-[25%]">{s.stageName}</td>
-                      <td className="px-5 py-2.5 font-medium text-[#0F172A] text-left w-[15%]" dir="ltr">
-                        {formatCurrency(s.amount)}
-                      </td>
-                    </tr>
-                  )}
-                />
+                {/* 🟠 חויב ולא שולם */}
+                {data.notPaidStages.map((s, i) => (
+                  <AlertRow key={`pay-${i}`} href={`/projects/${s.projectId}`} borderColor="border-l-orange-500">
+                    <span className="text-[11px] font-bold text-orange-500 uppercase tracking-wide shrink-0">
+                      לא שולם
+                    </span>
+                    <span className="font-semibold text-gray-800 text-[13px] truncate">
+                      {s.projectTitle}
+                    </span>
+                    <span className="text-gray-400 text-[13px] truncate">{s.stageName}</span>
+                    {s.daysSince !== undefined && (
+                      <span className="text-[12px] text-orange-400 shrink-0">
+                        {s.daysSince} ימים
+                      </span>
+                    )}
+                    <span className="font-bold text-orange-600 text-[13px] mr-auto shrink-0" dir="ltr">
+                      {fmt(s.amount)}
+                    </span>
+                  </AlertRow>
+                ))}
 
-                {/* Group 3: ללא פעילות מעל 30 יום */}
-                <AlertGroup<InactiveProjectItem>
-                  icon="⚫"
-                  title="ללא פעילות מעל 30 יום"
-                  badgeBg="bg-gray-100 text-gray-600"
-                  items={data.inactiveProjects}
-                  renderRow={(p, i) => (
-                    <tr
-                      key={i}
-                      className="border-b border-[#F6F7F9] last:border-0 hover:bg-[#F6F7F9] transition-colors"
-                    >
-                      <td className="px-5 py-2.5 w-[40%]">
-                        <Link
-                          href={`/projects/${p.projectId}`}
-                          className="font-medium text-[#6366F1] hover:underline"
-                        >
-                          {p.projectTitle}
-                        </Link>
-                      </td>
-                      <td className="px-5 py-2.5 text-[#64748B] w-[30%]">{p.clientName}</td>
-                      <td className="px-5 py-2.5 text-[#94A3B8] w-[30%] text-left" dir="ltr">
-                        {p.daysSinceActivity} ימים ללא עדכון
-                      </td>
-                    </tr>
-                  )}
-                />
+                {/* ⚫ ללא פעילות */}
+                {data.inactiveProjects.map((p, i) => (
+                  <AlertRow key={`inact-${i}`} href={`/projects/${p.projectId}`} borderColor="border-l-gray-400">
+                    <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wide shrink-0">
+                      לא פעיל
+                    </span>
+                    <span className="font-semibold text-gray-800 text-[13px] truncate">
+                      {p.projectTitle}
+                    </span>
+                    <span className="text-gray-400 text-[13px] truncate">{p.clientName}</span>
+                    <span className="text-[12px] text-gray-400 mr-auto shrink-0">
+                      {p.daysSinceActivity} ימים ללא פעילות
+                    </span>
+                  </AlertRow>
+                ))}
               </div>
             )}
           </div>
         )}
-      </div>
 
-      {/* ══════════════════════════════════════════
-          SIDEBAR WIDGET — appears on left in RTL
-         ══════════════════════════════════════════ */}
-      <div className="w-64 shrink-0 space-y-4">
-        {/* Shortcuts */}
-        <div className="bg-white rounded-xl border border-[#E5E7EB] p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-3">
-            קיצורי דרך
-          </p>
-          <div className="space-y-2">
-            <button
-              onClick={() => router.push('/projects/new')}
-              className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#6366F1] px-3 py-2 text-[13px] font-semibold text-white hover:bg-[#4F46E5] transition-colors"
-            >
-              <span>+</span> פרויקט חדש
-            </button>
-            <button
-              onClick={() => setClientModalOpen(true)}
-              className="w-full flex items-center justify-center gap-2 rounded-lg border border-[#E5E7EB] px-3 py-2 text-[13px] font-semibold text-[#0F172A] hover:bg-[#F6F7F9] transition-colors"
-            >
-              <span>+</span> לקוח חדש
-            </button>
-          </div>
-        </div>
+        {/* ── ACTIVE PROJECTS GRID ── */}
+        <div>
+          <h2 className="text-[13px] font-bold text-gray-500 uppercase tracking-widest mb-3">
+            פרויקטים פעילים
+          </h2>
 
-        {/* Active projects list */}
-        <div className="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden">
-          <div className="px-4 py-3 border-b border-[#F6F7F9] flex items-center justify-between">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">
-              פרויקטים פעילים
-            </p>
-            {!loading && (
-              <span className="text-[11px] font-bold text-[#6366F1]">
-                {data.activeProjectsCount}
-              </span>
-            )}
-          </div>
-
-          <div className="max-h-[500px] overflow-y-auto">
-            {loading ? (
-              <div className="space-y-0">
-                {[1, 2, 3, 4].map((n) => (
-                  <div key={n} className="flex items-center gap-3 px-4 py-3 border-b border-[#F6F7F9] animate-pulse">
-                    <div className="w-2 h-2 rounded-full bg-[#E5E7EB] shrink-0" />
-                    <div className="h-3 flex-1 rounded bg-[#E5E7EB]" />
-                  </div>
-                ))}
-              </div>
-            ) : data.activeProjects.length === 0 ? (
-              <div className="px-4 py-6 text-center">
-                <p className="text-[12px] text-[#94A3B8] italic">אין פרויקטים פעילים</p>
-              </div>
-            ) : (
-              data.activeProjects.map((proj) => (
-                <Link
-                  key={proj.id}
-                  href={`/projects/${proj.id}`}
-                  className="flex items-center gap-3 px-4 py-2.5 hover:bg-[#F6F7F9] border-b border-[#F6F7F9] last:border-0 transition-colors group"
-                >
-                  <span className="w-2 h-2 rounded-full bg-[#6366F1] shrink-0" />
-                  <span className="text-[13px] text-[#0F172A] group-hover:text-[#6366F1] truncate transition-colors">
-                    {proj.title}
-                  </span>
-                </Link>
-              ))
-            )}
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-2 gap-3">
+              {[1, 2, 3, 4].map((n) => (
+                <div key={n} className="h-36 rounded-xl bg-white animate-pulse border border-gray-100" />
+              ))}
+            </div>
+          ) : data.projectsWithProgress.length === 0 ? (
+            <div className="rounded-xl bg-white border border-gray-100 px-5 py-8 text-center"
+              style={{ borderWidth: '0.5px' }}>
+              <p className="text-[13px] text-gray-400">אין פרויקטים פעילים כרגע</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {data.projectsWithProgress.map((proj) => (
+                <ProjectCard key={proj.id} proj={proj} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
+      {/* ── DARK SIDEBAR (left in RTL) ── */}
+      <SidebarWidget
+        activeProjects={loading ? [] : data.activeProjects}
+        loading={loading}
+        onNewClient={() => setClientModalOpen(true)}
+      />
 
       {/* ── Modals ── */}
       {openModal === 'payment' && data && (
