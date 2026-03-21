@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -28,6 +29,7 @@ interface SidebarProps {
 export default function Sidebar({ role, fullName }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
+  const [logoError, setLogoError] = useState(false)
 
   const visibleItems = navItems.filter(
     (item) => !item.adminOnly || role === 'admin'
@@ -44,23 +46,20 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
     <aside className="w-56 bg-[#2B2B2B] text-white min-h-screen flex flex-col shrink-0 print:hidden">
       {/* Logo */}
       <div className="px-[18px] py-4 border-b border-white/10">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logo.png"
-          alt="Heiterim Architects"
-          style={{ maxWidth: 160, display: 'block' }}
-          onError={(e) => {
-            // Fallback text logo if image not found
-            const el = e.currentTarget
-            el.style.display = 'none'
-            const fallback = el.nextSibling as HTMLElement
-            if (fallback) fallback.style.display = 'flex'
-          }}
-        />
-        <div style={{ display: 'none' }} className="items-center gap-2">
-          <div className="w-5 h-5 bg-[#E8C420] rounded-[2px] flex-shrink-0" />
-          <span className="text-[13px] font-extrabold tracking-tight text-white">Heiterim</span>
-        </div>
+        {logoError ? (
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 bg-[#E8C420] rounded-[2px] flex-shrink-0" />
+            <span className="text-[13px] font-extrabold tracking-tight text-white">Heiterim</span>
+          </div>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src="/logo.png"
+            alt="Heiterim Architects"
+            style={{ maxWidth: 160, display: 'block' }}
+            onError={() => setLogoError(true)}
+          />
+        )}
       </div>
 
       {/* Nav */}

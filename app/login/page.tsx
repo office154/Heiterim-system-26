@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [logoError, setLogoError] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -37,22 +38,20 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/logo.png"
-            alt="Heiterim Architects"
-            style={{ maxWidth: 240 }}
-            onError={(e) => {
-              const el = e.currentTarget
-              el.style.display = 'none'
-              const fallback = el.nextSibling as HTMLElement
-              if (fallback) fallback.style.display = 'flex'
-            }}
-          />
-          <div style={{ display: 'none' }} className="items-center gap-3">
-            <div className="w-8 h-8 bg-[#E8C420] rounded-[2px]" />
-            <span className="text-[22px] font-black tracking-tight text-[#2B2B2B]">Heiterim Architects</span>
-          </div>
+          {logoError ? (
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-[#E8C420] rounded-[2px]" />
+              <span className="text-[22px] font-black tracking-tight text-[#2B2B2B]">Heiterim Architects</span>
+            </div>
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src="/logo.png"
+              alt="Heiterim Architects"
+              style={{ maxWidth: 240 }}
+              onError={() => setLogoError(true)}
+            />
+          )}
         </div>
 
         {/* Card */}
