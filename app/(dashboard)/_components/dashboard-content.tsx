@@ -108,6 +108,7 @@ function KpiCard({
   border = 'border-gray-200',
   loading,
   onClick,
+  href,
 }: {
   label: string
   value: string | number
@@ -117,9 +118,17 @@ function KpiCard({
   border?: string
   loading?: boolean
   onClick?: () => void
+  href?: string
 }) {
+  const isInteractive = !!(onClick || href)
+
   const body = (
-    <div className={`rounded-xl border p-5 h-full ${bg} ${border} ${onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}`}
+    <div
+      className={`rounded-xl border p-5 h-full ${bg} ${border} transition-all duration-150 ${
+        isInteractive
+          ? 'cursor-pointer hover:border-[#6366f1] hover:scale-[1.01] hover:shadow-[0_0_0_1.5px_#6366f1] hover:shadow-sm'
+          : ''
+      }`}
       style={{ borderWidth: '0.5px' }}
     >
       <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">{label}</p>
@@ -137,8 +146,19 @@ function KpiCard({
     </div>
   )
 
+  if (href) {
+    return (
+      <Link href={href} className="block h-full">
+        {body}
+      </Link>
+    )
+  }
   if (onClick) {
-    return <button className="block w-full text-right h-full" onClick={onClick}>{body}</button>
+    return (
+      <button className="block w-full text-right h-full" onClick={onClick}>
+        {body}
+      </button>
+    )
   }
   return body
 }
@@ -349,6 +369,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
               value={loading ? '—' : data.activeProjectsCount}
               valueColor="text-[#6366f1]"
               loading={loading}
+              href="/projects?status=active"
             />
             {isAdmin && (
               <KpiCard
@@ -357,12 +378,14 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
                 subtitle={loading ? undefined : `מתוך ${fmt(data.totalContract)} חוזים`}
                 valueColor="text-green-600"
                 loading={loading}
+                href="/reports"
               />
             )}
             <KpiCard
               label="לקוחות פעילים"
               value={loading ? '—' : data.activeClientsCount}
               loading={loading}
+              href="/clients?filter=active"
             />
           </div>
 
@@ -373,6 +396,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
                 label="יתרה לגבייה"
                 value={loading ? '—' : fmt(data.totalPendingCollection)}
                 loading={loading}
+                href="/reports#outstanding"
               />
               <KpiCard
                 label="ממתינים לתשלום"
