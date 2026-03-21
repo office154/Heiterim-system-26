@@ -41,7 +41,7 @@ function NoteEdit({ stageId, projectId, note }: { stageId: string; projectId: st
         onBlur={handleBlur}
         onKeyDown={(e) => { if (e.key === 'Escape') { setValue(note ?? ''); setEditing(false) } }}
         rows={2}
-        className="w-full mt-1 text-[11px] text-[#0F172A] border border-[#6366F1] rounded px-2 py-1 resize-none focus:outline-none bg-white"
+        className="w-full mt-1 text-[11px] text-[#2B2B2B] border border-[#E8C420] rounded-[2px] px-2 py-1 resize-none focus:outline-none bg-white"
         placeholder="הוסף הערה..."
       />
     )
@@ -51,7 +51,7 @@ function NoteEdit({ stageId, projectId, note }: { stageId: string; projectId: st
     return (
       <p
         onClick={(e) => { e.stopPropagation(); setEditing(true) }}
-        className="mt-1 text-[11px] text-[#64748B] cursor-pointer hover:text-[#0F172A] transition-colors leading-relaxed"
+        className="mt-1 text-[11px] text-[#6A6660] cursor-pointer hover:text-[#2B2B2B] transition-colors leading-relaxed"
         title="לחץ לעריכה"
       >
         {note}
@@ -62,7 +62,7 @@ function NoteEdit({ stageId, projectId, note }: { stageId: string; projectId: st
   return (
     <button
       onClick={(e) => { e.stopPropagation(); setEditing(true) }}
-      className="mt-1 text-[10px] text-[#94A3B8] hover:text-[#6366F1] transition-colors"
+      className="mt-1 text-[10px] text-[#9A9690] hover:text-[#E8C420] transition-colors"
     >
       + הוסף הערה
     </button>
@@ -71,9 +71,9 @@ function NoteEdit({ stageId, projectId, note }: { stageId: string; projectId: st
 
 // ─── Status config ────────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<ProjectStatus, { dot: string; label: string; text: string }> = {
-  active:    { dot: 'bg-[#16A34A]', label: 'פעיל',  text: 'text-[#16A34A]' },
-  completed: { dot: 'bg-[#64748B]', label: 'הושלם', text: 'text-[#64748B]' },
-  on_hold:   { dot: 'bg-[#F59E0B]', label: 'מושהה', text: 'text-[#F59E0B]' },
+  active:    { dot: 'bg-[#1A7A6E]', label: 'פעיל',  text: 'text-[#1A7A6E]' },
+  completed: { dot: 'bg-[#6A6660]', label: 'הושלם', text: 'text-[#6A6660]' },
+  on_hold:   { dot: 'bg-[#D4820A]', label: 'מושהה', text: 'text-[#D4820A]' },
 }
 
 // ─── Timeline content ─────────────────────────────────────────────────────────
@@ -86,8 +86,8 @@ function TimelineContent({
 }) {
   const { data: stages, isLoading } = useProjectStages(projectId)
 
-  if (isLoading) return <p className="text-[12px] text-[#64748B]">טוען...</p>
-  if (!stages?.length) return <p className="text-[12px] text-[#64748B]">אין שלבים</p>
+  if (isLoading) return <p className="text-[12px] text-[#6A6660]">טוען...</p>
+  if (!stages?.length) return <p className="text-[12px] text-[#6A6660]">אין שלבים</p>
 
   // Only keep stages whose track was selected for this project
   const filtered = stages.filter((s) => projectTracks.includes(s.track as TrackValue))
@@ -106,7 +106,7 @@ function TimelineContent({
       {trackOrder.map((track) => (
         <div key={track}>
           {showHeader && (
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#64748B] mb-2">
+            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#6A6660] mb-2">
               {TRACK_LABELS[track] ?? track}
             </p>
           )}
@@ -120,33 +120,33 @@ function TimelineContent({
               return (
                 <div key={stage.id} className="flex gap-3 relative pb-3 last:pb-0">
                   {!isLast && (
-                    <div className="absolute right-[5px] top-3.5 bottom-0 w-px bg-[#E5E7EB]" />
+                    <div className="absolute right-[5px] top-3.5 bottom-0 w-px bg-[#E0DDD4]" />
                   )}
                   <div className="flex-shrink-0 mt-0.5 z-10">
                     {state === 'done' ? (
-                      <div className="w-3 h-3 rounded-full bg-[#0F172A] flex items-center justify-center">
+                      <div className="w-3 h-3 rounded-full bg-[#2B2B2B] flex items-center justify-center">
                         <svg width="7" height="6" viewBox="0 0 7 6" fill="none">
                           <polyline points="1,3 2.8,5 6,1" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </div>
                     ) : state === 'active' ? (
-                      <div className="w-3 h-3 rounded-full border-2 border-[#6366F1] bg-white" />
+                      <div className="w-3 h-3 rounded-full border-2 border-[#E8C420] bg-white" />
                     ) : (
-                      <div className="w-3 h-3 rounded-full border border-[#E5E7EB] bg-white" />
+                      <div className="w-3 h-3 rounded-full border border-[#E0DDD4] bg-white" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     {/* Stage name + days elapsed */}
                     <div className="flex items-baseline justify-between gap-2">
                       <span className={`text-[12px] leading-tight ${
-                        state === 'done'   ? 'text-[#94A3B8] line-through' :
-                        state === 'active' ? 'text-[#0F172A] font-semibold' :
-                                            'text-[#94A3B8]'
+                        state === 'done'   ? 'text-[#9A9690] line-through' :
+                        state === 'active' ? 'text-[#2B2B2B] font-semibold' :
+                                            'text-[#9A9690]'
                       }`}>
                         {stage.name}
                       </span>
                       {state === 'done' && stage.completed_at && (
-                        <span className="text-[10px] text-[#94A3B8] flex-shrink-0 whitespace-nowrap">
+                        <span className="text-[10px] text-[#9A9690] flex-shrink-0 whitespace-nowrap">
                           {daysSince(stage.completed_at)}
                         </span>
                       )}
@@ -155,9 +155,9 @@ function TimelineContent({
                     {/* Financial hint */}
                     {stage.price > 0 && (stage.completed || stage.invoice_sent) && (
                       <span className={`block text-[10px] mt-0.5 ${
-                        stage.completed && !stage.invoice_sent ? 'text-[#F59E0B]' :
-                        stage.invoice_sent && !stage.paid      ? 'text-[#DC2626]' :
-                        stage.paid                             ? 'text-[#16A34A]' : ''
+                        stage.completed && !stage.invoice_sent ? 'text-[#D4820A]' :
+                        stage.invoice_sent && !stage.paid      ? 'text-[#C0392B]' :
+                        stage.paid                             ? 'text-[#1A7A6E]' : ''
                       }`}>
                         {stage.completed && !stage.invoice_sent ? '⚠ חשבונית לא נשלחה' :
                          stage.invoice_sent && !stage.paid      ? '⚠ לא שולם' :
@@ -198,11 +198,11 @@ function TimelinePanel({
 
   if (collapsed) {
     return (
-      <div className="flex-shrink-0 w-8 bg-white border-r border-[#E5E7EB] flex flex-col items-center pt-4">
+      <div className="flex-shrink-0 w-8 bg-white border-r border-[#E0DDD4] flex flex-col items-center pt-4">
         <button
           onClick={onToggleCollapse}
           title="פתח ציר זמן"
-          className="text-[#64748B] hover:text-[#0F172A] transition-colors text-[15px] rotate-180"
+          className="text-[#6A6660] hover:text-[#2B2B2B] transition-colors text-[15px] rotate-180"
         >
           ›
         </button>
@@ -211,14 +211,14 @@ function TimelinePanel({
   }
 
   return (
-    <div className="flex-shrink-0 w-72 bg-white border-r border-[#E5E7EB] flex flex-col overflow-hidden rounded-lg border">
+    <div className="flex-shrink-0 w-72 bg-white border-r border-[#E0DDD4] flex flex-col overflow-hidden rounded-[2px] border">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB] flex-shrink-0">
-        <span className="text-[11px] font-bold uppercase tracking-widest text-[#64748B]">ציר זמן</span>
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[#E0DDD4] flex-shrink-0">
+        <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#6A6660]">ציר זמן</span>
         <button
           onClick={onToggleCollapse}
           title="צמצם"
-          className="text-[#64748B] hover:text-[#0F172A] transition-colors text-[15px] leading-none"
+          className="text-[#6A6660] hover:text-[#2B2B2B] transition-colors text-[15px] leading-none"
         >
           ›
         </button>
@@ -227,10 +227,10 @@ function TimelinePanel({
       {project && cfg ? (
         <>
           {/* Project identity */}
-          <div className="px-4 py-3 border-b border-[#E5E7EB] flex-shrink-0">
-            <p className="text-[13px] font-semibold text-[#0F172A] leading-snug">{project.title}</p>
+          <div className="px-4 py-3 border-b border-[#E0DDD4] flex-shrink-0">
+            <p className="text-[13px] font-semibold text-[#2B2B2B] leading-snug">{project.title}</p>
             {project.client?.name && (
-              <p className="text-[11px] text-[#64748B] mt-0.5">{project.client.name}</p>
+              <p className="text-[11px] text-[#6A6660] mt-0.5">{project.client.name}</p>
             )}
             <div className="flex items-center gap-1.5 mt-1.5">
               <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />
@@ -247,10 +247,10 @@ function TimelinePanel({
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-3 border-t border-[#E5E7EB] flex-shrink-0">
+          <div className="px-4 py-3 border-t border-[#E0DDD4] flex-shrink-0">
             <Link
               href={`/projects/${project.id}`}
-              className="flex items-center justify-center w-full py-2 bg-[#6366F1] text-white text-[12px] font-semibold rounded-md hover:bg-[#4F46E5] transition-colors"
+              className="flex items-center justify-center w-full py-2 bg-[#E8C420] text-[#2B2B2B] text-[12px] font-extrabold rounded-[2px] hover:bg-[#D4B010] transition-colors"
             >
               פתח פרויקט מלא
             </Link>
@@ -258,7 +258,7 @@ function TimelinePanel({
         </>
       ) : (
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-[12px] text-[#64748B]">העבר עכבר על פרויקט</p>
+          <p className="text-[12px] text-[#6A6660]">העבר עכבר על פרויקט</p>
         </div>
       )}
     </div>
@@ -288,27 +288,27 @@ function ProjectRow({
       onClick={() => router.push(`/projects/${project.id}`)}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className={`flex items-center px-5 py-4 border-b border-[#F6F7F9] last:border-0 cursor-pointer transition-colors relative ${
-        isHovered ? 'bg-[#F6F7F9]' : 'hover:bg-[#F6F7F9]'
+      className={`flex items-center px-5 py-4 border-b border-[#F0EDE4] last:border-0 cursor-pointer transition-colors relative ${
+        isHovered ? 'bg-[#F8F6F2]' : 'hover:bg-[#F8F6F2]'
       }`}
     >
       {/* Alert stripe */}
       {hasAlert && (
-        <span className="absolute right-0 top-2.5 bottom-2.5 w-[3px] bg-[#F59E0B] rounded-l-full" />
+        <span className="absolute right-0 top-2.5 bottom-2.5 w-[3px] bg-[#D4820A] rounded-l-full" />
       )}
       {/* Hover indicator */}
       {isHovered && (
-        <span className="absolute left-0 top-2.5 bottom-2.5 w-[3px] bg-[#6366F1] rounded-r-full" />
+        <span className="absolute left-0 top-2.5 bottom-2.5 w-[3px] bg-[#E8C420] rounded-r-full" />
       )}
 
       <div className="flex-1 min-w-0">
-        <div className="text-[13px] font-semibold text-[#0F172A] truncate">{project.title}</div>
-        <div className="text-[11px] text-[#64748B] mt-0.5 truncate">
+        <div className="text-[13px] font-semibold text-[#2B2B2B] truncate">{project.title}</div>
+        <div className="text-[11px] text-[#6A6660] mt-0.5 truncate">
           {trackLabels}{project.location ? ` · ${project.location}` : ''}
         </div>
       </div>
 
-      <div className="hidden md:block text-[12px] text-[#64748B] mx-5 flex-shrink-0 w-24 truncate">
+      <div className="hidden md:block text-[12px] text-[#6A6660] mx-5 flex-shrink-0 w-24 truncate">
         {project.client?.name ?? '—'}
       </div>
 
@@ -317,7 +317,7 @@ function ProjectRow({
         <span className={`text-[12px] font-medium ${cfg.text}`}>{cfg.label}</span>
       </div>
 
-      <span className="mr-4 text-[#64748B] text-[13px] flex-shrink-0">←</span>
+      <span className="mr-4 text-[#6A6660] text-[13px] flex-shrink-0">←</span>
     </div>
   )
 }
@@ -358,10 +358,10 @@ export default function ProjectsPage() {
     <div className="flex flex-col h-full space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-[20px] font-bold text-[#0F172A] tracking-tight">פרויקטים</h1>
+        <h1 className="text-[20px] font-black text-[#2B2B2B] tracking-tight">פרויקטים</h1>
         <Link
           href="/projects/new"
-          className="inline-flex items-center px-4 py-2 bg-[#6366F1] text-white text-[13px] font-semibold rounded-md hover:bg-[#4F46E5] transition-colors"
+          className="inline-flex items-center px-4 py-2 bg-[#E8C420] text-[#2B2B2B] text-[13px] font-extrabold rounded-[2px] hover:bg-[#D4B010] transition-colors"
         >
           + פרויקט חדש
         </Link>
@@ -369,12 +369,12 @@ export default function ProjectsPage() {
 
       {/* Alert banner */}
       {role === 'admin' && (alerts?.length ?? 0) > 0 && (
-        <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E5E7EB] rounded-lg border-r-[3px] border-r-[#F59E0B]">
-          <span className="w-2 h-2 rounded-full bg-[#F59E0B] flex-shrink-0" />
-          <span className="text-[13px] text-[#0F172A] font-medium">
+        <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#E0DDD4] rounded-[2px] border-r-[3px] border-r-[#D4820A]">
+          <span className="w-2 h-2 rounded-full bg-[#D4820A] flex-shrink-0" />
+          <span className="text-[13px] text-[#2B2B2B] font-medium">
             {alerts!.length} {alerts!.length === 1 ? 'פרויקט דורש' : 'פרויקטים דורשים'} טיפול
           </span>
-          <Link href="/reports" className="mr-auto text-[12px] font-medium text-[#6366F1] hover:underline">
+          <Link href="/reports" className="mr-auto text-[12px] font-medium text-[#E8C420] hover:underline">
             לדוחות
           </Link>
         </div>
@@ -386,12 +386,12 @@ export default function ProjectsPage() {
           placeholder="חיפוש לפי שם..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-xs h-9 text-[13px] border-[#E5E7EB] bg-white text-[#0F172A] placeholder:text-[#64748B] focus-visible:ring-[#6366F1]"
+          className="max-w-xs h-9 text-[13px] border-[#E0DDD4] bg-white text-[#2B2B2B] placeholder:text-[#6A6660] focus-visible:ring-[#1A7A6E]"
         />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as ProjectStatus | 'all')}
-          className="h-9 px-3 text-[13px] border border-[#E5E7EB] rounded-md bg-white text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-[#6366F1]"
+          className="h-9 px-3 text-[13px] border border-[#E0DDD4] rounded-[2px] bg-white text-[#2B2B2B] focus:outline-none focus:ring-1 focus:ring-[#1A7A6E]"
         >
           <option value="all">כל הסטטוסים</option>
           <option value="active">פעיל</option>
@@ -406,17 +406,17 @@ export default function ProjectsPage() {
         {/* Left — project list */}
         <div className="flex-1 min-w-0 space-y-4 overflow-y-auto">
           {isLoading ? (
-            <div className="py-16 text-center text-[13px] text-[#64748B]">טוען...</div>
+            <div className="py-16 text-center text-[13px] text-[#6A6660]">טוען...</div>
           ) : filtered.length === 0 ? (
-            <div className="py-16 text-center text-[13px] text-[#64748B]">
+            <div className="py-16 text-center text-[13px] text-[#6A6660]">
               {projects?.length === 0 ? 'אין פרויקטים עדיין' : 'לא נמצאו תוצאות'}
             </div>
           ) : (
             <>
               {active.length > 0 && (
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-2">פעילים</p>
-                  <div className="bg-white border border-[#E5E7EB] rounded-lg overflow-hidden">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#6A6660] mb-2">פעילים</p>
+                  <div className="bg-white border border-[#E0DDD4] rounded-[2px] overflow-hidden">
                     {active.map((p) => (
                       <ProjectRow
                         key={p.id}
@@ -432,10 +432,10 @@ export default function ProjectsPage() {
               )}
               {others.length > 0 && (
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-2">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#6A6660] mb-2">
                     {active.length > 0 ? 'אחרים' : 'פרויקטים'}
                   </p>
-                  <div className="bg-white border border-[#E5E7EB] rounded-lg overflow-hidden">
+                  <div className="bg-white border border-[#E0DDD4] rounded-[2px] overflow-hidden">
                     {others.map((p) => (
                       <ProjectRow
                         key={p.id}

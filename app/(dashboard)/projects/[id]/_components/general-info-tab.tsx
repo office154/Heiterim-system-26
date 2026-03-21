@@ -18,9 +18,9 @@ interface FieldRowProps {
 
 function FieldRow({ label, children }: FieldRowProps) {
   return (
-    <div className="grid grid-cols-3 gap-4 py-3 border-b border-gray-100 last:border-0">
-      <dt className="text-sm font-medium text-gray-500 pt-1">{label}</dt>
-      <dd className="col-span-2 text-sm text-gray-900">{children}</dd>
+    <div className="grid grid-cols-3 gap-4 py-3 border-b border-[#F0EDE4] last:border-0">
+      <dt className="text-sm font-medium text-[#6A6660] pt-1">{label}</dt>
+      <dd className="col-span-2 text-sm text-[#2B2B2B]">{children}</dd>
     </div>
   )
 }
@@ -41,8 +41,11 @@ export function GeneralInfoTab({ project }: GeneralInfoTabProps) {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       {/* Project Info */}
-      <div className="rounded-lg border border-gray-200 bg-white p-5">
-        <h2 className="mb-4 text-base font-semibold text-gray-800">פרטי פרויקט</h2>
+      <div
+        className="rounded-[2px] border border-[#E0DDD4] bg-white p-5"
+        style={{ boxShadow: '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)' }}
+      >
+        <h2 className="mb-4 text-base font-semibold text-[#2B2B2B]">פרטי פרויקט</h2>
         <dl>
           <FieldRow label="שם הפרויקט">
             <InlineEdit
@@ -61,7 +64,7 @@ export function GeneralInfoTab({ project }: GeneralInfoTabProps) {
 
           <FieldRow label="סטטוס">
             <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[project.status]}`}
+              className={`inline-flex items-center rounded-[2px] px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[project.status]}`}
             >
               {STATUS_LABELS[project.status]}
             </span>
@@ -112,13 +115,13 @@ export function GeneralInfoTab({ project }: GeneralInfoTabProps) {
           </FieldRow>
 
           <FieldRow label="נוצר ע״י">
-            <span className="text-gray-600">
+            <span className="text-[#6A6660]">
               {project.creator?.full_name ?? '—'}
             </span>
           </FieldRow>
 
           <FieldRow label="תאריך יצירה">
-            <span className="text-gray-600">
+            <span className="text-[#6A6660]">
               {new Date(project.created_at).toLocaleDateString('he-IL')}
             </span>
           </FieldRow>
@@ -126,10 +129,13 @@ export function GeneralInfoTab({ project }: GeneralInfoTabProps) {
       </div>
 
       {/* Client Info */}
-      <div className="rounded-lg border border-gray-200 bg-white p-5">
-        <h2 className="mb-4 text-base font-semibold text-gray-800">פרטי לקוח</h2>
+      <div
+        className="rounded-[2px] border border-[#E0DDD4] bg-white p-5"
+        style={{ boxShadow: '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)' }}
+      >
+        <h2 className="mb-4 text-base font-semibold text-[#2B2B2B]">פרטי לקוח</h2>
         {!project.client ? (
-          <p className="text-sm text-gray-400 italic">לא שויך לקוח לפרויקט זה</p>
+          <p className="text-sm text-[#9A9690] italic">לא שויך לקוח לפרויקט זה</p>
         ) : (
           <dl>
             <FieldRow label="שם">

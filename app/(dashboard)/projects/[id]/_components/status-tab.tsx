@@ -18,11 +18,11 @@ const REQUIREMENT_STATUSES: RequirementStatus[] = [
 ]
 
 const STATUS_STYLES: Record<RequirementStatus, string> = {
-  'ממתין': 'bg-gray-100 text-gray-700',
-  'בטיפול': 'bg-yellow-100 text-yellow-800',
-  'הוגש': 'bg-blue-100 text-blue-800',
-  'התקבל': 'bg-green-100 text-green-800',
-  'חזרו הערות': 'bg-red-100 text-red-800',
+  'ממתין': 'bg-[#F0EDE4] text-[#6A6660]',
+  'בטיפול': 'bg-[#FEF9E7] text-[#D4820A]',
+  'הוגש': 'bg-[#E8F5F3] text-[#1A7A6E]',
+  'התקבל': 'bg-[#E8F5F3] text-[#1A7A6E]',
+  'חזרו הערות': 'bg-[#FEE2E2] text-[#C0392B]',
 }
 
 const PREDEFINED_SECTIONS = ['תיק מידע', 'בקשה להיתר', 'הערות ועדה', 'בדיקת תכן', 'אחר']
@@ -61,7 +61,7 @@ function DateCell({
         onBlur={async () => { await onSave(local); setEditing(false) }}
         onKeyDown={(e) => { if (e.key === 'Escape') setEditing(false) }}
         dir="ltr"
-        className="rounded border border-blue-300 px-1 py-0.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="rounded-[2px] border border-[#1A7A6E] px-1 py-0.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/20"
       />
     )
   }
@@ -69,9 +69,9 @@ function DateCell({
   return (
     <button
       onClick={() => setEditing(true)}
-      className="rounded px-1 py-0.5 text-xs transition-all hover:bg-blue-50 hover:ring-1 hover:ring-blue-200 print:cursor-default"
+      className="rounded-[2px] px-1 py-0.5 text-xs transition-all hover:bg-[#F0EDE4] hover:ring-1 hover:ring-[#E0DDD4] print:cursor-default"
     >
-      {value ? formatDate(value) : <span className="italic text-gray-400">—</span>}
+      {value ? formatDate(value) : <span className="italic text-[#9A9690]">—</span>}
     </button>
   )
 }
@@ -92,7 +92,7 @@ function StatusCell({
     <select
       value={value}
       onChange={handleChange}
-      className={`rounded px-2 py-1 text-xs font-medium focus:outline-none ${STATUS_STYLES[value]} print:border-none print:bg-transparent`}
+      className={`rounded-[2px] px-2 py-1 text-xs font-medium focus:outline-none ${STATUS_STYLES[value]} print:border-none print:bg-transparent`}
     >
       {REQUIREMENT_STATUSES.map((s) => (
         <option key={s} value={s}>{s}</option>
@@ -124,7 +124,7 @@ function RequirementInput({
       onBlur={handleBlur}
       onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
       placeholder="הקלד פירוט..."
-      className="w-full rounded border border-[#CBD5E1] bg-[#F8FAFC] px-2 py-1.5 text-[13px] text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#6366F1] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6366F1]/20"
+      className="w-full rounded-[2px] border border-[#C8C4BC] bg-[#F8F6F2] px-2 py-1.5 text-[13px] text-[#2B2B2B] placeholder:text-[#9A9690] focus:border-[#1A7A6E] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/12"
     />
   )
 }
@@ -146,22 +146,22 @@ function ContactsTable({ projectId }: { projectId: string }) {
 
   return (
     <div className="print:hidden">
-      <h2 className="mb-3 text-base font-semibold text-gray-800">אנשי קשר</h2>
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+      <h2 className="mb-3 text-base font-semibold text-[#2B2B2B]">אנשי קשר</h2>
+      <div className="overflow-hidden rounded-[2px] border border-[#E0DDD4] bg-white">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-xs text-gray-500">
+          <thead className="bg-[#F8F6F2] text-[10px] text-[#9A9690]">
             <tr>
-              <th className="px-3 py-2 text-right font-medium">תפקיד</th>
-              <th className="px-3 py-2 text-center font-medium">מינוי</th>
-              <th className="px-3 py-2 text-right font-medium">שם</th>
-              <th className="px-3 py-2 text-right font-medium">טלפון</th>
-              <th className="px-3 py-2 text-right font-medium">מייל</th>
+              <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">תפקיד</th>
+              <th className="px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">מינוי</th>
+              <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">שם</th>
+              <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">טלפון</th>
+              <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">מייל</th>
               <th className="w-8 px-3 py-2" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-[#F0EDE4]">
             {(contacts ?? []).map((c) => (
-              <tr key={c.id} className="group hover:bg-gray-50">
+              <tr key={c.id} className="group hover:bg-[#F8F6F2]">
                 <td className="px-3 py-1.5">
                   <InlineEdit value={c.role} onSave={(v) => saveContact(c, 'role', v)} />
                 </td>
@@ -185,7 +185,7 @@ function ContactsTable({ projectId }: { projectId: string }) {
                 <td className="px-3 py-1.5">
                   <button
                     onClick={() => deleteContact.mutate({ id: c.id, projectId })}
-                    className="hidden text-gray-300 hover:text-red-500 group-hover:block"
+                    className="hidden text-[#9A9690] hover:text-[#C0392B] group-hover:block"
                   >
                     ✕
                   </button>
@@ -194,13 +194,13 @@ function ContactsTable({ projectId }: { projectId: string }) {
             ))}
           </tbody>
         </table>
-        <div className="border-t border-gray-100 p-2">
+        <div className="border-t border-[#F0EDE4] p-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleAdd}
             disabled={createContact.isPending}
-            className="text-xs text-gray-500"
+            className="text-xs text-[#6A6660]"
           >
             + הוסף איש קשר
           </Button>
@@ -247,28 +247,28 @@ function RequirementsSection({
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white print:break-inside-avoid">
+    <div className="overflow-hidden rounded-[2px] border border-[#E0DDD4] bg-white print:break-inside-avoid">
       {/* Section header */}
-      <div className="border-b border-gray-200 bg-gray-800 px-4 py-2">
-        <span className="text-sm font-semibold text-white">{section}</span>
+      <div className="border-b border-[#E0DDD4] bg-[#2B2B2B] px-4 py-2">
+        <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#E8C420]">{section}</span>
       </div>
 
       <table className="w-full text-sm">
-        <thead className="bg-gray-50 text-xs text-gray-500">
+        <thead className="bg-[#F8F6F2] text-[10px] text-[#9A9690]">
           <tr>
-            <th className="w-8 px-3 py-2 text-center font-medium">#</th>
-            <th className="w-20 px-3 py-2 text-center font-medium">עלה למערכת</th>
-            <th className="px-3 py-2 text-right font-medium">פירוט</th>
-            <th className="w-32 px-3 py-2 text-center font-medium">סטטוס</th>
-            <th className="w-24 px-3 py-2 text-center font-medium">תאריך</th>
-            <th className="px-3 py-2 text-right font-medium">הערות</th>
+            <th className="w-8 px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">#</th>
+            <th className="w-20 px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">עלה למערכת</th>
+            <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">פירוט</th>
+            <th className="w-32 px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">סטטוס</th>
+            <th className="w-24 px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">תאריך</th>
+            <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">הערות</th>
             <th className="print:hidden w-8 px-3 py-2" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100">
+        <tbody className="divide-y divide-[#F0EDE4]">
           {requirements.map((req, idx) => (
-            <tr key={req.id} className="group hover:bg-gray-50">
-              <td className="px-3 py-1.5 text-center text-xs text-gray-400">
+            <tr key={req.id} className="group hover:bg-[#F8F6F2]">
+              <td className="px-3 py-1.5 text-center text-xs text-[#9A9690]">
                 {sectionIndex > 0 ? `${sectionIndex}.${idx + 1}` : idx + 1}
               </td>
               <td className="px-3 py-1.5 text-center">
@@ -307,7 +307,7 @@ function RequirementsSection({
               <td className="print:hidden px-3 py-1.5">
                 <button
                   onClick={() => deleteReq.mutate({ id: req.id, projectId })}
-                  className="hidden text-gray-300 hover:text-red-500 group-hover:block"
+                  className="hidden text-[#9A9690] hover:text-[#C0392B] group-hover:block"
                 >
                   ✕
                 </button>
@@ -317,13 +317,13 @@ function RequirementsSection({
         </tbody>
       </table>
 
-      <div className="print:hidden border-t border-gray-100 p-2">
+      <div className="print:hidden border-t border-[#F0EDE4] p-2">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => handleAddRow(requirements)}
           disabled={createReq.isPending}
-          className="text-xs text-gray-500"
+          className="text-xs text-[#6A6660]"
         >
           + הוסף פירוט
         </Button>
@@ -386,7 +386,7 @@ export function StatusTab({ projectId }: StatusTabProps) {
   }
 
   if (isLoading || !project) {
-    return <div className="py-8 text-center text-gray-400">טוען...</div>
+    return <div className="py-8 text-center text-[#9A9690]">טוען...</div>
   }
 
   const todayFormatted = new Date().toLocaleDateString('he-IL')
@@ -398,47 +398,54 @@ export function StatusTab({ projectId }: StatusTabProps) {
         <h1 className="text-xl font-bold">
           דוח סטטוס — {project.title} — {todayFormatted}
         </h1>
-        {project.location && <p className="text-sm text-gray-600">{project.location}</p>}
+        {project.location && <p className="text-sm text-[#6A6660]">{project.location}</p>}
       </div>
 
       {/* PDF button */}
       <div className="flex justify-end print:hidden">
-        <Button variant="outline" onClick={() => window.print()}>
+        <Button
+          variant="outline"
+          onClick={() => window.print()}
+          className="border-[#C8C4BC] text-[#4A4844] hover:bg-[#F0EDE4] rounded-[2px]"
+        >
           🖨️ הורד דוח PDF
         </Button>
       </div>
 
       {/* Report header */}
-      <div className="rounded-lg border border-gray-200 bg-white p-5">
-        <h2 className="mb-4 text-base font-semibold text-gray-800 print:hidden">פרטי דוח</h2>
+      <div
+        className="rounded-[2px] border border-[#E0DDD4] bg-white p-5"
+        style={{ boxShadow: '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)' }}
+      >
+        <h2 className="mb-4 text-base font-semibold text-[#2B2B2B] print:hidden">פרטי דוח</h2>
         <dl className="grid grid-cols-2 gap-x-8 gap-y-2">
           <div className="flex items-center gap-2">
-            <dt className="text-sm font-medium text-gray-500 whitespace-nowrap">שם פרויקט:</dt>
-            <dd className="text-sm text-gray-900">
+            <dt className="text-sm font-medium text-[#6A6660] whitespace-nowrap">שם פרויקט:</dt>
+            <dd className="text-sm text-[#2B2B2B]">
               <InlineEdit value={project.title} onSave={(v) => saveProjectField('title', v)} />
             </dd>
           </div>
           <div className="flex items-center gap-2">
-            <dt className="text-sm font-medium text-gray-500 whitespace-nowrap">מיקום:</dt>
-            <dd className="text-sm text-gray-900">
+            <dt className="text-sm font-medium text-[#6A6660] whitespace-nowrap">מיקום:</dt>
+            <dd className="text-sm text-[#2B2B2B]">
               <InlineEdit value={project.location} onSave={(v) => saveProjectField('location', v)} emptyText="לחץ להוספה" />
             </dd>
           </div>
           <div className="flex items-center gap-2">
-            <dt className="text-sm font-medium text-gray-500 whitespace-nowrap">מס׳ תיק מידע:</dt>
-            <dd className="text-sm text-gray-900">
+            <dt className="text-sm font-medium text-[#6A6660] whitespace-nowrap">מס׳ תיק מידע:</dt>
+            <dd className="text-sm text-[#2B2B2B]">
               <InlineEdit value={project.info_file_number} onSave={(v) => saveProjectField('info_file_number', v)} emptyText="לחץ להוספה" />
             </dd>
           </div>
           <div className="flex items-center gap-2">
-            <dt className="text-sm font-medium text-gray-500 whitespace-nowrap">מס׳ הגשה להיתר:</dt>
-            <dd className="text-sm text-gray-900">
+            <dt className="text-sm font-medium text-[#6A6660] whitespace-nowrap">מס׳ הגשה להיתר:</dt>
+            <dd className="text-sm text-[#2B2B2B]">
               <InlineEdit value={project.permit_submission_number} onSave={(v) => saveProjectField('permit_submission_number', v)} emptyText="לחץ להוספה" />
             </dd>
           </div>
           <div className="flex items-center gap-2">
-            <dt className="text-sm font-medium text-gray-500 whitespace-nowrap">תאריך עדכון:</dt>
-            <dd className="text-sm text-gray-600">{todayFormatted}</dd>
+            <dt className="text-sm font-medium text-[#6A6660] whitespace-nowrap">תאריך עדכון:</dt>
+            <dd className="text-sm text-[#6A6660]">{todayFormatted}</dd>
           </div>
         </dl>
       </div>
@@ -448,7 +455,7 @@ export function StatusTab({ projectId }: StatusTabProps) {
 
       {/* Requirements sections */}
       <div className="space-y-4">
-        <h2 className="text-base font-semibold text-gray-800 print:hidden">דרישות</h2>
+        <h2 className="text-base font-semibold text-[#2B2B2B] print:hidden">דרישות</h2>
 
         {allSections.map((section, idx) => (
           <RequirementsSection
@@ -461,7 +468,7 @@ export function StatusTab({ projectId }: StatusTabProps) {
         ))}
 
         {allSections.length === 0 && (
-          <p className="py-4 text-center text-sm italic text-gray-400">
+          <p className="py-4 text-center text-sm italic text-[#9A9690]">
             אין דרישות עדיין — הוסף שלב כדי להתחיל
           </p>
         )}
@@ -473,12 +480,12 @@ export function StatusTab({ projectId }: StatusTabProps) {
               + הוסף שלב
             </Button>
           ) : (
-            <div className="flex flex-wrap items-center gap-2 rounded-lg border border-dashed border-gray-300 p-3">
+            <div className="flex flex-wrap items-center gap-2 rounded-[2px] border border-dashed border-[#E0DDD4] p-3">
               {availablePredefined.map((s) => (
                 <button
                   key={s}
                   onClick={() => handleAddPredefined(s)}
-                  className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm hover:bg-gray-50"
+                  className="rounded-[2px] border border-[#E0DDD4] bg-white px-3 py-1 text-sm hover:bg-[#F0EDE4]"
                 >
                   {s}
                 </button>
@@ -487,7 +494,7 @@ export function StatusTab({ projectId }: StatusTabProps) {
               {!showCustomInput ? (
                 <button
                   onClick={() => setShowCustomInput(true)}
-                  className="rounded-md border border-blue-300 bg-blue-50 px-3 py-1 text-sm text-blue-700 hover:bg-blue-100"
+                  className="rounded-[2px] border border-[#1A7A6E] bg-[#E8F5F3] px-3 py-1 text-sm text-[#1A7A6E] hover:bg-[#D0EDE8]"
                 >
                   + מותאם אישית
                 </button>
@@ -506,11 +513,11 @@ export function StatusTab({ projectId }: StatusTabProps) {
                       }
                     }}
                     placeholder="שם השלב..."
-                    className="rounded border border-blue-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="rounded-[2px] border border-[#1A7A6E] px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/20"
                   />
                   <button
                     onClick={handleAddCustom}
-                    className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700"
+                    className="rounded-[2px] bg-[#2B2B2B] px-3 py-1 text-sm text-white hover:bg-[#383634]"
                   >
                     הוסף
                   </button>
@@ -523,7 +530,7 @@ export function StatusTab({ projectId }: StatusTabProps) {
                   setShowCustomInput(false)
                   setCustomSectionInput('')
                 }}
-                className="text-sm text-gray-400 hover:text-gray-600"
+                className="text-sm text-[#9A9690] hover:text-[#6A6660]"
               >
                 ביטול
               </button>

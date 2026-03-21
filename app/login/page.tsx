@@ -3,15 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -42,17 +33,42 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="text-center space-y-1">
-          <CardTitle className="text-2xl font-bold">מערכת ניהול משימות</CardTitle>
-          <p className="text-gray-500 text-sm">התחברות לחשבון</p>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen flex items-center justify-center bg-[#F0EDE4]">
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo.png"
+            alt="Heiterim Architects"
+            style={{ maxWidth: 240 }}
+            onError={(e) => {
+              const el = e.currentTarget
+              el.style.display = 'none'
+              const fallback = el.nextSibling as HTMLElement
+              if (fallback) fallback.style.display = 'flex'
+            }}
+          />
+          <div style={{ display: 'none' }} className="items-center gap-3">
+            <div className="w-8 h-8 bg-[#E8C420] rounded-[2px]" />
+            <span className="text-[22px] font-black tracking-tight text-[#2B2B2B]">Heiterim Architects</span>
+          </div>
+        </div>
+
+        {/* Card */}
+        <div
+          className="bg-white rounded-[4px] p-8"
+          style={{ boxShadow: '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)', border: '1px solid #E0DDD4' }}
+        >
+          <h1 className="text-[20px] font-black tracking-tight text-[#2B2B2B] mb-1">התחברות</h1>
+          <p className="text-[13px] text-[#9A9690] mb-6">היכנס לחשבון שלך</p>
+
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">אימייל</Label>
-              <Input
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="block text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">
+                אימייל
+              </label>
+              <input
                 id="email"
                 type="email"
                 value={email}
@@ -60,29 +76,36 @@ export default function LoginPage() {
                 placeholder="your@email.com"
                 required
                 dir="ltr"
-                className="text-left"
+                className="w-full rounded-[2px] border border-[#E0DDD4] bg-white px-3 py-2 text-[13px] text-[#2B2B2B] placeholder:text-[#9A9690] focus:border-[#1A7A6E] focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/12"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">סיסמה</Label>
-              <Input
+            <div className="space-y-1.5">
+              <label htmlFor="password" className="block text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">
+                סיסמה
+              </label>
+              <input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 dir="ltr"
+                className="w-full rounded-[2px] border border-[#E0DDD4] bg-white px-3 py-2 text-[13px] text-[#2B2B2B] focus:border-[#1A7A6E] focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/12"
               />
             </div>
             {error && (
-              <p className="text-sm text-red-500 text-center">{error}</p>
+              <p className="text-[13px] text-[#C0392B] text-center">{error}</p>
             )}
-            <Button type="submit" className="w-full" disabled={loading}>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-[2px] bg-[#E8C420] px-4 py-2.5 text-[14px] font-extrabold text-[#2B2B2B] hover:bg-[#D4B010] disabled:opacity-50 transition-colors mt-2"
+            >
               {loading ? 'מתחבר...' : 'התחברות'}
-            </Button>
+            </button>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

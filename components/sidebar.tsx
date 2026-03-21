@@ -41,14 +41,25 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
   }
 
   return (
-    <aside className="w-56 bg-white text-[#0F172A] min-h-screen flex flex-col shrink-0 border-l border-[#E5E7EB] print:hidden">
+    <aside className="w-56 bg-[#2B2B2B] text-white min-h-screen flex flex-col shrink-0 print:hidden">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-[#E5E7EB]">
-        <div className="flex items-center gap-2.5">
-          <div className="w-5 h-5 bg-[#0F172A] rounded-[4px] flex-shrink-0" />
-          <span className="text-[13px] font-bold tracking-tight text-[#0F172A]">
-            Heiterim
-          </span>
+      <div className="px-[18px] py-4 border-b border-white/10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo.png"
+          alt="Heiterim Architects"
+          style={{ maxWidth: 160, display: 'block' }}
+          onError={(e) => {
+            // Fallback text logo if image not found
+            const el = e.currentTarget
+            el.style.display = 'none'
+            const fallback = el.nextSibling as HTMLElement
+            if (fallback) fallback.style.display = 'flex'
+          }}
+        />
+        <div style={{ display: 'none' }} className="items-center gap-2">
+          <div className="w-5 h-5 bg-[#E8C420] rounded-[2px] flex-shrink-0" />
+          <span className="text-[13px] font-extrabold tracking-tight text-white">Heiterim</span>
         </div>
       </div>
 
@@ -61,14 +72,14 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center px-3 py-2 rounded-md text-[13px] font-medium transition-colors relative',
+                'flex items-center px-3 py-2 rounded-[2px] text-[13px] font-medium transition-colors relative',
                 isActive
-                  ? 'text-[#0F172A] font-semibold bg-[#F6F7F9]'
-                  : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F6F7F9]'
+                  ? 'text-white font-semibold bg-[#383634]'
+                  : 'text-[#6A6660] hover:text-[#dddddd] hover:bg-[#323030]'
               )}
             >
               {isActive && (
-                <span className="absolute right-0 top-1 bottom-1 w-[3px] bg-[#6366F1] rounded-l-full" />
+                <span className="absolute right-0 top-1 bottom-1 w-[3px] bg-[#E8C420] rounded-l-full" />
               )}
               {item.label}
             </Link>
@@ -77,16 +88,16 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-4 border-t border-[#E5E7EB] space-y-2">
+      <div className="px-4 py-4 border-t border-white/10 space-y-2">
         <div className="px-3">
-          <p className="text-[13px] font-semibold text-[#0F172A] truncate">{fullName}</p>
-          <p className="text-[11px] text-[#64748B]">
+          <p className="text-[13px] font-semibold text-white truncate">{fullName}</p>
+          <p className="text-[11px] text-[#6A6660]">
             {role === 'admin' ? 'מנהל' : 'עובד'}
           </p>
         </div>
         <button
           onClick={handleLogout}
-          className="w-full text-right px-3 py-1.5 rounded-md text-[12px] text-[#64748B] hover:text-[#0F172A] hover:bg-[#F6F7F9] transition-colors"
+          className="w-full text-right px-3 py-1.5 rounded-[2px] text-[12px] text-[#6A6660] hover:text-white hover:bg-[#323030] transition-colors"
         >
           התנתקות
         </button>

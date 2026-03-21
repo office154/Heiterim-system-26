@@ -14,19 +14,19 @@ export default function ProjectDetailPage() {
   const { data: project, isLoading, error } = useProject(id)
 
   if (isLoading) {
-    return <div className="py-12 text-center text-gray-400">טוען פרויקט...</div>
+    return <div className="py-12 text-center text-[#9A9690]">טוען פרויקט...</div>
   }
 
   if (error || !project) {
-    return <div className="py-12 text-center text-red-500">שגיאה בטעינת הפרויקט</div>
+    return <div className="py-12 text-center text-[#C0392B]">שגיאה בטעינת הפרויקט</div>
   }
 
   return (
     <div className="space-y-4">
       <div className="print:hidden">
-        <h1 className="text-2xl font-bold text-gray-900">{project.title}</h1>
+        <h1 className="text-2xl font-black text-[#2B2B2B] tracking-tight">{project.title}</h1>
         {project.location && (
-          <p className="mt-1 text-sm text-gray-500">{project.location}</p>
+          <p className="mt-1 text-sm text-[#6A6660]">{project.location}</p>
         )}
       </div>
 

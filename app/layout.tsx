@@ -6,7 +6,7 @@ import { Providers } from '@/lib/providers'
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 
 export const metadata: Metadata = {
-  title: 'מערכת ניהול משימות',
+  title: 'Heiterim Architects',
   description: 'מערכת לניהול פרויקטים ומשימות',
 }
 
@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="he" dir="rtl" className={inter.variable}>
-      <body className="font-sans antialiased bg-gray-50">
+      <body className="font-sans antialiased bg-[#F0EDE4]">
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -45,7 +45,7 @@ function TabsList({
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-gray-100 p-1',
+        'flex items-center border-b border-[#E0DDD4] bg-transparent gap-0 p-0',
         className
       )}
     >
@@ -71,10 +71,10 @@ function TabsTrigger({
       type="button"
       onClick={() => setActiveTab(value)}
       className={cn(
-        'inline-flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all',
+        'px-5 py-2.5 text-[13px] font-medium transition-all border-b-2 -mb-px',
         isActive
-          ? 'bg-white text-gray-900 shadow-sm'
-          : 'text-gray-500 hover:text-gray-800',
+          ? 'text-[#2B2B2B] font-bold border-[#E8C420]'
+          : 'text-[#9A9690] border-transparent hover:text-[#4A4844] hover:border-[#E0DDD4]',
         className
       )}
     >

@@ -29,46 +29,26 @@
 
 @layer base {
   :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --radius: 0.625rem;
-  }
-
-  .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
+    /* Heiterim Architects brand palette */
+    --background: #F0EDE4;
+    --foreground: #2B2B2B;
+    --card: #FFFFFF;
+    --card-foreground: #2B2B2B;
+    --popover: #FFFFFF;
+    --popover-foreground: #2B2B2B;
+    --primary: #E8C420;
+    --primary-foreground: #2B2B2B;
+    --secondary: #F8F6F2;
+    --secondary-foreground: #2B2B2B;
+    --muted: #F8F6F2;
+    --muted-foreground: #9A9690;
+    --accent: #E8C420;
+    --accent-foreground: #2B2B2B;
+    --destructive: #C0392B;
+    --border: #E0DDD4;
+    --input: #E0DDD4;
+    --ring: #1A7A6E;
+    --radius: 0.125rem;
   }
 
   * {
@@ -83,5 +63,14 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .shadow-brand-sm {
+    box-shadow: 0 2px 0 #D8D4CC, 0 3px 10px rgba(43,43,43,.06);
+  }
+  .shadow-brand-md {
+    box-shadow: 0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08);
+  }
+  .shadow-brand-accent {
+    box-shadow: 0 3px 0 #C8C4BC, 0 5px 18px rgba(232,196,32,.1);
   }
 }

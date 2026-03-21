@@ -59,7 +59,7 @@ function PriceInput({
           if (e.key === 'Escape') { setLocalValue(String(value || '')); setEditing(false) }
         }}
         dir="ltr"
-        className="w-24 rounded border border-blue-300 px-2 py-1 text-center text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-24 rounded-[2px] border border-[#1A7A6E] px-2 py-1 text-center text-sm focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/20"
       />
     )
   }
@@ -68,7 +68,7 @@ function PriceInput({
     <button
       onClick={() => setEditing(true)}
       title="לחץ לעריכה"
-      className="rounded px-2 py-1 text-sm transition-all hover:bg-blue-50 hover:ring-1 hover:ring-blue-200"
+      className="rounded-[2px] px-2 py-1 text-sm transition-all hover:bg-[#F0EDE4] hover:ring-1 hover:ring-[#E0DDD4]"
     >
       {formatPrice(value)}
     </button>
@@ -105,7 +105,7 @@ function NewStageInput({
       }}
       onBlur={confirm}
       placeholder="שם שלב..."
-      className="w-28 rounded border border-[#6366F1] bg-[#EEF2FF] px-2 py-1 text-center text-xs font-medium text-[#4F46E5] placeholder:text-[#A5B4FC] focus:outline-none focus:ring-2 focus:ring-[#6366F1]/40"
+      className="w-28 rounded-[2px] border border-[#E8C420] bg-[#FEFCE8] px-2 py-1 text-center text-xs font-medium text-[#2B2B2B] placeholder:text-[#9A9690] focus:outline-none focus:ring-2 focus:ring-[#E8C420]/40"
     />
   )
 }
@@ -173,15 +173,15 @@ function TrackSection({
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+    <div className="overflow-hidden rounded-[2px] border border-[#E0DDD4] bg-white">
       {/* Track header — only when multiple tracks */}
       {showHeader && (
-        <div className="flex items-center justify-between bg-gray-800 px-4 py-2">
-          <h3 className="text-sm font-semibold text-white">{TRACK_LABELS[track]}</h3>
+        <div className="flex items-center justify-between bg-[#2B2B2B] px-4 py-2">
+          <h3 className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#E8C420]">{TRACK_LABELS[track]}</h3>
           <button
             onClick={handleRemoveTrack}
             disabled={removeTrack.isPending}
-            className="text-xs text-gray-400 transition-colors hover:text-red-400 disabled:opacity-50"
+            className="text-xs text-[#6A6660] transition-colors hover:text-[#C0392B] disabled:opacity-50"
           >
             הסר מסלול ✕
           </button>
@@ -191,22 +191,22 @@ function TrackSection({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 bg-gray-50">
+            <tr className="border-b border-[#E0DDD4] bg-[#F8F6F2]">
               {/* Row-label column */}
-              <th className="sticky right-0 z-10 min-w-36 bg-gray-50 px-4 py-2 text-right text-xs font-medium text-gray-500">
+              <th className="sticky right-0 z-10 min-w-36 bg-[#F8F6F2] px-4 py-2 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">
                 שלב
               </th>
 
               {/* One column per existing stage */}
               {stages.map((stage) => (
-                <th key={stage.id} className="min-w-32 px-3 py-2 text-center font-medium text-gray-700">
+                <th key={stage.id} className="min-w-32 px-3 py-2 text-center font-medium text-[#2B2B2B]">
                   <div className="flex flex-col items-center gap-1">
                     {/* ✕ delete button */}
                     <button
                       onClick={() => handleDeleteStage(stage)}
                       disabled={deleteStage.isPending}
                       title={`מחק שלב "${stage.name}"`}
-                      className="h-4 w-4 flex items-center justify-center rounded text-gray-300 hover:bg-red-50 hover:text-red-500 transition-colors text-[10px] leading-none disabled:opacity-40"
+                      className="h-4 w-4 flex items-center justify-center rounded-[2px] text-[#9A9690] hover:bg-[#FEE2E2] hover:text-[#C0392B] transition-colors text-[10px] leading-none disabled:opacity-40"
                     >
                       ✕
                     </button>
@@ -230,7 +230,7 @@ function TrackSection({
                   <button
                     onClick={() => setAddingStage(true)}
                     disabled={addStage.isPending}
-                    className="whitespace-nowrap rounded-md border border-dashed border-[#6366F1] px-2.5 py-1 text-[11px] font-semibold text-[#6366F1] hover:bg-[#EEF2FF] transition-colors disabled:opacity-40"
+                    className="whitespace-nowrap rounded-[2px] border border-dashed border-[#E8C420] px-2.5 py-1 text-[11px] font-semibold text-[#E8C420] hover:bg-[#FEFCE8] transition-colors disabled:opacity-40"
                   >
                     + הוסף שלב
                   </button>
@@ -244,7 +244,7 @@ function TrackSection({
               <tr>
                 <td
                   colSpan={2}
-                  className="px-6 py-8 text-center text-sm italic text-gray-400"
+                  className="px-6 py-8 text-center text-sm italic text-[#9A9690]"
                 >
                   לחץ &quot;+ הוסף שלב&quot; כדי להוסיף את השלב הראשון
                 </td>
@@ -252,8 +252,8 @@ function TrackSection({
             ) : (
               <>
                 {/* בוצע */}
-                <tr className="border-b border-gray-100">
-                  <td className="sticky right-0 z-10 bg-gray-50 px-4 py-2.5 text-right text-xs font-medium text-gray-600">
+                <tr className="border-b border-[#E0DDD4]">
+                  <td className="sticky right-0 z-10 bg-[#F8F6F2] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#6A6660]">
                     בוצע
                   </td>
                   {stages.map((stage) => (
@@ -271,8 +271,8 @@ function TrackSection({
                 </tr>
 
                 {/* נשלחה חשבונית */}
-                <tr className="border-b border-gray-100">
-                  <td className="sticky right-0 z-10 bg-gray-50 px-4 py-2.5 text-right text-xs font-medium text-gray-600">
+                <tr className="border-b border-[#E0DDD4]">
+                  <td className="sticky right-0 z-10 bg-[#F8F6F2] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#6A6660]">
                     נשלחה חשבונית
                   </td>
                   {stages.map((stage) => {
@@ -280,7 +280,7 @@ function TrackSection({
                     return (
                       <td
                         key={stage.id}
-                        className={`px-3 py-2.5 text-center transition-colors ${highlight ? 'bg-red-100' : ''}`}
+                        className={`px-3 py-2.5 text-center transition-colors ${highlight ? 'bg-[#FEF9E7]' : ''}`}
                       >
                         <div className="flex justify-center">
                           <Checkbox
@@ -295,8 +295,8 @@ function TrackSection({
                 </tr>
 
                 {/* שולם */}
-                <tr className="border-b border-gray-100">
-                  <td className="sticky right-0 z-10 bg-gray-50 px-4 py-2.5 text-right text-xs font-medium text-gray-600">
+                <tr className="border-b border-[#E0DDD4]">
+                  <td className="sticky right-0 z-10 bg-[#F8F6F2] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#6A6660]">
                     שולם
                   </td>
                   {stages.map((stage) => {
@@ -304,7 +304,7 @@ function TrackSection({
                     return (
                       <td
                         key={stage.id}
-                        className={`px-3 py-2.5 text-center transition-colors ${highlight ? 'bg-red-300' : ''}`}
+                        className={`px-3 py-2.5 text-center transition-colors ${highlight ? 'bg-[#FEE2E2]' : ''}`}
                       >
                         <div className="flex justify-center">
                           <Checkbox
@@ -320,8 +320,8 @@ function TrackSection({
 
                 {/* מחיר — admin only */}
                 {showPrices && (
-                  <tr className="border-b-2 border-gray-200">
-                    <td className="sticky right-0 z-10 bg-gray-50 px-4 py-2.5 text-right text-xs font-medium text-gray-600">
+                  <tr className="border-b-2 border-[#E0DDD4]">
+                    <td className="sticky right-0 z-10 bg-[#F8F6F2] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#6A6660]">
                       מחיר
                     </td>
                     {stages.map((stage) => (
@@ -339,29 +339,29 @@ function TrackSection({
                 {/* Summary rows — admin only */}
                 {showPrices && stages.length > 0 && (
                   <>
-                    <tr className="bg-gray-50">
-                      <td className="sticky right-0 z-10 bg-gray-50 px-4 py-2 text-right text-xs font-semibold text-gray-700">
+                    <tr className="bg-[#F8F6F2]">
+                      <td className="sticky right-0 z-10 bg-[#F8F6F2] px-4 py-2 text-right text-xs font-semibold text-[#2B2B2B]">
                         סה״כ חוזה
                       </td>
-                      <td colSpan={stages.length + 1} className="px-4 py-2 text-right text-sm font-semibold text-gray-900">
+                      <td colSpan={stages.length + 1} className="px-4 py-2 text-right text-sm font-black text-[#2B2B2B]">
                         {formatPrice(totalContract)}
                       </td>
                     </tr>
-                    <tr className="bg-gray-50">
-                      <td className="sticky right-0 z-10 bg-gray-50 px-4 py-2 text-right text-xs font-semibold text-gray-700">
+                    <tr className="bg-[#F8F6F2]">
+                      <td className="sticky right-0 z-10 bg-[#F8F6F2] px-4 py-2 text-right text-xs font-semibold text-[#2B2B2B]">
                         סה״כ שולם
                       </td>
-                      <td colSpan={stages.length + 1} className="px-4 py-2 text-right text-sm font-semibold text-green-700">
+                      <td colSpan={stages.length + 1} className="px-4 py-2 text-right text-sm font-black text-[#1A7A6E]">
                         {formatPrice(totalPaid)}
                       </td>
                     </tr>
-                    <tr className="bg-gray-50">
-                      <td className="sticky right-0 z-10 bg-gray-50 px-4 py-2 text-right text-xs font-semibold text-gray-700">
+                    <tr className="bg-[#F8F6F2]">
+                      <td className="sticky right-0 z-10 bg-[#F8F6F2] px-4 py-2 text-right text-xs font-semibold text-[#2B2B2B]">
                         יתרה
                       </td>
                       <td
                         colSpan={stages.length + 1}
-                        className={`px-4 py-2 text-right text-sm font-semibold ${balance > 0 ? 'text-orange-600' : 'text-green-700'}`}
+                        className={`px-4 py-2 text-right text-sm font-black ${balance > 0 ? 'text-[#D4820A]' : 'text-[#1A7A6E]'}`}
                       >
                         {formatPrice(balance)}
                       </td>
@@ -387,7 +387,7 @@ export function StagesTab({ projectId }: StagesTabProps) {
   const showPrices = role === 'admin'
 
   if (isLoading) {
-    return <div className="py-8 text-center text-gray-400">טוען שלבים...</div>
+    return <div className="py-8 text-center text-[#9A9690]">טוען שלבים...</div>
   }
   if (!project || !stages) return null
 

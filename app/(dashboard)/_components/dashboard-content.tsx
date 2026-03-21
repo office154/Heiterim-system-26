@@ -16,8 +16,6 @@ interface DashboardContentProps {
   fullName: string
 }
 
-// ─── Utilities ────────────────────────────────────────────────────────────────
-
 function fmt(n: number) {
   return '₪' + n.toLocaleString('he-IL')
 }
@@ -32,7 +30,6 @@ function hebrewDate() {
 }
 
 // ─── Alert Modal ──────────────────────────────────────────────────────────────
-
 function AlertModal({
   title,
   items,
@@ -48,43 +45,44 @@ function AlertModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl mx-4 overflow-hidden"
+        className="w-full max-w-2xl bg-white mx-4 overflow-hidden"
+        style={{ borderRadius: '4px', border: '1px solid #E0DDD4', boxShadow: '0 8px 40px rgba(43,43,43,.2)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-[15px] font-bold text-gray-900">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E0DDD4]">
+          <h2 className="text-[15px] font-bold text-[#2B2B2B] tracking-tight">{title}</h2>
           <button
             onClick={onClose}
-            className="h-8 w-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors text-lg"
+            className="h-8 w-8 flex items-center justify-center rounded-[2px] text-[#9A9690] hover:text-[#2B2B2B] hover:bg-[#F0EDE4] transition-colors text-lg"
           >
             ✕
           </button>
         </div>
         <div className="max-h-[60vh] overflow-y-auto">
           <table className="w-full text-[13px]">
-            <thead className="sticky top-0 bg-gray-50 border-b border-gray-100">
+            <thead className="sticky top-0 bg-[#F8F6F2] border-b border-[#E0DDD4]">
               <tr>
-                <th className="px-5 py-3 text-right font-semibold text-gray-500 text-[11px] uppercase tracking-wide">פרויקט</th>
-                <th className="px-5 py-3 text-right font-semibold text-gray-500 text-[11px] uppercase tracking-wide">לקוח</th>
-                <th className="px-5 py-3 text-right font-semibold text-gray-500 text-[11px] uppercase tracking-wide">שלב</th>
-                <th className="px-5 py-3 text-left font-semibold text-gray-500 text-[11px] uppercase tracking-wide">סכום</th>
+                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">פרויקט</th>
+                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">לקוח</th>
+                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">שלב</th>
+                <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">סכום</th>
               </tr>
             </thead>
             <tbody>
               {items.map((item, i) => (
-                <tr key={i} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                <tr key={i} className="border-b border-[#F0EDE4] hover:bg-[#F8F6F2] transition-colors">
                   <td className="px-5 py-3">
                     <Link
                       href={`/projects/${item.projectId}`}
                       onClick={onClose}
-                      className="font-semibold text-[#6366f1] hover:underline"
+                      className="font-semibold text-[#E8C420] hover:underline"
                     >
                       {item.projectTitle}
                     </Link>
                   </td>
-                  <td className="px-5 py-3 text-gray-500">{item.clientName}</td>
-                  <td className="px-5 py-3 text-gray-700">{item.stageName}</td>
-                  <td className="px-5 py-3 font-semibold text-gray-900 text-left" dir="ltr">
+                  <td className="px-5 py-3 text-[#6A6660]">{item.clientName}</td>
+                  <td className="px-5 py-3 text-[#2B2B2B]">{item.stageName}</td>
+                  <td className="px-5 py-3 font-black text-[#2B2B2B] text-left" dir="ltr">
                     {fmt(item.amount)}
                   </td>
                 </tr>
@@ -98,73 +96,82 @@ function AlertModal({
 }
 
 // ─── KPI Card ─────────────────────────────────────────────────────────────────
-
 function KpiCard({
   label,
   value,
   subtitle,
-  valueColor = 'text-gray-900',
+  valueColor = 'text-[#2B2B2B]',
   bg = 'bg-white',
-  border = 'border-gray-200',
+  borderColor = '#E0DDD4',
   loading,
   onClick,
   href,
+  featuredTop,
 }: {
   label: string
   value: string | number
   subtitle?: string
   valueColor?: string
   bg?: string
-  border?: string
+  borderColor?: string
   loading?: boolean
   onClick?: () => void
   href?: string
+  featuredTop?: boolean
 }) {
   const isInteractive = !!(onClick || href)
 
   const body = (
     <div
-      className={`rounded-xl border p-5 h-full ${bg} ${border} transition-all duration-150 ${
-        isInteractive
-          ? 'cursor-pointer hover:border-[#6366f1] hover:scale-[1.01] hover:shadow-[0_0_0_1.5px_#6366f1] hover:shadow-sm'
-          : ''
+      className={`${bg} p-5 h-full transition-all duration-150 ${
+        isInteractive ? 'cursor-pointer' : ''
       }`}
-      style={{ borderWidth: '0.5px' }}
+      style={{
+        border: `1px solid ${borderColor}`,
+        borderRadius: '2px',
+        borderTop: featuredTop ? `3px solid #E8C420` : undefined,
+        boxShadow: '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)',
+      }}
+      onMouseEnter={(e) => {
+        if (!isInteractive) return
+        const el = e.currentTarget as HTMLElement
+        el.style.borderColor = '#E8C420'
+        el.style.boxShadow = '0 3px 0 #C8C4BC, 0 5px 18px rgba(232,196,32,.1)'
+        el.style.transform = 'scale(1.01)'
+      }}
+      onMouseLeave={(e) => {
+        if (!isInteractive) return
+        const el = e.currentTarget as HTMLElement
+        el.style.borderColor = borderColor
+        el.style.boxShadow = '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)'
+        el.style.transform = 'scale(1)'
+      }}
     >
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">{label}</p>
+      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690] mb-2">{label}</p>
       {loading ? (
         <div className="space-y-2 animate-pulse">
-          <div className="h-8 w-24 rounded-lg bg-gray-100" />
-          {subtitle !== undefined && <div className="h-3 w-32 rounded bg-gray-100" />}
+          <div className="h-8 w-24 rounded-[2px] bg-[#E8E4DC]" />
+          {subtitle !== undefined && <div className="h-3 w-32 rounded-[2px] bg-[#E8E4DC]" />}
         </div>
       ) : (
         <>
-          <p className={`text-3xl font-bold tracking-tight ${valueColor}`}>{value}</p>
-          {subtitle && <p className="text-[12px] text-gray-400 mt-1">{subtitle}</p>}
+          <p className={`text-3xl font-black tracking-tight ${valueColor}`}>{value}</p>
+          {subtitle && <p className="text-[12px] text-[#9A9690] mt-1">{subtitle}</p>}
         </>
       )}
     </div>
   )
 
   if (href) {
-    return (
-      <Link href={href} className="block h-full">
-        {body}
-      </Link>
-    )
+    return <Link href={href} className="block h-full">{body}</Link>
   }
   if (onClick) {
-    return (
-      <button className="block w-full text-right h-full" onClick={onClick}>
-        {body}
-      </button>
-    )
+    return <button className="block w-full text-right h-full" onClick={onClick}>{body}</button>
   }
   return body
 }
 
 // ─── Alert Row ────────────────────────────────────────────────────────────────
-
 function AlertRow({
   href,
   borderColor,
@@ -177,8 +184,14 @@ function AlertRow({
   return (
     <Link
       href={href}
-      className={`flex items-center gap-4 px-4 py-3 bg-white rounded-lg border-l-4 border-r-0 border-t border-b border-gray-100 hover:bg-gray-50 transition-colors group ${borderColor}`}
-      style={{ borderTopWidth: '0.5px', borderBottomWidth: '0.5px', borderRightWidth: '0.5px' }}
+      className="flex items-center gap-4 px-4 py-3 bg-white hover:bg-[#F8F6F2] transition-colors group"
+      style={{
+        borderRight: `3px solid ${borderColor}`,
+        borderTop: '0.5px solid #E0DDD4',
+        borderBottom: '0.5px solid #E0DDD4',
+        borderLeft: '0.5px solid #E0DDD4',
+        borderRadius: '2px',
+      }}
     >
       {children}
     </Link>
@@ -186,35 +199,53 @@ function AlertRow({
 }
 
 // ─── Project Card ─────────────────────────────────────────────────────────────
-
 function ProjectCard({ proj }: { proj: ProjectProgress }) {
+  const statusStyle: Record<string, string> = {
+    active:    'bg-[#E8F5F3] text-[#1A7A6E] border border-[#A8D4D0]',
+    on_hold:   'bg-[#FEF9E7] text-[#D4820A] border border-[#F0D070]',
+    completed: 'bg-[#F0EDE4] text-[#6A6660] border border-[#C8C4BC]',
+  }
+  const statusLabel: Record<string, string> = {
+    active: 'פעיל', on_hold: 'מושהה', completed: 'הושלם',
+  }
+
   return (
     <Link
       href={`/projects/${proj.id}`}
-      className="block bg-white rounded-xl p-5 hover:border-[#6366f1] hover:shadow-[0_0_0_2px_#6366f1] transition-all group"
-      style={{ border: '0.5px solid #e5e7eb' }}
+      className="block bg-white p-5 transition-all duration-150 group"
+      style={{
+        border: '1px solid #E0DDD4',
+        borderRadius: '2px',
+        boxShadow: '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)',
+      }}
+      onMouseEnter={(e) => {
+        const el = e.currentTarget as HTMLAnchorElement
+        el.style.borderColor = '#E8C420'
+        el.style.boxShadow = '0 3px 0 #C8C4BC, 0 5px 18px rgba(232,196,32,.1)'
+        el.style.transform = 'scale(1.01)'
+      }}
+      onMouseLeave={(e) => {
+        const el = e.currentTarget as HTMLAnchorElement
+        el.style.borderColor = '#E0DDD4'
+        el.style.boxShadow = '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)'
+        el.style.transform = 'scale(1)'
+      }}
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-gray-900 text-[14px] truncate group-hover:text-[#6366f1] transition-colors">
+          <h3 className="font-bold text-[#2B2B2B] text-[14px] truncate tracking-tight">
             {proj.title}
           </h3>
-          <p className="text-[12px] text-gray-400 mt-0.5 truncate">{proj.clientName}</p>
+          <p className="text-[12px] text-[#9A9690] mt-0.5 truncate">{proj.clientName}</p>
         </div>
-        <span
-          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full shrink-0 mr-2 ${
-            proj.status === 'active'
-              ? 'bg-green-100 text-green-700'
-              : 'bg-yellow-100 text-yellow-700'
-          }`}
-        >
-          {proj.status === 'active' ? 'פעיל' : 'מושהה'}
+        <span className={`text-[11px] font-semibold px-2.5 py-1 shrink-0 mr-2 rounded-[2px] ${statusStyle[proj.status] ?? statusStyle.completed}`}>
+          {statusLabel[proj.status] ?? proj.status}
         </span>
       </div>
 
       {proj.currentStageName !== '—' && (
-        <p className="text-[12px] text-gray-500 mb-3 truncate">
-          <span className="text-gray-400">שלב נוכחי: </span>{proj.currentStageName}
+        <p className="text-[12px] text-[#6A6660] mb-3 truncate">
+          <span className="text-[#9A9690]">שלב נוכחי: </span>{proj.currentStageName}
         </p>
       )}
 
@@ -222,39 +253,34 @@ function ProjectCard({ proj }: { proj: ProjectProgress }) {
       {proj.totalStages > 0 ? (
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[11px] text-gray-500">
+            <span className="text-[11px] text-[#6A6660]">
               {proj.completedStages}/{proj.totalStages} שלבים
             </span>
-            <span className="text-[11px] font-bold text-[#6366f1]">
+            <span className="text-[11px] font-bold text-[#E8C420]">
               {proj.progressPercent}%
             </span>
           </div>
-          {/* Track: always visible, fill grows with progress */}
-          <div
-            className="w-full overflow-hidden"
-            style={{ height: '6px', backgroundColor: '#e5e7eb', borderRadius: '3px' }}
-          >
+          <div className="w-full overflow-hidden" style={{ height: '3px', backgroundColor: '#E8E4DC', borderRadius: '1px' }}>
             <div
               style={{
-                height: '6px',
+                height: '3px',
                 width: `${proj.progressPercent}%`,
-                backgroundColor: '#6366f1',
-                borderRadius: '3px',
+                backgroundColor: '#E8C420',
+                borderRadius: '1px',
                 transition: 'width 0.4s ease',
-                minWidth: proj.progressPercent > 0 ? '6px' : '0px',
+                minWidth: proj.progressPercent > 0 ? '3px' : '0px',
               }}
             />
           </div>
         </div>
       ) : (
-        <p className="text-[11px] text-gray-400 italic">אין שלבים מוגדרים</p>
+        <p className="text-[11px] text-[#9A9690] italic">אין שלבים מוגדרים</p>
       )}
     </Link>
   )
 }
 
 // ─── Dark Sidebar Widget ───────────────────────────────────────────────────────
-
 function SidebarWidget({
   activeProjects,
   loading,
@@ -267,22 +293,22 @@ function SidebarWidget({
   const router = useRouter()
 
   return (
-    <aside className="w-[220px] shrink-0 bg-[#1a1a2e] flex flex-col">
+    <aside className="w-[220px] shrink-0 bg-[#2B2B2B] flex flex-col">
       {/* Quick actions */}
       <div className="p-5 border-b border-white/10">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40 mb-3">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-white/40 mb-3">
           פעולות מהירות
         </p>
         <div className="space-y-2">
           <button
             onClick={() => router.push('/projects/new')}
-            className="w-full bg-[#6366f1] hover:bg-[#4f46e5] text-white text-[13px] font-semibold px-3 py-2.5 rounded-lg transition-colors text-right"
+            className="w-full rounded-[2px] bg-[#E8C420] hover:bg-[#D4B010] text-[#2B2B2B] text-[13px] font-extrabold px-3 py-2.5 transition-colors text-right"
           >
             + פרויקט חדש
           </button>
           <button
             onClick={onNewClient}
-            className="w-full border border-white/20 hover:border-white/40 hover:bg-white/5 text-white/80 hover:text-white text-[13px] font-medium px-3 py-2.5 rounded-lg transition-colors text-right"
+            className="w-full rounded-[2px] border border-white/20 hover:border-white/40 hover:bg-white/5 text-white/80 hover:text-white text-[13px] font-medium px-3 py-2.5 transition-colors text-right"
           >
             + לקוח חדש
           </button>
@@ -292,11 +318,11 @@ function SidebarWidget({
       {/* Active projects list */}
       <div className="flex-1 flex flex-col min-h-0">
         <div className="px-5 py-4 flex items-center justify-between">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">
+          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-white/40">
             פרויקטים פעילים
           </p>
           {!loading && (
-            <span className="text-[11px] font-bold text-[#6366f1]">{activeProjects.length}</span>
+            <span className="text-[11px] font-bold text-[#E8C420]">{activeProjects.length}</span>
           )}
         </div>
 
@@ -304,7 +330,7 @@ function SidebarWidget({
           {loading ? (
             <div className="space-y-2 px-2 animate-pulse">
               {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="h-8 rounded-lg bg-white/5" />
+                <div key={n} className="h-8 rounded-[2px] bg-white/5" />
               ))}
             </div>
           ) : activeProjects.length === 0 ? (
@@ -314,9 +340,9 @@ function SidebarWidget({
               <Link
                 key={proj.id}
                 href={`/projects/${proj.id}`}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors group"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-[2px] hover:bg-white/10 transition-colors group"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E8C420] shrink-0" />
                 <span className="text-[12px] text-white/70 group-hover:text-white truncate transition-colors">
                   {proj.title}
                 </span>
@@ -330,7 +356,6 @@ function SidebarWidget({
 }
 
 // ─── Main Dashboard Component ─────────────────────────────────────────────────
-
 export function DashboardContent({ role, fullName }: DashboardContentProps) {
   const isAdmin = role === 'admin'
   const { data, isLoading } = useDashboardData()
@@ -346,18 +371,17 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
     data.inactiveProjects.length === 0
 
   return (
-    /* -m-8 escapes the layout's p-8, giving us full-bleed control */
     <div className="flex -m-8 min-h-screen">
 
       {/* ── MAIN CONTENT (right in RTL) ── */}
-      <div className="flex-1 bg-[#f5f4f0] p-8 overflow-y-auto space-y-7 min-w-0">
+      <div className="flex-1 bg-[#F0EDE4] p-8 overflow-y-auto space-y-7 min-w-0">
 
         {/* Greeting */}
         <div>
-          <h1 className="text-[22px] font-bold text-gray-900 tracking-tight">
+          <h1 className="text-[22px] font-black text-[#2B2B2B] tracking-tight">
             שלום, {fullName} 👋
           </h1>
-          <p className="text-[13px] text-gray-400 mt-1">{hebrewDate()}</p>
+          <p className="text-[13px] text-[#9A9690] mt-1">{hebrewDate()}</p>
         </div>
 
         {/* ── KPI CARDS ── */}
@@ -365,18 +389,19 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
           {/* Row 1 */}
           <div className={`grid gap-3 ${isAdmin ? 'grid-cols-3' : 'grid-cols-2'}`}>
             <KpiCard
-              label='פרויקטים פעילים'
+              label="פרויקטים פעילים"
               value={loading ? '—' : data.activeProjectsCount}
-              valueColor="text-[#6366f1]"
+              valueColor="text-[#E8C420]"
               loading={loading}
               href="/projects?status=active"
+              featuredTop
             />
             {isAdmin && (
               <KpiCard
                 label='סה"כ גבייה'
                 value={loading ? '—' : fmt(data.totalPaid)}
                 subtitle={loading ? undefined : `מתוך ${fmt(data.totalContract)} חוזים`}
-                valueColor="text-green-600"
+                valueColor="text-[#1A7A6E]"
                 loading={loading}
                 href="/reports"
               />
@@ -395,15 +420,16 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
               <KpiCard
                 label="יתרה לגבייה"
                 value={loading ? '—' : fmt(data.totalPendingCollection)}
+                valueColor="text-[#C0392B]"
                 loading={loading}
                 href="/reports#outstanding"
               />
               <KpiCard
                 label="ממתינים לתשלום"
                 value={loading ? '—' : data.waitingPaymentCount}
-                valueColor="text-red-600"
-                bg="bg-[#fff5f5]"
-                border="border-[#fecaca]"
+                valueColor="text-[#C0392B]"
+                bg="bg-white"
+                borderColor="#fecaca"
                 loading={loading}
                 onClick={
                   !loading && data.waitingPaymentCount > 0
@@ -417,9 +443,9 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
               <KpiCard
                 label="ממתינים לחשבונית"
                 value={loading ? '—' : data.waitingInvoiceCount}
-                valueColor="text-orange-600"
-                bg="bg-[#fffbeb]"
-                border="border-[#fed7aa]"
+                valueColor="text-[#D4820A]"
+                bg="bg-white"
+                borderColor="#fed7aa"
                 loading={loading}
                 onClick={
                   !loading && data.waitingInvoiceCount > 0
@@ -437,74 +463,56 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
         {/* ── ALERTS — admin only ── */}
         {isAdmin && (
           <div>
-            <h2 className="text-[13px] font-bold text-gray-500 uppercase tracking-widest mb-3">
+            <h2 className="text-[10px] font-bold text-[#9A9690] uppercase tracking-[0.08em] mb-3">
               דורש טיפול עכשיו
             </h2>
 
             {loading ? (
               <div className="space-y-2 animate-pulse">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="h-12 rounded-lg bg-white border border-gray-100" />
+                  <div key={n} className="h-12 rounded-[2px] bg-white border border-[#E0DDD4]" />
                 ))}
               </div>
             ) : allAlertsEmpty ? (
-              <div className="flex items-center gap-3 px-4 py-3 bg-green-50 rounded-lg border border-green-100"
-                style={{ borderWidth: '0.5px' }}>
-                <span className="text-green-600 text-base">✓</span>
-                <span className="text-[13px] font-semibold text-green-700">אין פריטים דחופים</span>
+              <div
+                className="flex items-center gap-3 px-4 py-3"
+                style={{ background: '#E8F5F3', borderRadius: '2px', border: '0.5px solid #A8D4D0' }}
+              >
+                <span className="text-[#1A7A6E] text-base">✓</span>
+                <span className="text-[13px] font-semibold text-[#1A7A6E]">אין פריטים דחופים</span>
               </div>
             ) : (
               <div className="space-y-2">
-                {/* 🔴 בוצע ולא חויב */}
+                {/* לא חויב */}
                 {data.notInvoicedStages.map((s, i) => (
-                  <AlertRow key={`inv-${i}`} href={`/projects/${s.projectId}`} borderColor="border-l-red-500">
-                    <span className="text-[11px] font-bold text-red-500 uppercase tracking-wide shrink-0">
-                      לא חויב
-                    </span>
-                    <span className="font-semibold text-gray-800 text-[13px] truncate">
-                      {s.projectTitle}
-                    </span>
-                    <span className="text-gray-400 text-[13px] truncate">{s.stageName}</span>
-                    <span className="font-bold text-red-600 text-[13px] mr-auto shrink-0" dir="ltr">
-                      {fmt(s.amount)}
-                    </span>
+                  <AlertRow key={`inv-${i}`} href={`/projects/${s.projectId}`} borderColor="#C0392B">
+                    <span className="text-[10px] font-bold text-[#C0392B] uppercase tracking-[0.08em] shrink-0">לא חויב</span>
+                    <span className="font-semibold text-[#2B2B2B] text-[13px] truncate">{s.projectTitle}</span>
+                    <span className="text-[#6A6660] text-[13px] truncate">{s.stageName}</span>
+                    <span className="font-black text-[#C0392B] text-[13px] mr-auto shrink-0" dir="ltr">{fmt(s.amount)}</span>
                   </AlertRow>
                 ))}
 
-                {/* 🟠 חויב ולא שולם */}
+                {/* לא שולם */}
                 {data.notPaidStages.map((s, i) => (
-                  <AlertRow key={`pay-${i}`} href={`/projects/${s.projectId}`} borderColor="border-l-orange-500">
-                    <span className="text-[11px] font-bold text-orange-500 uppercase tracking-wide shrink-0">
-                      לא שולם
-                    </span>
-                    <span className="font-semibold text-gray-800 text-[13px] truncate">
-                      {s.projectTitle}
-                    </span>
-                    <span className="text-gray-400 text-[13px] truncate">{s.stageName}</span>
+                  <AlertRow key={`pay-${i}`} href={`/projects/${s.projectId}`} borderColor="#D4820A">
+                    <span className="text-[10px] font-bold text-[#D4820A] uppercase tracking-[0.08em] shrink-0">לא שולם</span>
+                    <span className="font-semibold text-[#2B2B2B] text-[13px] truncate">{s.projectTitle}</span>
+                    <span className="text-[#6A6660] text-[13px] truncate">{s.stageName}</span>
                     {s.daysSince !== undefined && (
-                      <span className="text-[12px] text-orange-400 shrink-0">
-                        {s.daysSince} ימים
-                      </span>
+                      <span className="text-[12px] text-[#D4820A] shrink-0">{s.daysSince} ימים</span>
                     )}
-                    <span className="font-bold text-orange-600 text-[13px] mr-auto shrink-0" dir="ltr">
-                      {fmt(s.amount)}
-                    </span>
+                    <span className="font-black text-[#D4820A] text-[13px] mr-auto shrink-0" dir="ltr">{fmt(s.amount)}</span>
                   </AlertRow>
                 ))}
 
-                {/* ⚫ ללא פעילות */}
+                {/* ללא פעילות */}
                 {data.inactiveProjects.map((p, i) => (
-                  <AlertRow key={`inact-${i}`} href={`/projects/${p.projectId}`} borderColor="border-l-gray-400">
-                    <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wide shrink-0">
-                      לא פעיל
-                    </span>
-                    <span className="font-semibold text-gray-800 text-[13px] truncate">
-                      {p.projectTitle}
-                    </span>
-                    <span className="text-gray-400 text-[13px] truncate">{p.clientName}</span>
-                    <span className="text-[12px] text-gray-400 mr-auto shrink-0">
-                      {p.daysSinceActivity} ימים ללא פעילות
-                    </span>
+                  <AlertRow key={`inact-${i}`} href={`/projects/${p.projectId}`} borderColor="#9A9690">
+                    <span className="text-[10px] font-bold text-[#9A9690] uppercase tracking-[0.08em] shrink-0">לא פעיל</span>
+                    <span className="font-semibold text-[#2B2B2B] text-[13px] truncate">{p.projectTitle}</span>
+                    <span className="text-[#6A6660] text-[13px] truncate">{p.clientName}</span>
+                    <span className="text-[12px] text-[#9A9690] mr-auto shrink-0">{p.daysSinceActivity} ימים ללא פעילות</span>
                   </AlertRow>
                 ))}
               </div>
@@ -514,20 +522,22 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
 
         {/* ── ACTIVE PROJECTS GRID ── */}
         <div>
-          <h2 className="text-[13px] font-bold text-gray-500 uppercase tracking-widest mb-3">
+          <h2 className="text-[10px] font-bold text-[#9A9690] uppercase tracking-[0.08em] mb-3">
             פרויקטים פעילים
           </h2>
 
           {loading ? (
             <div className="grid grid-cols-2 gap-3">
               {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="h-36 rounded-xl bg-white animate-pulse border border-gray-100" />
+                <div key={n} className="h-36 rounded-[2px] bg-white animate-pulse border border-[#E0DDD4]" />
               ))}
             </div>
           ) : data.projectsWithProgress.length === 0 ? (
-            <div className="rounded-xl bg-white border border-gray-100 px-5 py-8 text-center"
-              style={{ borderWidth: '0.5px' }}>
-              <p className="text-[13px] text-gray-400">אין פרויקטים פעילים כרגע</p>
+            <div
+              className="px-5 py-8 text-center bg-white"
+              style={{ borderRadius: '2px', border: '0.5px solid #E0DDD4' }}
+            >
+              <p className="text-[13px] text-[#9A9690]">אין פרויקטים פעילים כרגע</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
