@@ -282,7 +282,7 @@ export type ProjectFile = Database['public']['Tables']['project_files']['Row']
 // Joined types used in queries
 export type ProjectWithClient = Project & {
   client: Client | null
-  creator: Pick<Profile, 'full_name'> | null
+  creator?: Pick<Profile, 'full_name'> | null
 }
 
 export type ClientWithProjects = Client & {

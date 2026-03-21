@@ -15,7 +15,7 @@ export function useProjects() {
       const supabase = createClient()
       const { data, error } = await supabase
         .from('projects')
-        .select('*, client:clients(id, name, company), creator:profiles(full_name)')
+        .select('*, client:clients(id, name, company)')
         .order('created_at', { ascending: false })
       if (error) throw error
       return data as ProjectWithClient[]
@@ -30,7 +30,7 @@ export function useProject(id: string) {
       const supabase = createClient()
       const { data, error } = await supabase
         .from('projects')
-        .select('*, client:clients(*), creator:profiles(full_name)')
+        .select('*, client:clients(*)')
         .eq('id', id)
         .single()
       if (error) throw error
