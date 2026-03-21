@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -43,20 +44,26 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
   }
 
   return (
-    <aside className="w-56 bg-[#2B2B2B] text-white min-h-screen flex flex-col shrink-0 print:hidden">
+    <aside
+      className="w-56 min-h-screen flex flex-col shrink-0 print:hidden"
+      style={{ background: '#e4e4e4', borderLeft: '1px solid #d4d4d4' }}
+    >
       {/* Logo */}
-      <div className="px-[18px] py-4 border-b border-white/10">
+      <div className="px-[18px] py-4" style={{ borderBottom: '1px solid #d4d4d4' }}>
         {logoError ? (
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-[#E8C420] rounded-[2px] flex-shrink-0" />
-            <span className="text-[13px] font-extrabold tracking-tight text-white">Heiterim</span>
+            <div className="w-5 h-5 rounded-[2px] flex-shrink-0" style={{ background: '#E8C420' }} />
+            <span className="text-[13px] font-bold tracking-tight" style={{ color: '#1a1a1a' }}>
+              Heiterim
+            </span>
           </div>
         ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src="/logo.png"
             alt="Heiterim Architects"
-            style={{ maxWidth: 160, display: 'block' }}
+            width={160}
+            height={60}
+            style={{ objectFit: 'contain', display: 'block' }}
             onError={() => setLogoError(true)}
           />
         )}
@@ -71,15 +78,31 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center px-3 py-2 rounded-[2px] text-[13px] font-medium transition-colors relative',
+                'flex items-center px-3 py-2 rounded-[2px] text-[13px] transition-colors relative',
                 isActive
-                  ? 'text-white font-semibold bg-[#383634]'
-                  : 'text-[#6A6660] hover:text-[#dddddd] hover:bg-[#323030]'
+                  ? 'font-bold'
+                  : 'font-medium'
               )}
+              style={isActive ? {
+                color: '#1a1a1a',
+                background: '#d8d8d8',
+                borderRight: '3px solid #E8C420',
+              } : {
+                color: '#888888',
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  (e.currentTarget as HTMLElement).style.background = '#dcdcdc'
+                  ;(e.currentTarget as HTMLElement).style.color = '#1a1a1a'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  (e.currentTarget as HTMLElement).style.background = ''
+                  ;(e.currentTarget as HTMLElement).style.color = '#888888'
+                }
+              }}
             >
-              {isActive && (
-                <span className="absolute right-0 top-1 bottom-1 w-[3px] bg-[#E8C420] rounded-l-full" />
-              )}
               {item.label}
             </Link>
           )
@@ -87,16 +110,25 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-4 border-t border-white/10 space-y-2">
+      <div className="px-4 py-4 space-y-2" style={{ borderTop: '1px solid #d4d4d4' }}>
         <div className="px-3">
-          <p className="text-[13px] font-semibold text-white truncate">{fullName}</p>
-          <p className="text-[11px] text-[#6A6660]">
+          <p className="text-[13px] font-semibold truncate" style={{ color: '#1a1a1a' }}>{fullName}</p>
+          <p className="text-[11px]" style={{ color: '#888888' }}>
             {role === 'admin' ? 'מנהל' : 'עובד'}
           </p>
         </div>
         <button
           onClick={handleLogout}
-          className="w-full text-right px-3 py-1.5 rounded-[2px] text-[12px] text-[#6A6660] hover:text-white hover:bg-[#323030] transition-colors"
+          className="w-full text-right px-3 py-1.5 rounded-[2px] text-[12px] transition-colors"
+          style={{ color: '#888888' }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.background = '#dcdcdc'
+            ;(e.currentTarget as HTMLElement).style.color = '#1a1a1a'
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.background = ''
+            ;(e.currentTarget as HTMLElement).style.color = '#888888'
+          }}
         >
           התנתקות
         </button>

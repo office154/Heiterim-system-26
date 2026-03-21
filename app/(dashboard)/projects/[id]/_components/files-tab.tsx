@@ -19,12 +19,12 @@ function formatDate(dateStr: string): string {
 }
 
 function FileIcon({ fileType }: { fileType: string | null }) {
-  if (!fileType) return <span className="text-[#6A6660]">📄</span>
+  if (!fileType) return <span className="text-[#666666]">📄</span>
   if (fileType.startsWith('image/')) return <span>🖼️</span>
   if (fileType === 'application/pdf') return <span>📋</span>
   if (fileType.includes('word') || fileType.includes('document')) return <span>📝</span>
   if (fileType.includes('sheet') || fileType.includes('excel')) return <span>📊</span>
-  return <span className="text-[#6A6660]">📄</span>
+  return <span className="text-[#666666]">📄</span>
 }
 
 export function FilesTab({ projectId }: FilesTabProps) {
@@ -73,15 +73,15 @@ export function FilesTab({ projectId }: FilesTabProps) {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-[14px] font-semibold text-[#2B2B2B]">קבצים</h2>
+        <h2 className="text-[14px] font-semibold text-[#1a1a1a]">קבצים</h2>
         <div className="flex items-center gap-2">
           {uploadFile.isPending && (
-            <span className="text-[12px] text-[#6A6660]">מעלה...</span>
+            <span className="text-[12px] text-[#666666]">מעלה...</span>
           )}
           <button
             onClick={() => inputRef.current?.click()}
             disabled={uploadFile.isPending}
-            className="inline-flex items-center gap-1.5 rounded-[2px] bg-[#E8C420] px-3 py-1.5 text-[13px] font-extrabold text-[#2B2B2B] hover:bg-[#D4B010] disabled:opacity-40 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-[2px] bg-[#E8C420] px-3 py-1.5 text-[13px] font-extrabold text-[#1a1a1a] hover:bg-[#D4B010] disabled:opacity-40 transition-colors"
           >
             + העלה קובץ
           </button>
@@ -96,21 +96,24 @@ export function FilesTab({ projectId }: FilesTabProps) {
       </div>
 
       {/* File list */}
-      <div className="rounded-[2px] border border-[#E0DDD4] bg-white overflow-hidden">
+      <div
+        className="rounded-[2px] border border-[#dddddd] bg-white overflow-hidden"
+        style={{ boxShadow: '0 2px 0 #cccccc, 0 3px 10px rgba(0,0,0,0.05)' }}
+      >
         {isLoading ? (
-          <div className="py-10 text-center text-[13px] text-[#6A6660]">טוען קבצים...</div>
+          <div className="py-10 text-center text-[13px] text-[#666666]">טוען קבצים...</div>
         ) : !files || files.length === 0 ? (
           <div className="py-12 text-center">
-            <p className="text-[13px] text-[#6A6660]">אין קבצים עדיין</p>
-            <p className="mt-1 text-[12px] text-[#9A9690]">לחץ על &quot;העלה קובץ&quot; כדי להתחיל</p>
+            <p className="text-[13px] text-[#666666]">אין קבצים עדיין</p>
+            <p className="mt-1 text-[12px] text-[#aaaaaa]">לחץ על &quot;העלה קובץ&quot; כדי להתחיל</p>
           </div>
         ) : (
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="border-b border-[#E0DDD4]">
-                <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#6A6660]">שם קובץ</th>
-                <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#6A6660]">גודל</th>
-                <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#6A6660]">תאריך העלאה</th>
+              <tr className="border-b border-[#dddddd] bg-[#f8f8f8]">
+                <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">שם קובץ</th>
+                <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">גודל</th>
+                <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">תאריך העלאה</th>
                 <th className="w-36 px-4 py-3" />
               </tr>
             </thead>
@@ -118,20 +121,20 @@ export function FilesTab({ projectId }: FilesTabProps) {
               {files.map((file) => (
                 <tr
                   key={file.id}
-                  className="group border-b border-[#F0EDE4] last:border-0 hover:bg-[#F8F6F2] transition-colors"
+                  className="group border-b border-[#f4f4f4] last:border-0 hover:bg-[#f8f8f8] transition-colors"
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <FileIcon fileType={file.file_type} />
-                      <span className="font-medium text-[#2B2B2B] truncate max-w-[280px]">
+                      <span className="font-medium text-[#1a1a1a] truncate max-w-[280px]">
                         {file.file_name}
                       </span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-[#6A6660]">
+                  <td className="px-4 py-3 text-[#666666]">
                     {formatBytes(file.file_size)}
                   </td>
-                  <td className="px-4 py-3 text-[#6A6660]">
+                  <td className="px-4 py-3 text-[#666666]">
                     {formatDate(file.created_at)}
                   </td>
                   <td className="px-4 py-3">
@@ -147,7 +150,7 @@ export function FilesTab({ projectId }: FilesTabProps) {
                           }
                         }}
                         title="תצוגה מקדימה"
-                        className="flex h-7 w-7 items-center justify-center rounded-[2px] hover:bg-[#FEFCE8] text-[#E8C420] hover:text-[#D4B010] transition-colors"
+                        className="flex h-7 w-7 items-center justify-center rounded-[2px] hover:bg-[#fef9e0] text-[#E8C420] hover:text-[#D4B010] transition-colors"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
@@ -164,7 +167,7 @@ export function FilesTab({ projectId }: FilesTabProps) {
                           a.click()
                         }}
                         title="הורדה"
-                        className="flex h-7 w-7 items-center justify-center rounded-[2px] hover:bg-[#F0EDE4] text-[#6A6660] hover:text-[#2B2B2B] transition-colors"
+                        className="flex h-7 w-7 items-center justify-center rounded-[2px] hover:bg-[#f0f0f0] text-[#666666] hover:text-[#1a1a1a] transition-colors"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -177,7 +180,7 @@ export function FilesTab({ projectId }: FilesTabProps) {
                         onClick={() => handleDelete(file.id, file.file_path)}
                         disabled={deletingId === file.id}
                         title="מחיקה"
-                        className="flex h-7 w-7 items-center justify-center rounded-[2px] hover:bg-[#FEE2E2] text-[#9A9690] hover:text-[#C0392B] transition-colors disabled:opacity-40"
+                        className="flex h-7 w-7 items-center justify-center rounded-[2px] hover:bg-[#fdf0ef] text-[#aaaaaa] hover:text-[#C0392B] transition-colors disabled:opacity-40"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="3 6 5 6 21 6"/>
@@ -203,16 +206,16 @@ export function FilesTab({ projectId }: FilesTabProps) {
         >
           <div
             className="relative max-h-[90vh] max-w-[90vw] overflow-auto bg-white"
-            style={{ borderRadius: '4px', border: '1px solid #E0DDD4', boxShadow: '0 8px 40px rgba(43,43,43,.2)' }}
+            style={{ borderRadius: '4px', border: '1px solid #dddddd', boxShadow: '0 8px 40px rgba(0,0,0,0.15)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-[#E0DDD4] px-5 py-3">
-              <span className="text-[13px] font-semibold text-[#2B2B2B] truncate max-w-[400px]">
+            <div className="flex items-center justify-between border-b border-[#dddddd] px-5 py-3">
+              <span className="text-[13px] font-semibold text-[#1a1a1a] truncate max-w-[400px]">
                 {previewName}
               </span>
               <button
                 onClick={() => setPreviewUrl(null)}
-                className="mr-4 text-[#6A6660] hover:text-[#2B2B2B] text-lg leading-none"
+                className="mr-4 text-[#666666] hover:text-[#1a1a1a] text-lg leading-none"
               >
                 ✕
               </button>

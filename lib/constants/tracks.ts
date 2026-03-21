@@ -25,9 +25,9 @@ export const STATUS_LABELS: Record<ProjectStatus, string> = {
 }
 
 export const STATUS_COLORS: Record<ProjectStatus, string> = {
-  active:    'bg-[#E8F5F3] text-[#1A7A6E] border border-[#A8D4D0]',
-  completed: 'bg-[#F0EDE4] text-[#6A6660] border border-[#C8C4BC]',
-  on_hold:   'bg-[#FEF9E7] text-[#D4820A] border border-[#F0D070]',
+  active:    'bg-[#E8F5F3] text-[#1A7A6E] border border-[#a8d4d0]',
+  completed: 'bg-[#f4f4f4] text-[#888888] border border-[#cccccc]',
+  on_hold:   'bg-[#fef3e0] text-[#D4820A] border border-[#f5d080]',
 }
 
 export const LEAD_SOURCE_OPTIONS = [

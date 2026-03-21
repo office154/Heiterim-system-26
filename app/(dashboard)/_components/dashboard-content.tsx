@@ -46,31 +46,31 @@ function AlertModal({
     >
       <div
         className="w-full max-w-2xl bg-white mx-4 overflow-hidden"
-        style={{ borderRadius: '4px', border: '1px solid #E0DDD4', boxShadow: '0 8px 40px rgba(43,43,43,.2)' }}
+        style={{ borderRadius: '4px', border: '1px solid #dddddd', boxShadow: '0 8px 40px rgba(0,0,0,0.15)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E0DDD4]">
-          <h2 className="text-[15px] font-bold text-[#2B2B2B] tracking-tight">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#dddddd]">
+          <h2 className="text-[15px] font-bold text-[#1a1a1a] tracking-tight">{title}</h2>
           <button
             onClick={onClose}
-            className="h-8 w-8 flex items-center justify-center rounded-[2px] text-[#9A9690] hover:text-[#2B2B2B] hover:bg-[#F0EDE4] transition-colors text-lg"
+            className="h-8 w-8 flex items-center justify-center rounded-[2px] text-[#aaaaaa] hover:text-[#1a1a1a] hover:bg-[#f0f0f0] transition-colors text-lg"
           >
             ✕
           </button>
         </div>
         <div className="max-h-[60vh] overflow-y-auto">
           <table className="w-full text-[13px]">
-            <thead className="sticky top-0 bg-[#F8F6F2] border-b border-[#E0DDD4]">
+            <thead className="sticky top-0 bg-[#f8f8f8] border-b border-[#dddddd]">
               <tr>
-                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">פרויקט</th>
-                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">לקוח</th>
-                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">שלב</th>
-                <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">סכום</th>
+                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">פרויקט</th>
+                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">לקוח</th>
+                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">שלב</th>
+                <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">סכום</th>
               </tr>
             </thead>
             <tbody>
               {items.map((item, i) => (
-                <tr key={i} className="border-b border-[#F0EDE4] hover:bg-[#F8F6F2] transition-colors">
+                <tr key={i} className="border-b border-[#f0f0f0] hover:bg-[#f8f8f8] transition-colors">
                   <td className="px-5 py-3">
                     <Link
                       href={`/projects/${item.projectId}`}
@@ -80,9 +80,9 @@ function AlertModal({
                       {item.projectTitle}
                     </Link>
                   </td>
-                  <td className="px-5 py-3 text-[#6A6660]">{item.clientName}</td>
-                  <td className="px-5 py-3 text-[#2B2B2B]">{item.stageName}</td>
-                  <td className="px-5 py-3 font-black text-[#2B2B2B] text-left" dir="ltr">
+                  <td className="px-5 py-3 text-[#666666]">{item.clientName}</td>
+                  <td className="px-5 py-3 text-[#1a1a1a]">{item.stageName}</td>
+                  <td className="px-5 py-3 font-black text-[#1a1a1a] text-left" dir="ltr">
                     {fmt(item.amount)}
                   </td>
                 </tr>
@@ -100,9 +100,9 @@ function KpiCard({
   label,
   value,
   subtitle,
-  valueColor = 'text-[#2B2B2B]',
+  valueColor = 'text-[#1a1a1a]',
   bg = 'bg-white',
-  borderColor = '#E0DDD4',
+  borderColor = '#dddddd',
   loading,
   onClick,
   href,
@@ -130,33 +130,33 @@ function KpiCard({
         border: `1px solid ${borderColor}`,
         borderRadius: '2px',
         borderTop: featuredTop ? `3px solid #E8C420` : undefined,
-        boxShadow: '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)',
+        boxShadow: '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)',
       }}
       onMouseEnter={(e) => {
         if (!isInteractive) return
         const el = e.currentTarget as HTMLElement
         el.style.borderColor = '#E8C420'
-        el.style.boxShadow = '0 3px 0 #C8C4BC, 0 5px 18px rgba(232,196,32,.1)'
+        el.style.boxShadow = '0 2px 0 #cccccc, 0 4px 14px rgba(232,196,32,0.1)'
         el.style.transform = 'scale(1.01)'
       }}
       onMouseLeave={(e) => {
         if (!isInteractive) return
         const el = e.currentTarget as HTMLElement
         el.style.borderColor = borderColor
-        el.style.boxShadow = '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)'
+        el.style.boxShadow = '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)'
         el.style.transform = 'scale(1)'
       }}
     >
-      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690] mb-2">{label}</p>
+      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa] mb-2">{label}</p>
       {loading ? (
         <div className="space-y-2 animate-pulse">
-          <div className="h-8 w-24 rounded-[2px] bg-[#E8E4DC]" />
-          {subtitle !== undefined && <div className="h-3 w-32 rounded-[2px] bg-[#E8E4DC]" />}
+          <div className="h-8 w-24 rounded-[2px] bg-[#e8e8e8]" />
+          {subtitle !== undefined && <div className="h-3 w-32 rounded-[2px] bg-[#e8e8e8]" />}
         </div>
       ) : (
         <>
           <p className={`text-3xl font-black tracking-tight ${valueColor}`}>{value}</p>
-          {subtitle && <p className="text-[12px] text-[#9A9690] mt-1">{subtitle}</p>}
+          {subtitle && <p className="text-[12px] text-[#aaaaaa] mt-1">{subtitle}</p>}
         </>
       )}
     </div>
@@ -184,13 +184,12 @@ function AlertRow({
   return (
     <Link
       href={href}
-      className="flex items-center gap-4 px-4 py-3 bg-white hover:bg-[#F8F6F2] transition-colors group"
+      className="flex items-center gap-4 px-4 py-3 bg-white hover:bg-[#f8f8f8] transition-colors group"
       style={{
         borderRight: `3px solid ${borderColor}`,
-        borderTop: '0.5px solid #E0DDD4',
-        borderBottom: '0.5px solid #E0DDD4',
-        borderLeft: '0.5px solid #E0DDD4',
+        border: '1px solid #dddddd',
         borderRadius: '2px',
+        boxShadow: '0 2px 0 #cccccc, 0 3px 10px rgba(0,0,0,0.05)',
       }}
     >
       {children}
@@ -201,9 +200,9 @@ function AlertRow({
 // ─── Project Card ─────────────────────────────────────────────────────────────
 function ProjectCard({ proj }: { proj: ProjectProgress }) {
   const statusStyle: Record<string, string> = {
-    active:    'bg-[#E8F5F3] text-[#1A7A6E] border border-[#A8D4D0]',
-    on_hold:   'bg-[#FEF9E7] text-[#D4820A] border border-[#F0D070]',
-    completed: 'bg-[#F0EDE4] text-[#6A6660] border border-[#C8C4BC]',
+    active:    'bg-[#E8F5F3] text-[#1A7A6E] border border-[#a8d4d0]',
+    on_hold:   'bg-[#fef3e0] text-[#D4820A] border border-[#f5d080]',
+    completed: 'bg-[#f4f4f4] text-[#888888] border border-[#cccccc]',
   }
   const statusLabel: Record<string, string> = {
     active: 'פעיל', on_hold: 'מושהה', completed: 'הושלם',
@@ -214,29 +213,29 @@ function ProjectCard({ proj }: { proj: ProjectProgress }) {
       href={`/projects/${proj.id}`}
       className="block bg-white p-5 transition-all duration-150 group"
       style={{
-        border: '1px solid #E0DDD4',
+        border: '1px solid #dddddd',
         borderRadius: '2px',
-        boxShadow: '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)',
+        boxShadow: '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)',
       }}
       onMouseEnter={(e) => {
         const el = e.currentTarget as HTMLAnchorElement
         el.style.borderColor = '#E8C420'
-        el.style.boxShadow = '0 3px 0 #C8C4BC, 0 5px 18px rgba(232,196,32,.1)'
+        el.style.boxShadow = '0 2px 0 #cccccc, 0 4px 14px rgba(232,196,32,0.1)'
         el.style.transform = 'scale(1.01)'
       }}
       onMouseLeave={(e) => {
         const el = e.currentTarget as HTMLAnchorElement
-        el.style.borderColor = '#E0DDD4'
-        el.style.boxShadow = '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)'
+        el.style.borderColor = '#dddddd'
+        el.style.boxShadow = '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)'
         el.style.transform = 'scale(1)'
       }}
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-[#2B2B2B] text-[14px] truncate tracking-tight">
+          <h3 className="font-bold text-[#1a1a1a] text-[14px] truncate tracking-tight">
             {proj.title}
           </h3>
-          <p className="text-[12px] text-[#9A9690] mt-0.5 truncate">{proj.clientName}</p>
+          <p className="text-[12px] text-[#aaaaaa] mt-0.5 truncate">{proj.clientName}</p>
         </div>
         <span className={`text-[11px] font-semibold px-2.5 py-1 shrink-0 mr-2 rounded-[2px] ${statusStyle[proj.status] ?? statusStyle.completed}`}>
           {statusLabel[proj.status] ?? proj.status}
@@ -244,8 +243,8 @@ function ProjectCard({ proj }: { proj: ProjectProgress }) {
       </div>
 
       {proj.currentStageName !== '—' && (
-        <p className="text-[12px] text-[#6A6660] mb-3 truncate">
-          <span className="text-[#9A9690]">שלב נוכחי: </span>{proj.currentStageName}
+        <p className="text-[12px] text-[#666666] mb-3 truncate">
+          <span className="text-[#aaaaaa]">שלב נוכחי: </span>{proj.currentStageName}
         </p>
       )}
 
@@ -253,14 +252,14 @@ function ProjectCard({ proj }: { proj: ProjectProgress }) {
       {proj.totalStages > 0 ? (
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[11px] text-[#6A6660]">
+            <span className="text-[11px] text-[#666666]">
               {proj.completedStages}/{proj.totalStages} שלבים
             </span>
             <span className="text-[11px] font-bold text-[#E8C420]">
               {proj.progressPercent}%
             </span>
           </div>
-          <div className="w-full overflow-hidden" style={{ height: '3px', backgroundColor: '#E8E4DC', borderRadius: '1px' }}>
+          <div className="w-full overflow-hidden" style={{ height: '3px', backgroundColor: '#eeeeee', borderRadius: '1px' }}>
             <div
               style={{
                 height: '3px',
@@ -274,13 +273,13 @@ function ProjectCard({ proj }: { proj: ProjectProgress }) {
           </div>
         </div>
       ) : (
-        <p className="text-[11px] text-[#9A9690] italic">אין שלבים מוגדרים</p>
+        <p className="text-[11px] text-[#aaaaaa] italic">אין שלבים מוגדרים</p>
       )}
     </Link>
   )
 }
 
-// ─── Dark Sidebar Widget ───────────────────────────────────────────────────────
+// ─── Light Sidebar Widget ───────────────────────────────────────────────────────
 function SidebarWidget({
   activeProjects,
   loading,
@@ -293,22 +292,22 @@ function SidebarWidget({
   const router = useRouter()
 
   return (
-    <aside className="w-[220px] shrink-0 bg-[#2B2B2B] flex flex-col">
+    <aside className="w-[220px] shrink-0 bg-[#e4e4e4] flex flex-col">
       {/* Quick actions */}
-      <div className="p-5 border-b border-white/10">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-white/40 mb-3">
+      <div className="p-5 border-b border-[#d4d4d4]">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa] mb-3">
           פעולות מהירות
         </p>
         <div className="space-y-2">
           <button
             onClick={() => router.push('/projects/new')}
-            className="w-full rounded-[2px] bg-[#E8C420] hover:bg-[#D4B010] text-[#2B2B2B] text-[13px] font-extrabold px-3 py-2.5 transition-colors text-right"
+            className="w-full rounded-[2px] bg-[#E8C420] hover:bg-[#D4B010] text-[#1a1a1a] text-[13px] font-extrabold px-3 py-2.5 transition-colors text-right"
           >
             + פרויקט חדש
           </button>
           <button
             onClick={onNewClient}
-            className="w-full rounded-[2px] border border-white/20 hover:border-white/40 hover:bg-white/5 text-white/80 hover:text-white text-[13px] font-medium px-3 py-2.5 transition-colors text-right"
+            className="w-full rounded-[2px] border border-[#cccccc] hover:border-[#aaaaaa] hover:bg-[#dcdcdc] text-[#666666] hover:text-[#1a1a1a] text-[13px] font-medium px-3 py-2.5 transition-colors text-right"
           >
             + לקוח חדש
           </button>
@@ -318,7 +317,7 @@ function SidebarWidget({
       {/* Active projects list */}
       <div className="flex-1 flex flex-col min-h-0">
         <div className="px-5 py-4 flex items-center justify-between">
-          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-white/40">
+          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">
             פרויקטים פעילים
           </p>
           {!loading && (
@@ -330,20 +329,20 @@ function SidebarWidget({
           {loading ? (
             <div className="space-y-2 px-2 animate-pulse">
               {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="h-8 rounded-[2px] bg-white/5" />
+                <div key={n} className="h-8 rounded-[2px] bg-[#f0f0f0]" />
               ))}
             </div>
           ) : activeProjects.length === 0 ? (
-            <p className="text-[12px] text-white/30 italic px-2">אין פרויקטים פעילים</p>
+            <p className="text-[12px] text-[#cccccc] italic px-2">אין פרויקטים פעילים</p>
           ) : (
             activeProjects.map((proj) => (
               <Link
                 key={proj.id}
                 href={`/projects/${proj.id}`}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-[2px] hover:bg-white/10 transition-colors group"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-[2px] hover:bg-[#dcdcdc] transition-colors group"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-[#E8C420] shrink-0" />
-                <span className="text-[12px] text-white/70 group-hover:text-white truncate transition-colors">
+                <span className="text-[12px] text-[#666666] group-hover:text-[#1a1a1a] truncate transition-colors">
                   {proj.title}
                 </span>
               </Link>
@@ -374,14 +373,14 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
     <div className="flex -m-8 min-h-screen">
 
       {/* ── MAIN CONTENT (right in RTL) ── */}
-      <div className="flex-1 bg-[#F0EDE4] p-8 overflow-y-auto space-y-7 min-w-0">
+      <div className="flex-1 bg-[#f0f0f0] p-8 overflow-y-auto space-y-7 min-w-0">
 
         {/* Greeting */}
         <div>
-          <h1 className="text-[22px] font-black text-[#2B2B2B] tracking-tight">
+          <h1 className="text-[22px] font-black text-[#1a1a1a] tracking-tight">
             שלום, {fullName} 👋
           </h1>
-          <p className="text-[13px] text-[#9A9690] mt-1">{hebrewDate()}</p>
+          <p className="text-[13px] text-[#aaaaaa] mt-1">{hebrewDate()}</p>
         </div>
 
         {/* ── KPI CARDS ── */}
@@ -429,7 +428,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
                 value={loading ? '—' : data.waitingPaymentCount}
                 valueColor="text-[#C0392B]"
                 bg="bg-white"
-                borderColor="#fecaca"
+                borderColor="#dddddd"
                 loading={loading}
                 onClick={
                   !loading && data.waitingPaymentCount > 0
@@ -445,7 +444,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
                 value={loading ? '—' : data.waitingInvoiceCount}
                 valueColor="text-[#D4820A]"
                 bg="bg-white"
-                borderColor="#fed7aa"
+                borderColor="#dddddd"
                 loading={loading}
                 onClick={
                   !loading && data.waitingInvoiceCount > 0
@@ -463,20 +462,20 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
         {/* ── ALERTS — admin only ── */}
         {isAdmin && (
           <div>
-            <h2 className="text-[10px] font-bold text-[#9A9690] uppercase tracking-[0.08em] mb-3">
+            <h2 className="text-[10px] font-bold text-[#aaaaaa] uppercase tracking-[0.08em] mb-3">
               דורש טיפול עכשיו
             </h2>
 
             {loading ? (
               <div className="space-y-2 animate-pulse">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="h-12 rounded-[2px] bg-white border border-[#E0DDD4]" />
+                  <div key={n} className="h-12 rounded-[2px] bg-[#e8e8e8] border border-[#dddddd]" />
                 ))}
               </div>
             ) : allAlertsEmpty ? (
               <div
                 className="flex items-center gap-3 px-4 py-3"
-                style={{ background: '#E8F5F3', borderRadius: '2px', border: '0.5px solid #A8D4D0' }}
+                style={{ background: '#E8F5F3', borderRadius: '2px', border: '0.5px solid #a8d4d0' }}
               >
                 <span className="text-[#1A7A6E] text-base">✓</span>
                 <span className="text-[13px] font-semibold text-[#1A7A6E]">אין פריטים דחופים</span>
@@ -487,8 +486,8 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
                 {data.notInvoicedStages.map((s, i) => (
                   <AlertRow key={`inv-${i}`} href={`/projects/${s.projectId}`} borderColor="#C0392B">
                     <span className="text-[10px] font-bold text-[#C0392B] uppercase tracking-[0.08em] shrink-0">לא חויב</span>
-                    <span className="font-semibold text-[#2B2B2B] text-[13px] truncate">{s.projectTitle}</span>
-                    <span className="text-[#6A6660] text-[13px] truncate">{s.stageName}</span>
+                    <span className="font-semibold text-[#1a1a1a] text-[13px] truncate">{s.projectTitle}</span>
+                    <span className="text-[#666666] text-[13px] truncate">{s.stageName}</span>
                     <span className="font-black text-[#C0392B] text-[13px] mr-auto shrink-0" dir="ltr">{fmt(s.amount)}</span>
                   </AlertRow>
                 ))}
@@ -497,8 +496,8 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
                 {data.notPaidStages.map((s, i) => (
                   <AlertRow key={`pay-${i}`} href={`/projects/${s.projectId}`} borderColor="#D4820A">
                     <span className="text-[10px] font-bold text-[#D4820A] uppercase tracking-[0.08em] shrink-0">לא שולם</span>
-                    <span className="font-semibold text-[#2B2B2B] text-[13px] truncate">{s.projectTitle}</span>
-                    <span className="text-[#6A6660] text-[13px] truncate">{s.stageName}</span>
+                    <span className="font-semibold text-[#1a1a1a] text-[13px] truncate">{s.projectTitle}</span>
+                    <span className="text-[#666666] text-[13px] truncate">{s.stageName}</span>
                     {s.daysSince !== undefined && (
                       <span className="text-[12px] text-[#D4820A] shrink-0">{s.daysSince} ימים</span>
                     )}
@@ -508,11 +507,11 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
 
                 {/* ללא פעילות */}
                 {data.inactiveProjects.map((p, i) => (
-                  <AlertRow key={`inact-${i}`} href={`/projects/${p.projectId}`} borderColor="#9A9690">
-                    <span className="text-[10px] font-bold text-[#9A9690] uppercase tracking-[0.08em] shrink-0">לא פעיל</span>
-                    <span className="font-semibold text-[#2B2B2B] text-[13px] truncate">{p.projectTitle}</span>
-                    <span className="text-[#6A6660] text-[13px] truncate">{p.clientName}</span>
-                    <span className="text-[12px] text-[#9A9690] mr-auto shrink-0">{p.daysSinceActivity} ימים ללא פעילות</span>
+                  <AlertRow key={`inact-${i}`} href={`/projects/${p.projectId}`} borderColor="#aaaaaa">
+                    <span className="text-[10px] font-bold text-[#aaaaaa] uppercase tracking-[0.08em] shrink-0">לא פעיל</span>
+                    <span className="font-semibold text-[#1a1a1a] text-[13px] truncate">{p.projectTitle}</span>
+                    <span className="text-[#666666] text-[13px] truncate">{p.clientName}</span>
+                    <span className="text-[12px] text-[#aaaaaa] mr-auto shrink-0">{p.daysSinceActivity} ימים ללא פעילות</span>
                   </AlertRow>
                 ))}
               </div>
@@ -522,22 +521,22 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
 
         {/* ── ACTIVE PROJECTS GRID ── */}
         <div>
-          <h2 className="text-[10px] font-bold text-[#9A9690] uppercase tracking-[0.08em] mb-3">
+          <h2 className="text-[10px] font-bold text-[#aaaaaa] uppercase tracking-[0.08em] mb-3">
             פרויקטים פעילים
           </h2>
 
           {loading ? (
             <div className="grid grid-cols-2 gap-3">
               {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="h-36 rounded-[2px] bg-white animate-pulse border border-[#E0DDD4]" />
+                <div key={n} className="h-36 rounded-[2px] bg-[#e8e8e8] animate-pulse border border-[#dddddd]" />
               ))}
             </div>
           ) : data.projectsWithProgress.length === 0 ? (
             <div
               className="px-5 py-8 text-center bg-white"
-              style={{ borderRadius: '2px', border: '0.5px solid #E0DDD4' }}
+              style={{ borderRadius: '2px', border: '0.5px solid #dddddd' }}
             >
-              <p className="text-[13px] text-[#9A9690]">אין פרויקטים פעילים כרגע</p>
+              <p className="text-[13px] text-[#aaaaaa]">אין פרויקטים פעילים כרגע</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
@@ -549,7 +548,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
         </div>
       </div>
 
-      {/* ── DARK SIDEBAR (left in RTL) ── */}
+      {/* ── LIGHT SIDEBAR (left in RTL) ── */}
       <SidebarWidget
         activeProjects={loading ? [] : data.activeProjects}
         loading={loading}

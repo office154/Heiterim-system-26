@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
@@ -34,21 +35,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F0EDE4]">
+    <div className="min-h-screen flex items-center justify-center" style={{ background: '#f0f0f0' }}>
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-8">
           {logoError ? (
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-[#E8C420] rounded-[2px]" />
-              <span className="text-[22px] font-black tracking-tight text-[#2B2B2B]">Heiterim Architects</span>
+              <div className="w-8 h-8 rounded-[2px]" style={{ background: '#E8C420' }} />
+              <span className="text-[22px] font-black tracking-tight" style={{ color: '#1a1a1a' }}>
+                Heiterim Architects
+              </span>
             </div>
           ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src="/logo.png"
               alt="Heiterim Architects"
-              style={{ maxWidth: 240 }}
+              width={200}
+              height={80}
+              style={{ objectFit: 'contain' }}
               onError={() => setLogoError(true)}
             />
           )}
@@ -56,15 +60,26 @@ export default function LoginPage() {
 
         {/* Card */}
         <div
-          className="bg-white rounded-[4px] p-8"
-          style={{ boxShadow: '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)', border: '1px solid #E0DDD4' }}
+          className="p-8"
+          style={{
+            background: '#ffffff',
+            borderRadius: '4px',
+            border: '1px solid #dddddd',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.15)',
+          }}
         >
-          <h1 className="text-[20px] font-black tracking-tight text-[#2B2B2B] mb-1">התחברות</h1>
-          <p className="text-[13px] text-[#9A9690] mb-6">היכנס לחשבון שלך</p>
+          <h1 className="text-[20px] font-black tracking-tight mb-1" style={{ color: '#1a1a1a' }}>
+            התחברות
+          </h1>
+          <p className="text-[13px] mb-6" style={{ color: '#aaaaaa' }}>היכנס לחשבון שלך</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">
+              <label
+                htmlFor="email"
+                className="block text-[10px] font-bold uppercase tracking-[0.08em]"
+                style={{ color: '#aaaaaa' }}
+              >
                 אימייל
               </label>
               <input
@@ -75,11 +90,29 @@ export default function LoginPage() {
                 placeholder="your@email.com"
                 required
                 dir="ltr"
-                className="w-full rounded-[2px] border border-[#E0DDD4] bg-white px-3 py-2 text-[13px] text-[#2B2B2B] placeholder:text-[#9A9690] focus:border-[#1A7A6E] focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/12"
+                className="w-full px-3 py-2 text-[13px] transition-all outline-none"
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #dddddd',
+                  borderRadius: '2px',
+                  color: '#1a1a1a',
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#1A7A6E'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(26,122,110,0.12)'
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#dddddd'
+                  e.currentTarget.style.boxShadow = ''
+                }}
               />
             </div>
             <div className="space-y-1.5">
-              <label htmlFor="password" className="block text-[10px] font-bold uppercase tracking-[0.08em] text-[#9A9690]">
+              <label
+                htmlFor="password"
+                className="block text-[10px] font-bold uppercase tracking-[0.08em]"
+                style={{ color: '#aaaaaa' }}
+              >
                 סיסמה
               </label>
               <input
@@ -89,16 +122,38 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 dir="ltr"
-                className="w-full rounded-[2px] border border-[#E0DDD4] bg-white px-3 py-2 text-[13px] text-[#2B2B2B] focus:border-[#1A7A6E] focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/12"
+                className="w-full px-3 py-2 text-[13px] transition-all outline-none"
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #dddddd',
+                  borderRadius: '2px',
+                  color: '#1a1a1a',
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#1A7A6E'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(26,122,110,0.12)'
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#dddddd'
+                  e.currentTarget.style.boxShadow = ''
+                }}
               />
             </div>
             {error && (
-              <p className="text-[13px] text-[#C0392B] text-center">{error}</p>
+              <p className="text-[13px] text-center" style={{ color: '#C0392B' }}>{error}</p>
             )}
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-[2px] bg-[#E8C420] px-4 py-2.5 text-[14px] font-extrabold text-[#2B2B2B] hover:bg-[#D4B010] disabled:opacity-50 transition-colors mt-2"
+              className="w-full px-4 py-2.5 text-[14px] font-extrabold transition-colors mt-2"
+              style={{
+                background: '#E8C420',
+                color: '#1a1a1a',
+                borderRadius: '2px',
+                border: 'none',
+              }}
+              onMouseEnter={(e) => { if (!loading) (e.currentTarget as HTMLElement).style.background = '#D4B010' }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = '#E8C420' }}
             >
               {loading ? 'מתחבר...' : 'התחברות'}
             </button>

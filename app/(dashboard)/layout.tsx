@@ -27,7 +27,7 @@ export default async function DashboardLayout({
         role={profile?.role ?? 'employee'}
         fullName={profile?.full_name ?? user.email ?? ''}
       />
-      <main className="flex-1 p-8 overflow-auto bg-[#F0EDE4] min-h-screen">{children}</main>
+      <main className="flex-1 p-8 overflow-auto bg-[#f0f0f0] min-h-screen">{children}</main>
     </div>
   )
 }

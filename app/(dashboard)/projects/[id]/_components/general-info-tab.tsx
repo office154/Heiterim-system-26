@@ -18,9 +18,9 @@ interface FieldRowProps {
 
 function FieldRow({ label, children }: FieldRowProps) {
   return (
-    <div className="grid grid-cols-3 gap-4 py-3 border-b border-[#F0EDE4] last:border-0">
-      <dt className="text-sm font-medium text-[#6A6660] pt-1">{label}</dt>
-      <dd className="col-span-2 text-sm text-[#2B2B2B]">{children}</dd>
+    <div className="grid grid-cols-3 gap-4 py-3 border-b border-[#f4f4f4] last:border-0">
+      <dt className="text-sm font-medium text-[#666666] pt-1">{label}</dt>
+      <dd className="col-span-2 text-sm text-[#1a1a1a]">{children}</dd>
     </div>
   )
 }
@@ -42,10 +42,10 @@ export function GeneralInfoTab({ project }: GeneralInfoTabProps) {
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       {/* Project Info */}
       <div
-        className="rounded-[2px] border border-[#E0DDD4] bg-white p-5"
-        style={{ boxShadow: '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)' }}
+        className="rounded-[2px] border border-[#dddddd] bg-white p-5"
+        style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)' }}
       >
-        <h2 className="mb-4 text-base font-semibold text-[#2B2B2B]">פרטי פרויקט</h2>
+        <h2 className="mb-4 text-base font-semibold text-[#1a1a1a]">פרטי פרויקט</h2>
         <dl>
           <FieldRow label="שם הפרויקט">
             <InlineEdit
@@ -115,13 +115,13 @@ export function GeneralInfoTab({ project }: GeneralInfoTabProps) {
           </FieldRow>
 
           <FieldRow label="נוצר ע״י">
-            <span className="text-[#6A6660]">
+            <span className="text-[#666666]">
               {project.creator?.full_name ?? '—'}
             </span>
           </FieldRow>
 
           <FieldRow label="תאריך יצירה">
-            <span className="text-[#6A6660]">
+            <span className="text-[#666666]">
               {new Date(project.created_at).toLocaleDateString('he-IL')}
             </span>
           </FieldRow>
@@ -130,12 +130,12 @@ export function GeneralInfoTab({ project }: GeneralInfoTabProps) {
 
       {/* Client Info */}
       <div
-        className="rounded-[2px] border border-[#E0DDD4] bg-white p-5"
-        style={{ boxShadow: '0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08)' }}
+        className="rounded-[2px] border border-[#dddddd] bg-white p-5"
+        style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)' }}
       >
-        <h2 className="mb-4 text-base font-semibold text-[#2B2B2B]">פרטי לקוח</h2>
+        <h2 className="mb-4 text-base font-semibold text-[#1a1a1a]">פרטי לקוח</h2>
         {!project.client ? (
-          <p className="text-sm text-[#9A9690] italic">לא שויך לקוח לפרויקט זה</p>
+          <p className="text-sm text-[#aaaaaa] italic">לא שויך לקוח לפרויקט זה</p>
         ) : (
           <dl>
             <FieldRow label="שם">

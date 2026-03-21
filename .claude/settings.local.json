@@ -35,7 +35,9 @@
       "Bash(powershell -Command \"Get-ChildItem -Path ''C:\\\\Users\\\\ruti\\\\Downloads'' -Filter ''LOGO*'' -ErrorAction SilentlyContinue | Select-Object FullName; Get-ChildItem -Path ''C:\\\\Users\\\\ruti\\\\Desktop'' -Filter ''LOGO*'' -ErrorAction SilentlyContinue | Select-Object FullName\")",
       "Bash(powershell -Command \"Set-Location ''C:\\\\Projects_ruti\\\\Heiterim system 26''; git add app/globals.css app/layout.tsx components/sidebar.tsx components/ui/tabs.tsx lib/constants/tracks.ts\")",
       "Bash(powershell -Command \"Set-Location ''C:\\\\Projects_ruti\\\\Heiterim system 26''; git add app/login/page.tsx app/\\(dashboard\\)/layout.tsx app/\\(dashboard\\)/clients/page.tsx app/\\(dashboard\\)/reports/page.tsx\")",
-      "Bash(powershell -Command \"Set-Location ''C:\\\\Projects_ruti\\\\Heiterim system 26''; git add -u\")"
+      "Bash(powershell -Command \"Set-Location ''C:\\\\Projects_ruti\\\\Heiterim system 26''; git add -u\")",
+      "Bash(powershell -Command \"Set-Location ''C:\\\\Projects_ruti\\\\Heiterim system 26''; git commit -F commit_msg.txt; Remove-Item commit_msg.txt; git push origin master\")",
+      "Bash(powershell -Command \"Set-Location ''C:\\\\Projects_ruti\\\\Heiterim system 26''; git add -u; git add next.config.mjs; git status --short\")"
     ]
   }
 }

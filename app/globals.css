@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-sans);
+  --font-sans: 'Rubik', sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -29,34 +29,66 @@
 
 @layer base {
   :root {
-    /* Heiterim Architects brand palette */
-    --background: #F0EDE4;
-    --foreground: #2B2B2B;
-    --card: #FFFFFF;
-    --card-foreground: #2B2B2B;
-    --popover: #FFFFFF;
-    --popover-foreground: #2B2B2B;
-    --primary: #E8C420;
-    --primary-foreground: #2B2B2B;
-    --secondary: #F8F6F2;
-    --secondary-foreground: #2B2B2B;
-    --muted: #F8F6F2;
-    --muted-foreground: #9A9690;
-    --accent: #E8C420;
-    --accent-foreground: #2B2B2B;
-    --destructive: #C0392B;
-    --border: #E0DDD4;
-    --input: #E0DDD4;
-    --ring: #1A7A6E;
-    --radius: 0.125rem;
+    /* ── Heiterim Architects design tokens ── */
+    --bg-base:             #f0f0f0;
+    --bg-surface:          #e4e4e4;
+    --bg-card:             #ffffff;
+    --bg-elevated:         #f8f8f8;
+    --bg-hover:            #dcdcdc;
+    --border:              #dddddd;
+    --border-strong:       #cccccc;
+    --text-primary:        #1a1a1a;
+    --text-secondary:      #666666;
+    --text-muted:          #aaaaaa;
+    --accent-yellow:       #E8C420;
+    --accent-yellow-hover: #D4B010;
+    --accent-yellow-light: #fef9e0;
+    --accent-teal:         #1A7A6E;
+    --accent-teal-light:   #E8F5F3;
+    --accent-teal-border:  #a8d4d0;
+    --danger:              #C0392B;
+    --danger-light:        #fdf0ef;
+    --warning:             #D4820A;
+    --warning-light:       #fef3e0;
+    --success:             #1A7A6E;
+    --shadow-sm:           0 2px 0 #cccccc, 0 3px 10px rgba(0,0,0,0.05);
+    --shadow-md:           0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06);
+    --shadow-accent:       0 2px 0 #cccccc, 0 4px 14px rgba(232,196,32,0.1);
+
+    /* ── Tailwind theme tokens ── */
+    --background:          #f0f0f0;
+    --foreground:          #1a1a1a;
+    --card:                #ffffff;
+    --card-foreground:     #1a1a1a;
+    --popover:             #ffffff;
+    --popover-foreground:  #1a1a1a;
+    --primary:             #E8C420;
+    --primary-foreground:  #1a1a1a;
+    --secondary:           #f8f8f8;
+    --secondary-foreground: #1a1a1a;
+    --muted:               #f8f8f8;
+    --muted-foreground:    #aaaaaa;
+    --accent:              #E8C420;
+    --accent-foreground:   #1a1a1a;
+    --destructive:         #C0392B;
+    --input:               #dddddd;
+    --ring:                #1A7A6E;
+    --radius:              0.125rem;
   }
 
   * {
     @apply border-border outline-ring/50;
+    font-family: 'Rubik', sans-serif;
   }
 
-  body {
+  html, body {
+    font-family: 'Rubik', sans-serif;
     @apply bg-background text-foreground;
+  }
+
+  h1, h2, h3, h4, h5, h6,
+  input, textarea, select, button {
+    font-family: 'Rubik', sans-serif;
   }
 }
 
@@ -65,12 +97,12 @@
     text-wrap: balance;
   }
   .shadow-brand-sm {
-    box-shadow: 0 2px 0 #D8D4CC, 0 3px 10px rgba(43,43,43,.06);
+    box-shadow: var(--shadow-sm);
   }
   .shadow-brand-md {
-    box-shadow: 0 3px 0 #C8C4BC, 0 5px 18px rgba(43,43,43,.08);
+    box-shadow: var(--shadow-md);
   }
   .shadow-brand-accent {
-    box-shadow: 0 3px 0 #C8C4BC, 0 5px 18px rgba(232,196,32,.1);
+    box-shadow: var(--shadow-accent);
   }
 }
