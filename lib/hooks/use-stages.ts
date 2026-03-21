@@ -51,10 +51,62 @@ export function useUpdateStage() {
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['project-stages', variables.projectId] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard-data'] })
     },
   })
 }
 
+// ─── Add a single stage to a track ───────────────────────────────────────────
+export function useAddStage() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({
+      projectId,
+      track,
+      name,
+      orderIndex,
+    }: {
+      projectId: string
+      track: TrackValue
+      name: string
+      orderIndex: number
+    }) => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('project_stages')
+        .insert({ project_id: projectId, track, name: name.trim(), order_index: orderIndex })
+        .select()
+        .single()
+      if (error) throw error
+      return data as ProjectStage
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['project-stages', variables.projectId] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard-data'] })
+    },
+  })
+}
+
+// ─── Delete a single stage by id ─────────────────────────────────────────────
+export function useDeleteStage() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, projectId }: { id: string; projectId: string }) => {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('project_stages')
+        .delete()
+        .eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['project-stages', variables.projectId] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard-data'] })
+    },
+  })
+}
+
+// ─── Add a full track (with default stages) ───────────────────────────────────
 export function useAddTrack() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -90,10 +142,12 @@ export function useAddTrack() {
       queryClient.invalidateQueries({ queryKey: ['project-stages', variables.projectId] })
       queryClient.invalidateQueries({ queryKey: ['projects', variables.projectId] })
       queryClient.invalidateQueries({ queryKey: ['projects'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard-data'] })
     },
   })
 }
 
+// ─── Remove a full track (all its stages) ─────────────────────────────────────
 export function useRemoveTrack() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -125,6 +179,7 @@ export function useRemoveTrack() {
       queryClient.invalidateQueries({ queryKey: ['project-stages', variables.projectId] })
       queryClient.invalidateQueries({ queryKey: ['projects', variables.projectId] })
       queryClient.invalidateQueries({ queryKey: ['projects'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard-data'] })
     },
   })
 }
