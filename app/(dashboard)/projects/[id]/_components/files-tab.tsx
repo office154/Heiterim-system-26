@@ -111,7 +111,7 @@ export function FilesTab({ projectId }: FilesTabProps) {
                 <th className="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">שם קובץ</th>
                 <th className="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">גודל</th>
                 <th className="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">תאריך העלאה</th>
-                <th className="w-24 px-4 py-3" />
+                <th className="w-36 px-4 py-3" />
               </tr>
             </thead>
             <tbody>
@@ -136,19 +136,24 @@ export function FilesTab({ projectId }: FilesTabProps) {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
-                      {/* Preview — eye icon */}
-                      {isPreviewable(file.file_type) && (
-                        <button
-                          onClick={() => handlePreview(file.file_path, file.file_name, file.file_type)}
-                          title="תצוגה מקדימה"
-                          className="flex h-7 w-7 items-center justify-center rounded hover:bg-[#EEF2FF] text-[#6366F1] hover:text-[#4F46E5] transition-colors"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                          </svg>
-                        </button>
-                      )}
+                      {/* Preview — eye icon (always visible) */}
+                      <button
+                        onClick={async () => {
+                          if (isPreviewable(file.file_type)) {
+                            handlePreview(file.file_path, file.file_name, file.file_type)
+                          } else {
+                            const url = await getSignedUrl(file.file_path)
+                            window.open(url, '_blank')
+                          }
+                        }}
+                        title="תצוגה מקדימה"
+                        className="flex h-7 w-7 items-center justify-center rounded hover:bg-[#EEF2FF] text-[#6366F1] hover:text-[#4F46E5] transition-colors"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                          <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      </button>
                       {/* Download — arrow icon */}
                       <button
                         onClick={async () => {

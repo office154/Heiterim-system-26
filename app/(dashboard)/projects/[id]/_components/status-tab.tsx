@@ -124,7 +124,7 @@ function RequirementInput({
       onBlur={handleBlur}
       onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
       placeholder="הקלד פירוט..."
-      className="w-full rounded border border-[#E5E7EB] bg-white px-2 py-1 text-[13px] text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#6366F1] focus:outline-none focus:ring-1 focus:ring-[#6366F1]"
+      className="w-full rounded border border-[#CBD5E1] bg-[#F8FAFC] px-2 py-1.5 text-[13px] text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#6366F1] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6366F1]/20"
     />
   )
 }
