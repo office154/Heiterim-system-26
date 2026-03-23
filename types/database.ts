@@ -123,6 +123,7 @@ export interface Database {
           invoice_sent: boolean
           paid: boolean
           price: number
+          extra_payment: number
           completed_at: string | null
           note: string | null
           created_at: string
@@ -137,6 +138,7 @@ export interface Database {
           invoice_sent?: boolean
           paid?: boolean
           price?: number
+          extra_payment?: number
           completed_at?: string | null
           note?: string | null
           created_at?: string
@@ -151,6 +153,7 @@ export interface Database {
           invoice_sent?: boolean
           paid?: boolean
           price?: number
+          extra_payment?: number
           completed_at?: string | null
           note?: string | null
           created_at?: string

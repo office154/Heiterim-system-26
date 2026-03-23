@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useClients } from '@/lib/hooks/use-clients'
 import { CreateClientModal } from '@/components/create-client-modal'
 import { Input } from '@/components/ui/input'
+import { Breadcrumb } from '@/components/shared/Breadcrumb'
 
 export default function ClientsPage() {
   const { data: clients, isLoading } = useClients()
@@ -21,6 +22,7 @@ export default function ClientsPage() {
 
   return (
     <div className="space-y-5">
+      <Breadcrumb items={[{ label: 'דשבורד', href: '/' }, { label: 'לקוחות' }]} />
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-[20px] font-black text-[#1a1a1a] tracking-tight">לקוחות</h1>

@@ -133,8 +133,8 @@ function TrackSection({
 
   const [addingStage, setAddingStage] = useState(false)
 
-  const totalContract = stages.reduce((sum, s) => sum + s.price, 0)
-  const totalPaid = stages.filter((s) => s.paid).reduce((sum, s) => sum + s.price, 0)
+  const totalContract = stages.reduce((sum, s) => sum + s.price + (s.extra_payment || 0), 0)
+  const totalPaid = stages.filter((s) => s.paid).reduce((sum, s) => sum + s.price + (s.extra_payment || 0), 0)
   const balance = totalContract - totalPaid
 
   async function handleCheckbox(
@@ -148,6 +148,15 @@ function TrackSection({
   async function handlePrice(stage: ProjectStage, raw: string) {
     const price = parseFloat(raw) || 0
     await updateStage.mutateAsync({ id: stage.id, projectId, price })
+  }
+
+  async function handleNote(stage: ProjectStage, note: string) {
+    await updateStage.mutateAsync({ id: stage.id, projectId, note: note || null })
+  }
+
+  async function handleExtraPayment(stage: ProjectStage, raw: string) {
+    const extra_payment = parseFloat(raw) || 0
+    await updateStage.mutateAsync({ id: stage.id, projectId, extra_payment })
   }
 
   async function handleName(stage: ProjectStage, name: string) {
@@ -318,9 +327,28 @@ function TrackSection({
                   <td />
                 </tr>
 
+                {/* מלל חופשי */}
+                <tr className="border-b border-[#dddddd]">
+                  <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#666666]">
+                    הערה
+                  </td>
+                  {stages.map((stage) => (
+                    <td key={stage.id} className="px-3 py-2.5 text-center">
+                      <InlineEdit
+                        value={stage.note}
+                        onSave={(v) => handleNote(stage, v)}
+                        placeholder="הערה..."
+                        emptyText="—"
+                        className="text-center text-xs text-[#444444]"
+                      />
+                    </td>
+                  ))}
+                  <td />
+                </tr>
+
                 {/* מחיר — admin only */}
                 {showPrices && (
-                  <tr className="border-b-2 border-[#dddddd]">
+                  <tr className="border-b border-[#dddddd]">
                     <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#666666]">
                       מחיר
                     </td>
@@ -329,6 +357,24 @@ function TrackSection({
                         <PriceInput
                           value={stage.price}
                           onSave={(v) => handlePrice(stage, v)}
+                        />
+                      </td>
+                    ))}
+                    <td />
+                  </tr>
+                )}
+
+                {/* תשלום נוסף — admin only */}
+                {showPrices && (
+                  <tr className="border-b-2 border-[#dddddd]">
+                    <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#666666]">
+                      תשלום נוסף
+                    </td>
+                    {stages.map((stage) => (
+                      <td key={stage.id} className="px-3 py-2.5 text-center">
+                        <PriceInput
+                          value={stage.extra_payment || 0}
+                          onSave={(v) => handleExtraPayment(stage, v)}
                         />
                       </td>
                     ))}

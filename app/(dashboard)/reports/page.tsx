@@ -7,6 +7,7 @@ import { useCurrentRole } from '@/lib/hooks/use-profile'
 import { useFinancialSummary, useAlerts, useProjectsCount } from '@/lib/hooks/use-reports'
 import { TRACK_LABELS } from '@/lib/constants/tracks'
 import type { TrackValue } from '@/types/database'
+import { Breadcrumb } from '@/components/shared/Breadcrumb'
 
 function formatCurrency(n: number) {
   return '₪' + n.toLocaleString('he-IL')
@@ -27,6 +28,7 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-7">
+      <Breadcrumb items={[{ label: 'דשבורד', href: '/' }, { label: 'דוחות' }]} />
       <h1 className="text-[20px] font-black text-[#1a1a1a] tracking-tight">דוחות</h1>
 
       {/* Projects count */}

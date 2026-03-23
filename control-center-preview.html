@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control Center — Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #FAFAFA;
+  --surface: #FFFFFF;
+  --border: #E5E7EB;
+  --border-light: #F3F4F6;
+  --text-primary: #0A0A0A;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --accent: #2563EB;
+  --amber: #D97706;
+  --green: #16A34A;
+  --red: #DC2626;
+  --sidebar-w: 220px;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #E5E7EB;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  direction: rtl;
+}
+
+/* ========== BROWSER CHROME ========== */
+.browser {
+  width: 1100px;
+  max-width: 100%;
+  background: var(--surface);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);
+}
+.browser-bar {
+  background: #F3F4F6;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dots { display: flex; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.d1 { background: #FF5F57; }
+.d2 { background: #FEBC2E; }
+.d3 { background: #28C840; }
+.url-bar {
+  flex: 1;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+  direction: ltr;
+}
+
+/* ========== APP SHELL ========== */
+.app { display: flex; height: 680px; }
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+.sidebar-logo {
+  padding: 20px 20px 18px;
+  border-bottom: 1px solid var(--border-light);
+}
+.logo-mark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-square {
+  width: 22px; height: 22px;
+  background: var(--text-primary);
+  border-radius: 5px;
+  flex-shrink: 0;
+}
+.logo-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.sidebar-nav {
+  padding: 8px 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+  user-select: none;
+}
+.nav-item:hover { background: var(--border-light); color: var(--text-primary); }
+.nav-item.active { background: var(--border-light); color: var(--text-primary); font-weight: 600; }
+.nav-item svg { opacity: 0.5; flex-shrink: 0; }
+.nav-item.active svg { opacity: 1; }
+.nav-badge {
+  margin-right: auto;
+  background: var(--red);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 20px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border-light);
+}
+.user-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.user-avatar {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.user-name { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+.user-role { font-size: 11px; color: var(--text-muted); }
+
+/* ========== MAIN CONTENT ========== */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  overflow: hidden;
+  position: relative;
+}
+
+.topbar {
+  padding: 0 28px;
+  height: 52px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.topbar-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.topbar-date {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: var(--text-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.8; }
+
+/* ========== CONTENT AREA ========== */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/* ========== ALERT BANNER ========== */
+.alert-banner {
+  margin: 20px 28px 0;
+  padding: 10px 14px;
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #92400E;
+  font-weight: 500;
+}
+.alert-dot { width: 6px; height: 6px; border-radius: 50%; background: #D97706; flex-shrink: 0; }
+
+/* ========== SECTION ========== */
+.section {
+  padding: 20px 28px 0;
+}
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+/* ========== PROJECT LIST ========== */
+.project-list {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.project-row {
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  height: 60px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: background 0.1s;
+  position: relative;
+}
+.project-row:last-child { border-bottom: none; }
+.project-row:hover { background: #F9FAFB; }
+.project-row.selected { background: #F5F8FF; }
+.project-row.urgent::before {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--amber);
+  border-radius: 0 3px 3px 0;
+}
+
+.proj-info { flex: 1; min-width: 0; }
+.proj-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.proj-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.proj-stage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+  flex-shrink: 0;
+}
+.stage-name {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.stage-progress {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--border-light);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.proj-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 20px;
+  flex-shrink: 0;
+  min-width: 110px;
+  justify-content: flex-end;
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 20px;
+}
+.status-pill .s-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.status-active { background: #F0FDF4; color: #16A34A; }
+.status-active .s-dot { background: #16A34A; }
+.status-urgent { background: #FFFBEB; color: #D97706; }
+.status-urgent .s-dot { background: #D97706; }
+.status-done { background: #F9FAFB; color: var(--text-muted); }
+.status-done .s-dot { background: var(--text-muted); }
+
+.proj-arrow {
+  margin-left: 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+/* ========== KPI STRIP ========== */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.kpi-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.kpi-value.accent { color: var(--accent); }
+.kpi-value.danger { color: var(--red); }
+.kpi-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ========== DRAWER ========== */
+.drawer-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.04);
+  z-index: 50;
+  display: none;
+  transition: opacity 0.2s;
+}
+.drawer-overlay.open { display: block; }
+
+.drawer {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 380px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  z-index: 51;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.22s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 4px 0 24px rgba(0,0,0,0.06);
+}
+.drawer.open { transform: translateX(0); }
+
+.drawer-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.drawer-close {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 13px;
+  flex-shrink: 0;
+  transition: background 0.1s;
+}
+.drawer-close:hover { background: var(--border-light); }
+.drawer-proj-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+.drawer-proj-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+.drawer-status-line {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 6px 10px;
+  background: #FFFBEB;
+  border-radius: 6px;
+  border: 1px solid #FDE68A;
+  color: #92400E;
+}
+
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px;
+}
+
+.drawer-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+/* Timeline */
+.timeline { display: flex; flex-direction: column; position: relative; }
+.timeline-item {
+  display: flex;
+  gap: 14px;
+  padding-bottom: 18px;
+  position: relative;
+}
+.timeline-item:last-child { padding-bottom: 0; }
+.timeline-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.t-dot {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  z-index: 1;
+}
+.t-dot.done { background: var(--text-primary); border-color: var(--text-primary); }
+.t-dot.active { border-color: var(--accent); border-width: 2px; }
+.t-dot.blocked { border-color: var(--amber); }
+.t-dot.future { opacity: 0.35; }
+.t-dot svg { display: none; }
+.t-dot.done svg { display: block; }
+.t-line {
+  flex: 1;
+  width: 1px;
+  background: var(--border);
+  margin-top: 4px;
+  margin-bottom: 0;
+  min-height: 14px;
+}
+.timeline-item:last-child .t-line { display: none; }
+
+.timeline-right { flex: 1; padding-top: 0; }
+.t-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.t-name.muted { color: var(--text-muted); font-weight: 400; }
+.t-date { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+.t-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--amber);
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* Docs */
+.doc-list { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; }
+.doc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  background: var(--bg);
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
+}
+.doc-name { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+.doc-date { font-size: 11px; color: var(--text-muted); }
+.doc-dl { font-size: 11px; color: var(--accent); font-weight: 500; cursor: pointer; }
+
+/* ========== TAB SWITCHER ========== */
+.view-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  background: var(--border-light);
+  border-radius: 8px;
+  width: fit-content;
+}
+.view-tab {
+  padding: 5px 14px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.view-tab.active {
+  background: var(--surface);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* ========== ADMIN ALERTS PANEL ========== */
+.alerts-panel {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+.alerts-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.alerts-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+.alerts-count {
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  background: var(--red);
+  padding: 1px 6px;
+  border-radius: 20px;
+}
+.alert-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+}
+.alert-item:hover { background: var(--bg); }
+.alert-proj { font-size: 11px; font-weight: 600; color: var(--text-primary); }
+.alert-desc { font-size: 11px; color: var(--text-secondary); margin-top: 2px; line-height: 1.4; }
+.alert-time { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+.alert-resolve {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+/* ========== VIEW TOGGLE ========== */
+.view-client { display: flex; }
+.view-admin { display: none; }
+.showing-admin .view-client { display: none; }
+.showing-admin .view-admin { display: flex; }
+
+/* ========== LABELS ========== */
+.page-label {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9CA3AF;
+  margin-bottom: 6px;
+  margin-top: 28px;
+}
+.page-label:first-child { margin-top: 0; }
+.page-head {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.page-desc {
+  text-align: center;
+  font-size: 13px;
+  color: #6B7280;
+  margin-bottom: 28px;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.toggle-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6B7280;
+}
+.view-toggle {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: #E5E7EB;
+  border-radius: 8px;
+}
+.vt-btn {
+  padding: 5px 16px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.vt-btn.active {
+  background: white;
+  color: #0A0A0A;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+</style>
+</head>
+<body>
+
+<div style="width:100%; max-width:1140px;">
+
+  <!-- Header -->
+  <p class="page-label">Control Center — Preview</p>
+  <h1 class="page-head">Ultra Minimal Precision</h1>
+  <p class="page-desc">לחץ על פרויקט לראות את פרטיו — עבור בין תצוגת לקוח לתצוגת מנהל</p>
+
+  <!-- Toggle -->
+  <div class="toggle-row">
+    <span class="toggle-label">תצוגה:</span>
+    <div class="view-toggle">
+      <button class="vt-btn active" onclick="setView('client')">לקוח</button>
+      <button class="vt-btn" onclick="setView('admin')">מנהל</button>
+    </div>
+  </div>
+
+  <!-- Browser -->
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="dots">
+        <div class="dot d1"></div>
+        <div class="dot d2"></div>
+        <div class="dot d3"></div>
+      </div>
+      <div class="url-bar" id="urlBar">app.heiterim.co/dashboard</div>
+    </div>
+
+    <div class="app">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-logo">
+          <div class="logo-mark">
+            <div class="logo-square"></div>
+            <div class="logo-name">Heiterim</div>
+          </div>
+        </div>
+        <div class="sidebar-nav">
+          <div class="nav-item active">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            דשבורד
+          </div>
+          <div class="nav-item">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+            פרויקטים
+          </div>
+          <div class="nav-item">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            לקוחות
+          </div>
+          <div class="nav-item" id="reportsNav">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            דוחות
+            <span class="nav-badge" id="alertBadge" style="display:none">3</span>
+          </div>
+          <div class="nav-item" id="settingsNav" style="display:none">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            הגדרות
+          </div>
+        </div>
+        <div class="sidebar-footer">
+          <div class="user-row">
+            <div class="user-avatar" id="userAvatar">ר</div>
+            <div>
+              <div class="user-name" id="userName">רות כהן</div>
+              <div class="user-role" id="userRole">לקוח</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main area — CLIENT view -->
+      <div class="main view-client" id="clientView">
+        <div class="topbar">
+          <div class="topbar-title" id="clientTitle">הפרויקטים שלי</div>
+          <div class="topbar-right">
+            <span class="topbar-date">21 במרץ, 2026</span>
+          </div>
+        </div>
+
+        <div class="content" style="position:relative;">
+          <!-- Alert banner -->
+          <div class="alert-banner">
+            <div class="alert-dot"></div>
+            פרויקט אחד מחכה לאישורך
+          </div>
+
+          <!-- Projects section -->
+          <div class="section">
+            <div class="section-label">פרויקטים פעילים</div>
+            <div class="project-list">
+
+              <div class="project-row urgent selected" onclick="openDrawer('p1')">
+                <div class="proj-info">
+                  <div class="proj-name">בית פרטי — רמת גן</div>
+                  <div class="proj-sub">בקשה להיתר</div>
+                </div>
+                <div class="proj-stage">
+                  <span class="stage-name">ממתין לאישורך</span>
+                  <span class="stage-progress">4 / 7</span>
+                </div>
+                <div class="proj-status">
+                  <span class="status-pill status-urgent"><span class="s-dot"></span>נדרש אישור</span>
+                </div>
+                <div class="proj-arrow">←</div>
+              </div>
+
+              <div class="project-row" onclick="openDrawer('p2')">
+                <div class="proj-info">
+                  <div class="proj-name">משרדים — תל אביב מרכז</div>
+                  <div class="proj-sub">תכנון פנים</div>
+                </div>
+                <div class="proj-stage">
+                  <span class="stage-name">סיום תכניות מכרז</span>
+                  <span class="stage-progress">3 / 6</span>
+                </div>
+                <div class="proj-status">
+                  <span class="status-pill status-active"><span class="s-dot"></span>בתהליך</span>
+                </div>
+                <div class="proj-arrow">←</div>
+              </div>
+
+              <div class="project-row" onclick="openDrawer('p3')">
+                <div class="proj-info">
+                  <div class="proj-name">וילה — כפר שמריהו</div>
+                  <div class="proj-sub">היתר בנייה</div>
+                </div>
+                <div class="proj-stage">
+                  <span class="stage-name">תיק מידע</span>
+                  <span class="stage-progress">2 / 7</span>
+                </div>
+                <div class="proj-status">
+                  <span class="status-pill status-active"><span class="s-dot"></span>בתהליך</span>
+                </div>
+                <div class="proj-arrow">←</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Completed section -->
+          <div class="section" style="margin-top:16px; padding-bottom:24px;">
+            <div class="section-label">הושלמו</div>
+            <div class="project-list">
+              <div class="project-row" style="opacity:0.6;" onclick="openDrawer('p4')">
+                <div class="proj-info">
+                  <div class="proj-name">מלון — ים המלח</div>
+                  <div class="proj-sub">עיצוב פנים</div>
+                </div>
+                <div class="proj-stage">
+                  <span class="stage-progress">6 / 6</span>
+                </div>
+                <div class="proj-status">
+                  <span class="status-pill status-done"><span class="s-dot"></span>הושלם</span>
+                </div>
+                <div class="proj-arrow">←</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer overlay -->
+          <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+          <!-- Drawer -->
+          <div class="drawer" id="drawer">
+            <div class="drawer-header">
+              <div>
+                <div class="drawer-proj-name" id="drawerTitle">בית פרטי — רמת גן</div>
+                <div class="drawer-proj-meta" id="drawerMeta">בקשה להיתר · לקוח: משפחת לוי</div>
+                <div class="drawer-status-line" id="drawerStatusLine">⚠ ממתין לאישורך — חתימה על תוכנית קונסטרוקציה</div>
+              </div>
+              <div class="drawer-close" onclick="closeDrawer()">✕</div>
+            </div>
+            <div class="drawer-body">
+              <div class="drawer-section-title" id="drawerTimelineTitle">שלבי הפרויקט</div>
+              <div class="timeline" id="drawerTimeline"></div>
+
+              <div class="doc-list" id="drawerDocs">
+                <div style="height:12px"></div>
+                <div class="drawer-section-title">מסמכים (3)</div>
+                <div class="doc-row">
+                  <div>
+                    <div class="doc-name">תוכנית קומה א׳.pdf</div>
+                    <div class="doc-date">הועלה 18.3.2026</div>
+                  </div>
+                  <div class="doc-dl">הורד</div>
+                </div>
+                <div class="doc-row">
+                  <div>
+                    <div class="doc-name">תיק מידע מוניציפלי.pdf</div>
+                    <div class="doc-date">הועלה 2.2.2026</div>
+                  </div>
+                  <div class="doc-dl">הורד</div>
+                </div>
+                <div class="doc-row">
+                  <div>
+                    <div class="doc-name">חוזה התקשרות.pdf</div>
+                    <div class="doc-date">הועלה 14.1.2026</div>
+                  </div>
+                  <div class="doc-dl">הורד</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Main area — ADMIN view -->
+      <div class="main view-admin" id="adminView" style="display:none; flex-direction:row;">
+
+        <!-- Admin content -->
+        <div style="flex:1; display:flex; flex-direction:column; overflow:hidden; background:var(--bg);">
+          <div class="topbar">
+            <div class="topbar-title">Control Center</div>
+            <div class="topbar-right">
+              <span class="topbar-date">21 במרץ, 2026</span>
+              <button class="btn-primary">+ פרויקט חדש</button>
+            </div>
+          </div>
+
+          <div class="content" style="padding-bottom:24px;">
+            <!-- KPI strip -->
+            <div class="section">
+              <div class="kpi-strip">
+                <div class="kpi-card">
+                  <div class="kpi-label">פרויקטים פעילים</div>
+                  <div class="kpi-value accent">8</div>
+                  <div class="kpi-sub">+1 מהחודש שעבר</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">יתרה לגביה</div>
+                  <div class="kpi-value danger">₪284,000</div>
+                  <div class="kpi-sub">3 חשבוניות פתוחות</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">שלבים חסומים</div>
+                  <div class="kpi-value" style="color:var(--amber)">3</div>
+                  <div class="kpi-sub">מחכים לפעולה</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- All projects -->
+            <div class="section" style="margin-top:16px;">
+              <div class="section-label">כל הפרויקטים</div>
+              <div class="project-list">
+
+                <div class="project-row urgent">
+                  <div class="proj-info">
+                    <div class="proj-name">בית פרטי — רמת גן</div>
+                    <div class="proj-sub">משפחת לוי · היתר</div>
+                  </div>
+                  <div class="proj-stage">
+                    <span class="stage-name" style="color:var(--amber); font-weight:600;">חתימה נדרשת</span>
+                    <span class="stage-progress">4 / 7</span>
+                  </div>
+                  <div class="proj-status">
+                    <span class="status-pill status-urgent"><span class="s-dot"></span>ממתין ללקוח</span>
+                  </div>
+                  <div class="proj-arrow">←</div>
+                </div>
+
+                <div class="project-row urgent">
+                  <div class="proj-info">
+                    <div class="proj-name">מגדל משרדים — ת״א</div>
+                    <div class="proj-sub">קבוצת ויצמן · תכנון</div>
+                  </div>
+                  <div class="proj-stage">
+                    <span class="stage-name" style="color:var(--red); font-weight:600;">חשבונית לא שולמה</span>
+                    <span class="stage-progress">5 / 7</span>
+                  </div>
+                  <div class="proj-status">
+                    <span class="status-pill status-urgent"><span class="s-dot"></span>פיננסי</span>
+                  </div>
+                  <div class="proj-arrow">←</div>
+                </div>
+
+                <div class="project-row">
+                  <div class="proj-info">
+                    <div class="proj-name">וילה — כפר שמריהו</div>
+                    <div class="proj-sub">פרטי · היתר</div>
+                  </div>
+                  <div class="proj-stage">
+                    <span class="stage-name">תיק מידע</span>
+                    <span class="stage-progress">2 / 7</span>
+                  </div>
+                  <div class="proj-status">
+                    <span class="status-pill status-active"><span class="s-dot"></span>בתהליך</span>
+                  </div>
+                  <div class="proj-arrow">←</div>
+                </div>
+
+                <div class="project-row">
+                  <div class="proj-info">
+                    <div class="proj-name">משרדים — תל אביב מרכז</div>
+                    <div class="proj-sub">חברת טק · תכנון פנים</div>
+                  </div>
+                  <div class="proj-stage">
+                    <span class="stage-name">סיום תכניות מכרז</span>
+                    <span class="stage-progress">3 / 6</span>
+                  </div>
+                  <div class="proj-status">
+                    <span class="status-pill status-active"><span class="s-dot"></span>בתהליך</span>
+                  </div>
+                  <div class="proj-arrow">←</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts panel -->
+        <div class="alerts-panel">
+          <div class="alerts-header">
+            <div class="alerts-title">התראות</div>
+            <div class="alerts-count">3</div>
+          </div>
+
+          <div class="alert-item">
+            <div class="alert-proj">בית פרטי — רמת גן</div>
+            <div class="alert-desc">ממתין לחתימת לקוח על תוכנית קונסטרוקציה</div>
+            <div class="alert-time">48 שעות ללא תגובה</div>
+            <div class="alert-resolve">↗ פתח פרויקט</div>
+          </div>
+
+          <div class="alert-item">
+            <div class="alert-proj">מגדל משרדים — ת״א</div>
+            <div class="alert-desc">חשבונית ₪85,000 — לא שולמה (30 יום)</div>
+            <div class="alert-time">פג תאריך יעד</div>
+            <div class="alert-resolve">↗ פנה ללקוח</div>
+          </div>
+
+          <div class="alert-item">
+            <div class="alert-proj">וילה — כפר שמריהו</div>
+            <div class="alert-desc">שלב הושלם — חשבונית טרם נשלחה</div>
+            <div class="alert-time">3 ימים</div>
+            <div class="alert-resolve">↗ שלח חשבונית</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- end app -->
+  </div><!-- end browser -->
+</div>
+
+<script>
+const projects = {
+  p1: {
+    title: 'בית פרטי — רמת גן',
+    meta: 'בקשה להיתר · לקוח: משפחת לוי',
+    statusLine: '⚠ ממתין לאישורך — חתימה על תוכנית קונסטרוקציה',
+    statusType: 'urgent',
+    stages: [
+      { name: 'בדיקת התכנות', date: '14.1.2026', state: 'done' },
+      { name: 'חתימת חוזה', date: '20.1.2026', state: 'done' },
+      { name: 'הגשת תיק מידע', date: '3.2.2026', state: 'done' },
+      { name: 'בקשה להיתר', date: 'נדרש אישורך', state: 'blocked', action: 'חתום על תוכנית קונסטרוקציה' },
+      { name: 'החלטת ועדה', date: '', state: 'future' },
+      { name: 'קבלת היתר', date: '', state: 'future' },
+      { name: 'מסירה', date: '', state: 'future' },
+    ]
+  },
+  p2: {
+    title: 'משרדים — תל אביב מרכז',
+    meta: 'תכנון פנים · לקוח: חברת טק בע״מ',
+    statusLine: '→ בתהליך — עובדים על תכניות מכרז',
+    statusType: 'active',
+    stages: [
+      { name: 'בחירת חלופה', date: '10.12.2025', state: 'done' },
+      { name: 'אישור תקציב', date: '5.1.2026', state: 'done' },
+      { name: 'סיום תכניות מכרז', date: 'בתהליך', state: 'active' },
+      { name: 'סיום תכניות ביצוע', date: '', state: 'future' },
+      { name: 'בחירת חומרים', date: '', state: 'future' },
+      { name: 'מסירה', date: '', state: 'future' },
+    ]
+  },
+  p3: {
+    title: 'וילה — כפר שמריהו',
+    meta: 'היתר בנייה · לקוח: פרטי',
+    statusLine: '→ בתהליך — תיק מידע בהכנה',
+    statusType: 'active',
+    stages: [
+      { name: 'בדיקת התכנות', date: '2.3.2026', state: 'done' },
+      { name: 'הגשת תיק מידע', date: 'בתהליך', state: 'active' },
+      { name: 'בקשה להיתר', date: '', state: 'future' },
+      { name: 'החלטת ועדה', date: '', state: 'future' },
+      { name: 'קבלת היתר', date: '', state: 'future' },
+      { name: 'מסירה', date: '', state: 'future' },
+    ]
+  },
+  p4: {
+    title: 'מלון — ים המלח',
+    meta: 'עיצוב פנים · לקוח: קבוצת נדל״ן',
+    statusLine: '✓ הושלם — 15.2.2026',
+    statusType: 'done',
+    stages: [
+      { name: 'בחירת חלופה', date: '1.8.2025', state: 'done' },
+      { name: 'סיום תכניות מכרז', date: '15.9.2025', state: 'done' },
+      { name: 'סיום תכניות ביצוע', date: '10.11.2025', state: 'done' },
+      { name: 'בחירת חומרים', date: '1.1.2026', state: 'done' },
+      { name: 'ליווי ביצוע', date: '1.2.2026', state: 'done' },
+      { name: 'מסירה', date: '15.2.2026', state: 'done' },
+    ]
+  }
+};
+
+function openDrawer(id) {
+  const p = projects[id];
+  document.getElementById('drawerTitle').textContent = p.title;
+  document.getElementById('drawerMeta').textContent = p.meta;
+  const sl = document.getElementById('drawerStatusLine');
+  sl.textContent = p.statusLine;
+  sl.style.background = p.statusType === 'urgent' ? '#FFFBEB' : p.statusType === 'done' ? '#F0FDF4' : '#F0F9FF';
+  sl.style.borderColor = p.statusType === 'urgent' ? '#FDE68A' : p.statusType === 'done' ? '#BBF7D0' : '#BAE6FD';
+  sl.style.color = p.statusType === 'urgent' ? '#92400E' : p.statusType === 'done' ? '#166534' : '#0369A1';
+
+  const tl = document.getElementById('drawerTimeline');
+  tl.innerHTML = p.stages.map(s => `
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="t-dot ${s.state}">
+          ${s.state === 'done' ? '<svg width="8" height="8" viewBox="0 0 10 10" fill="white"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}
+        </div>
+        <div class="t-line"></div>
+      </div>
+      <div class="timeline-right">
+        <div class="t-name ${s.state === 'future' ? 'muted' : ''}">${s.name}</div>
+        ${s.date ? `<div class="t-date">${s.date}</div>` : ''}
+        ${s.action ? `<div class="t-action">⚠ ${s.action}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+}
+
+function setView(v) {
+  const btns = document.querySelectorAll('.vt-btn');
+  btns[0].classList.toggle('active', v === 'client');
+  btns[1].classList.toggle('active', v === 'admin');
+
+  const clientView = document.getElementById('clientView');
+  const adminView = document.getElementById('adminView');
+
+  if (v === 'admin') {
+    clientView.style.display = 'none';
+    adminView.style.display = 'flex';
+    document.getElementById('urlBar').textContent = 'app.heiterim.co/admin';
+    document.getElementById('userName').textContent = 'רות כהן';
+    document.getElementById('userRole').textContent = 'מנהל מערכת';
+    document.getElementById('alertBadge').style.display = 'flex';
+    document.getElementById('settingsNav').style.display = 'flex';
+  } else {
+    clientView.style.display = 'flex';
+    adminView.style.display = 'none';
+    document.getElementById('urlBar').textContent = 'app.heiterim.co/dashboard';
+    document.getElementById('userName').textContent = 'רות כהן';
+    document.getElementById('userRole').textContent = 'לקוח';
+    document.getElementById('alertBadge').style.display = 'none';
+    document.getElementById('settingsNav').style.display = 'none';
+  }
+  closeDrawer();
+}
+</script>
+</body>
+</html>

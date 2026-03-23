@@ -7,6 +7,7 @@ import { InlineEdit } from '@/components/inline-edit'
 import { Badge } from '@/components/ui/badge'
 import { TRACK_LABELS, STATUS_LABELS, STATUS_COLORS } from '@/lib/constants/tracks'
 import type { TrackValue } from '@/types/database'
+import { Breadcrumb } from '@/components/shared/Breadcrumb'
 
 interface FieldRowProps {
   label: string
@@ -42,6 +43,7 @@ export default function ClientDetailPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: 'דשבורד', href: '/' }, { label: 'לקוחות', href: '/clients' }, { label: client.name }]} />
       <div>
         <h1 className="text-2xl font-bold text-gray-900">{client.name}</h1>
         {client.company && (

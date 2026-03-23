@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { TrackValue, Client } from '@/types/database'
+import { Breadcrumb } from '@/components/shared/Breadcrumb'
 
 export default function NewProjectPage() {
   const router = useRouter()
@@ -75,6 +76,7 @@ export default function NewProjectPage() {
 
   return (
     <div className="max-w-2xl">
+      <Breadcrumb items={[{ label: 'דשבורד', href: '/' }, { label: 'פרויקטים', href: '/projects' }, { label: 'פרויקט חדש' }]} />
       <h1 className="mb-6 text-2xl font-bold text-gray-900">פרויקט חדש</h1>
 
       <form onSubmit={handleSubmit} className="space-y-5 rounded-lg border border-gray-200 bg-white p-6">

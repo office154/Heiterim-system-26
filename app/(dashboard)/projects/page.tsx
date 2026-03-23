@@ -10,6 +10,7 @@ import { useProjectStages, useUpdateStage } from '@/lib/hooks/use-stages'
 import { TRACK_LABELS } from '@/lib/constants/tracks'
 import { Input } from '@/components/ui/input'
 import type { ProjectStatus, TrackValue, ProjectWithClient } from '@/types/database'
+import { Breadcrumb } from '@/components/shared/Breadcrumb'
 
 function daysSince(dateStr: string | null): string | null {
   if (!dateStr) return null
@@ -356,6 +357,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="flex flex-col h-full space-y-5">
+      <Breadcrumb items={[{ label: 'דשבורד', href: '/' }, { label: 'פרויקטים' }]} />
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-[20px] font-black text-[#1a1a1a] tracking-tight">פרויקטים</h1>

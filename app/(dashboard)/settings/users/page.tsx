@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useCurrentRole } from '@/lib/hooks/use-profile'
 import { useProfiles, useUpdateProfile } from '@/lib/hooks/use-users'
 import type { Profile, UserRole } from '@/types/database'
+import { Breadcrumb } from '@/components/shared/Breadcrumb'
 
 function RoleSelect({ profile }: { profile: Profile }) {
   const { mutate: update } = useUpdateProfile()
@@ -68,6 +69,7 @@ export default function SettingsUsersPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: 'דשבורד', href: '/' }, { label: 'הגדרות' }, { label: 'ניהול משתמשים' }]} />
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-[20px] font-bold text-[#0F172A] tracking-tight">ניהול משתמשים</h1>

@@ -10,6 +10,7 @@ import {
   type ProjectProgress,
 } from '@/lib/hooks/use-dashboard'
 import { CreateClientModal } from '@/components/create-client-modal'
+import { Breadcrumb } from '@/components/shared/Breadcrumb'
 
 interface DashboardContentProps {
   role: 'admin' | 'employee'
@@ -373,7 +374,9 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
     <div className="flex -m-8 min-h-screen">
 
       {/* ── MAIN CONTENT (right in RTL) ── */}
-      <div className="flex-1 bg-[#f0f0f0] p-8 overflow-y-auto space-y-7 min-w-0">
+      <div className="flex-1 bg-[#f0f0f0] p-8 overflow-y-auto min-w-0">
+        <Breadcrumb items={[{ label: 'דשבורד' }]} />
+        <div className="space-y-7">
 
         {/* Greeting */}
         <div>
@@ -546,6 +549,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
             </div>
           )}
         </div>
+        </div>{/* end space-y-7 */}
       </div>
 
       {/* ── LIGHT SIDEBAR (left in RTL) ── */}
