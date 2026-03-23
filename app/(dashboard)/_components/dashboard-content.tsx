@@ -187,8 +187,8 @@ function AlertRow({
       href={href}
       className="flex items-center gap-4 px-4 py-3 bg-white hover:bg-[#f8f8f8] transition-colors group"
       style={{
-        borderRight: `3px solid ${borderColor}`,
         border: '1px solid #dddddd',
+        borderRight: `3px solid ${borderColor}`,
         borderRadius: '2px',
         boxShadow: '0 2px 0 #cccccc, 0 3px 10px rgba(0,0,0,0.05)',
       }}
@@ -403,7 +403,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
                 label='סה"כ גבייה'
                 value={loading ? '—' : fmt(data.totalPaid)}
                 subtitle={loading ? undefined : `מתוך ${fmt(data.totalContract)} חוזים`}
-                valueColor="text-[#1A7A6E]"
+                valueColor="text-[#2E7D5B]"
                 loading={loading}
                 href="/reports"
               />
@@ -429,7 +429,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
               <KpiCard
                 label="ממתינים לתשלום"
                 value={loading ? '—' : data.waitingPaymentCount}
-                valueColor="text-[#C0392B]"
+                valueColor="text-[#F59E0B]"
                 bg="bg-white"
                 borderColor="#dddddd"
                 loading={loading}
@@ -445,7 +445,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
               <KpiCard
                 label="ממתינים לחשבונית"
                 value={loading ? '—' : data.waitingInvoiceCount}
-                valueColor="text-[#D4820A]"
+                valueColor="text-[#C62828]"
                 bg="bg-white"
                 borderColor="#dddddd"
                 loading={loading}
@@ -487,24 +487,24 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
               <div className="space-y-2">
                 {/* לא חויב */}
                 {data.notInvoicedStages.map((s, i) => (
-                  <AlertRow key={`inv-${i}`} href={`/projects/${s.projectId}`} borderColor="#C0392B">
-                    <span className="text-[10px] font-bold text-[#C0392B] uppercase tracking-[0.08em] shrink-0">לא חויב</span>
+                  <AlertRow key={`inv-${i}`} href={`/projects/${s.projectId}`} borderColor="#C62828">
+                    <span className="text-[10px] font-bold text-[#C62828] uppercase tracking-[0.08em] shrink-0">לא חויב</span>
                     <span className="font-semibold text-[#1a1a1a] text-[13px] truncate">{s.projectTitle}</span>
                     <span className="text-[#666666] text-[13px] truncate">{s.stageName}</span>
-                    <span className="font-black text-[#C0392B] text-[13px] mr-auto shrink-0" dir="ltr">{fmt(s.amount)}</span>
+                    <span className="font-black text-[#C62828] text-[13px] mr-auto shrink-0" dir="ltr">{fmt(s.amount)}</span>
                   </AlertRow>
                 ))}
 
                 {/* לא שולם */}
                 {data.notPaidStages.map((s, i) => (
-                  <AlertRow key={`pay-${i}`} href={`/projects/${s.projectId}`} borderColor="#D4820A">
-                    <span className="text-[10px] font-bold text-[#D4820A] uppercase tracking-[0.08em] shrink-0">לא שולם</span>
+                  <AlertRow key={`pay-${i}`} href={`/projects/${s.projectId}`} borderColor="#F59E0B">
+                    <span className="text-[10px] font-bold text-[#F59E0B] uppercase tracking-[0.08em] shrink-0">לא שולם</span>
                     <span className="font-semibold text-[#1a1a1a] text-[13px] truncate">{s.projectTitle}</span>
                     <span className="text-[#666666] text-[13px] truncate">{s.stageName}</span>
                     {s.daysSince !== undefined && (
-                      <span className="text-[12px] text-[#D4820A] shrink-0">{s.daysSince} ימים</span>
+                      <span className="text-[12px] text-[#F59E0B] shrink-0">{s.daysSince} ימים</span>
                     )}
-                    <span className="font-black text-[#D4820A] text-[13px] mr-auto shrink-0" dir="ltr">{fmt(s.amount)}</span>
+                    <span className="font-black text-[#F59E0B] text-[13px] mr-auto shrink-0" dir="ltr">{fmt(s.amount)}</span>
                   </AlertRow>
                 ))}
 

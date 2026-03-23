@@ -18,6 +18,7 @@ const navItems: NavItem[] = [
   { label: 'דשבורד', href: '/' },
   { label: 'פרויקטים', href: '/projects' },
   { label: 'לקוחות', href: '/clients' },
+  { label: 'תשלומים', href: '/payments', adminOnly: true },
   { label: 'דוחות', href: '/reports', adminOnly: true },
   { label: 'הגדרות', href: '/settings/users', adminOnly: true },
 ]

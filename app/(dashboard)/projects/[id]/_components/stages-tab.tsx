@@ -289,7 +289,7 @@ function TrackSection({
                     return (
                       <td
                         key={stage.id}
-                        className={`px-3 py-2.5 text-center transition-colors ${highlight ? 'bg-[#fef3e0]' : ''}`}
+                        className={`px-3 py-2.5 text-center transition-colors ${highlight ? 'bg-[#FDEAEA]' : ''}`}
                       >
                         <div className="flex justify-center">
                           <Checkbox
@@ -313,7 +313,7 @@ function TrackSection({
                     return (
                       <td
                         key={stage.id}
-                        className={`px-3 py-2.5 text-center transition-colors ${highlight ? 'bg-[#fdf0ef]' : ''}`}
+                        className={`px-3 py-2.5 text-center transition-colors ${highlight ? 'bg-[#FEF3C7]' : ''}`}
                       >
                         <div className="flex justify-center">
                           <Checkbox
@@ -397,7 +397,7 @@ function TrackSection({
                       <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2 text-right text-xs font-semibold text-[#1a1a1a]">
                         סה״כ שולם
                       </td>
-                      <td colSpan={stages.length + 1} className="px-4 py-2 text-right text-sm font-black text-[#1A7A6E]">
+                      <td colSpan={stages.length + 1} className="px-4 py-2 text-right text-sm font-black text-[#2E7D5B]">
                         {formatPrice(totalPaid)}
                       </td>
                     </tr>
@@ -407,7 +407,7 @@ function TrackSection({
                       </td>
                       <td
                         colSpan={stages.length + 1}
-                        className={`px-4 py-2 text-right text-sm font-black ${balance > 0 ? 'text-[#D4820A]' : 'text-[#1A7A6E]'}`}
+                        className={`px-4 py-2 text-right text-sm font-black ${balance > 0 ? 'text-[#C62828]' : 'text-[#2E7D5B]'}`}
                       >
                         {formatPrice(balance)}
                       </td>

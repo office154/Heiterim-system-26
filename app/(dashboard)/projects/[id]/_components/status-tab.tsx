@@ -8,6 +8,7 @@ import { InlineEdit } from '@/components/inline-edit'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import type { RequirementStatus, ProjectContact, StatusRequirement } from '@/types/database'
+import { ProjectTimeline } from '@/components/features/projects/ProjectTimeline'
 
 interface StatusTabProps {
   projectId: string
@@ -392,152 +393,158 @@ export function StatusTab({ projectId }: StatusTabProps) {
   const todayFormatted = new Date().toLocaleDateString('he-IL')
 
   return (
-    <div className="space-y-6">
-      {/* Print-only header */}
-      <div className="hidden print:block print:mb-6">
-        <h1 className="text-xl font-bold">
-          דוח סטטוס — {project.title} — {todayFormatted}
-        </h1>
-        {project.location && <p className="text-sm text-[#666666]">{project.location}</p>}
-      </div>
+    <div dir="rtl" style={{ display: 'grid', gridTemplateColumns: '1fr 220px', gap: 16, alignItems: 'start' }}>
+      {/* ── Main content (right ~75%) ── */}
+      <div className="space-y-6">
+        {/* Print-only header */}
+        <div className="hidden print:block print:mb-6">
+          <h1 className="text-xl font-bold">
+            דוח סטטוס — {project.title} — {todayFormatted}
+          </h1>
+          {project.location && <p className="text-sm text-[#666666]">{project.location}</p>}
+        </div>
 
-      {/* PDF button */}
-      <div className="flex justify-end print:hidden">
-        <Button
-          variant="outline"
-          onClick={() => window.print()}
-          className="border-[#cccccc] text-[#666666] hover:bg-[#f0f0f0] rounded-[2px]"
+        {/* PDF button */}
+        <div className="flex justify-end print:hidden">
+          <Button
+            variant="outline"
+            onClick={() => window.print()}
+            className="border-[#cccccc] text-[#666666] hover:bg-[#f0f0f0] rounded-[2px]"
+          >
+            🖨️ הורד דוח PDF
+          </Button>
+        </div>
+
+        {/* Report header */}
+        <div
+          className="rounded-[2px] border border-[#dddddd] bg-white p-5"
+          style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)' }}
         >
-          🖨️ הורד דוח PDF
-        </Button>
-      </div>
-
-      {/* Report header */}
-      <div
-        className="rounded-[2px] border border-[#dddddd] bg-white p-5"
-        style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)' }}
-      >
-        <h2 className="mb-4 text-base font-semibold text-[#1a1a1a] print:hidden">פרטי דוח</h2>
-        <dl className="grid grid-cols-2 gap-x-8 gap-y-2">
-          <div className="flex items-center gap-2">
-            <dt className="text-sm font-medium text-[#666666] whitespace-nowrap">שם פרויקט:</dt>
-            <dd className="text-sm text-[#1a1a1a]">
-              <InlineEdit value={project.title} onSave={(v) => saveProjectField('title', v)} />
-            </dd>
-          </div>
-          <div className="flex items-center gap-2">
-            <dt className="text-sm font-medium text-[#666666] whitespace-nowrap">מיקום:</dt>
-            <dd className="text-sm text-[#1a1a1a]">
-              <InlineEdit value={project.location} onSave={(v) => saveProjectField('location', v)} emptyText="לחץ להוספה" />
-            </dd>
-          </div>
-          <div className="flex items-center gap-2">
-            <dt className="text-sm font-medium text-[#666666] whitespace-nowrap">מס׳ תיק מידע:</dt>
-            <dd className="text-sm text-[#1a1a1a]">
-              <InlineEdit value={project.info_file_number} onSave={(v) => saveProjectField('info_file_number', v)} emptyText="לחץ להוספה" />
-            </dd>
-          </div>
-          <div className="flex items-center gap-2">
-            <dt className="text-sm font-medium text-[#666666] whitespace-nowrap">מס׳ הגשה להיתר:</dt>
-            <dd className="text-sm text-[#1a1a1a]">
-              <InlineEdit value={project.permit_submission_number} onSave={(v) => saveProjectField('permit_submission_number', v)} emptyText="לחץ להוספה" />
-            </dd>
-          </div>
-          <div className="flex items-center gap-2">
-            <dt className="text-sm font-medium text-[#666666] whitespace-nowrap">תאריך עדכון:</dt>
-            <dd className="text-sm text-[#666666]">{todayFormatted}</dd>
-          </div>
-        </dl>
-      </div>
-
-      {/* Contacts table */}
-      <ContactsTable projectId={projectId} />
-
-      {/* Requirements sections */}
-      <div className="space-y-4">
-        <h2 className="text-base font-semibold text-[#1a1a1a] print:hidden">דרישות</h2>
-
-        {allSections.map((section, idx) => (
-          <RequirementsSection
-            key={section}
-            section={section}
-            requirements={(requirements ?? []).filter((r) => r.section === section)}
-            projectId={projectId}
-            sectionIndex={allSections.length > 1 ? idx + 1 : 0}
-          />
-        ))}
-
-        {allSections.length === 0 && (
-          <p className="py-4 text-center text-sm italic text-[#aaaaaa]">
-            אין דרישות עדיין — הוסף שלב כדי להתחיל
-          </p>
-        )}
-
-        {/* Add section controls */}
-        <div className="print:hidden">
-          {!addingSectionMode ? (
-            <Button variant="outline" size="sm" onClick={() => setAddingSectionMode(true)}>
-              + הוסף שלב
-            </Button>
-          ) : (
-            <div className="flex flex-wrap items-center gap-2 rounded-[2px] border border-dashed border-[#dddddd] p-3">
-              {availablePredefined.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => handleAddPredefined(s)}
-                  className="rounded-[2px] border border-[#dddddd] bg-white px-3 py-1 text-sm hover:bg-[#f0f0f0]"
-                >
-                  {s}
-                </button>
-              ))}
-
-              {!showCustomInput ? (
-                <button
-                  onClick={() => setShowCustomInput(true)}
-                  className="rounded-[2px] border border-[#1A7A6E] bg-[#E8F5F3] px-3 py-1 text-sm text-[#1A7A6E] hover:bg-[#a8d4d0]/30"
-                >
-                  + מותאם אישית
-                </button>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <input
-                    autoFocus
-                    type="text"
-                    value={customSectionInput}
-                    onChange={(e) => setCustomSectionInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleAddCustom()
-                      if (e.key === 'Escape') {
-                        setShowCustomInput(false)
-                        setCustomSectionInput('')
-                      }
-                    }}
-                    placeholder="שם השלב..."
-                    className="rounded-[2px] border border-[#1A7A6E] px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/20"
-                  />
-                  <button
-                    onClick={handleAddCustom}
-                    className="rounded-[2px] bg-[#1a1a1a] px-3 py-1 text-sm text-white hover:bg-[#333]"
-                  >
-                    הוסף
-                  </button>
-                </div>
-              )}
-
-              <button
-                onClick={() => {
-                  setAddingSectionMode(false)
-                  setShowCustomInput(false)
-                  setCustomSectionInput('')
-                }}
-                className="text-sm text-[#aaaaaa] hover:text-[#666666]"
-              >
-                ביטול
-              </button>
+          <h2 className="mb-4 text-base font-semibold text-[#1a1a1a] print:hidden">פרטי דוח</h2>
+          <dl className="grid grid-cols-2 gap-x-8 gap-y-2">
+            <div className="flex items-center gap-2">
+              <dt className="text-sm font-medium text-[#666666] whitespace-nowrap">שם פרויקט:</dt>
+              <dd className="text-sm text-[#1a1a1a]">
+                <InlineEdit value={project.title} onSave={(v) => saveProjectField('title', v)} />
+              </dd>
             </div>
+            <div className="flex items-center gap-2">
+              <dt className="text-sm font-medium text-[#666666] whitespace-nowrap">מיקום:</dt>
+              <dd className="text-sm text-[#1a1a1a]">
+                <InlineEdit value={project.location} onSave={(v) => saveProjectField('location', v)} emptyText="לחץ להוספה" />
+              </dd>
+            </div>
+            <div className="flex items-center gap-2">
+              <dt className="text-sm font-medium text-[#666666] whitespace-nowrap">מס׳ תיק מידע:</dt>
+              <dd className="text-sm text-[#1a1a1a]">
+                <InlineEdit value={project.info_file_number} onSave={(v) => saveProjectField('info_file_number', v)} emptyText="לחץ להוספה" />
+              </dd>
+            </div>
+            <div className="flex items-center gap-2">
+              <dt className="text-sm font-medium text-[#666666] whitespace-nowrap">מס׳ הגשה להיתר:</dt>
+              <dd className="text-sm text-[#1a1a1a]">
+                <InlineEdit value={project.permit_submission_number} onSave={(v) => saveProjectField('permit_submission_number', v)} emptyText="לחץ להוספה" />
+              </dd>
+            </div>
+            <div className="flex items-center gap-2">
+              <dt className="text-sm font-medium text-[#666666] whitespace-nowrap">תאריך עדכון:</dt>
+              <dd className="text-sm text-[#666666]">{todayFormatted}</dd>
+            </div>
+          </dl>
+        </div>
+
+        {/* Contacts table */}
+        <ContactsTable projectId={projectId} />
+
+        {/* Requirements sections */}
+        <div className="space-y-4">
+          <h2 className="text-base font-semibold text-[#1a1a1a] print:hidden">דרישות</h2>
+
+          {allSections.map((section, idx) => (
+            <RequirementsSection
+              key={section}
+              section={section}
+              requirements={(requirements ?? []).filter((r) => r.section === section)}
+              projectId={projectId}
+              sectionIndex={allSections.length > 1 ? idx + 1 : 0}
+            />
+          ))}
+
+          {allSections.length === 0 && (
+            <p className="py-4 text-center text-sm italic text-[#aaaaaa]">
+              אין דרישות עדיין — הוסף שלב כדי להתחיל
+            </p>
           )}
+
+          {/* Add section controls */}
+          <div className="print:hidden">
+            {!addingSectionMode ? (
+              <Button variant="outline" size="sm" onClick={() => setAddingSectionMode(true)}>
+                + הוסף שלב
+              </Button>
+            ) : (
+              <div className="flex flex-wrap items-center gap-2 rounded-[2px] border border-dashed border-[#dddddd] p-3">
+                {availablePredefined.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => handleAddPredefined(s)}
+                    className="rounded-[2px] border border-[#dddddd] bg-white px-3 py-1 text-sm hover:bg-[#f0f0f0]"
+                  >
+                    {s}
+                  </button>
+                ))}
+
+                {!showCustomInput ? (
+                  <button
+                    onClick={() => setShowCustomInput(true)}
+                    className="rounded-[2px] border border-[#1A7A6E] bg-[#E8F5F3] px-3 py-1 text-sm text-[#1A7A6E] hover:bg-[#a8d4d0]/30"
+                  >
+                    + מותאם אישית
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <input
+                      autoFocus
+                      type="text"
+                      value={customSectionInput}
+                      onChange={(e) => setCustomSectionInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleAddCustom()
+                        if (e.key === 'Escape') {
+                          setShowCustomInput(false)
+                          setCustomSectionInput('')
+                        }
+                      }}
+                      placeholder="שם השלב..."
+                      className="rounded-[2px] border border-[#1A7A6E] px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/20"
+                    />
+                    <button
+                      onClick={handleAddCustom}
+                      className="rounded-[2px] bg-[#1a1a1a] px-3 py-1 text-sm text-white hover:bg-[#333]"
+                    >
+                      הוסף
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => {
+                    setAddingSectionMode(false)
+                    setShowCustomInput(false)
+                    setCustomSectionInput('')
+                  }}
+                  className="text-sm text-[#aaaaaa] hover:text-[#666666]"
+                >
+                  ביטול
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* ── Timeline sidebar (left ~25%) ── */}
+      <ProjectTimeline projectId={projectId} />
     </div>
   )
 }
