@@ -11,6 +11,7 @@ import { createClient } from '@/lib/supabase/client'
 interface NavItem {
   label: string
   href: string
+  activePrefix?: string
   adminOnly?: boolean
 }
 
@@ -20,7 +21,7 @@ const navItems: NavItem[] = [
   { label: 'לקוחות', href: '/clients' },
   { label: 'תשלומים', href: '/payments', adminOnly: true },
   { label: 'דוחות', href: '/reports', adminOnly: true },
-  { label: 'הגדרות', href: '/settings/users', adminOnly: true },
+  { label: 'הגדרות', href: '/settings/users', activePrefix: '/settings', adminOnly: true },
 ]
 
 interface SidebarProps {
@@ -73,7 +74,10 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
       {/* Nav */}
       <nav className="flex-1 px-3 py-3 space-y-0.5">
         {visibleItems.map((item) => {
-          const isActive = pathname === item.href
+          const prefix = item.activePrefix ?? item.href
+          const isActive = prefix === '/'
+            ? pathname === '/'
+            : pathname.startsWith(prefix)
           return (
             <Link
               key={item.href}

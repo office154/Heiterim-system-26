@@ -39,10 +39,11 @@ export interface PaymentsSummary {
 
 export type PaymentStatus = 'paid' | 'invoiced' | 'required' | 'pending'
 
-export function getPaymentStatus(stage: Pick<PaymentStage, 'paid' | 'invoice_sent' | 'completed'>): PaymentStatus {
-  if (stage.paid)                              return 'paid'
-  if (stage.invoice_sent && !stage.paid)       return 'invoiced'
-  if (stage.completed && !stage.invoice_sent)  return 'required'
+export function getPaymentStatus(stage: Pick<PaymentStage, 'paid' | 'invoice_sent' | 'completed' | 'price'>): PaymentStatus {
+  if (stage.price <= 0)                                                         return 'pending'
+  if (stage.paid)                                                               return 'paid'
+  if (stage.completed && stage.invoice_sent && !stage.paid)                     return 'invoiced'
+  if (stage.completed && !stage.invoice_sent)                                   return 'required'
   return 'pending'
 }
 
@@ -93,9 +94,9 @@ export function usePayments() {
         const totalContract = stages.reduce((s, st) => s + (st.price || 0), 0)
         const totalPaid     = stages.filter(st => st.paid)
                                     .reduce((s, st) => s + (st.price || 0), 0)
-        const totalInvoiced = stages.filter(st => st.invoice_sent && !st.paid)
+        const totalInvoiced = stages.filter(st => st.completed && st.price > 0 && st.invoice_sent && !st.paid)
                                     .reduce((s, st) => s + (st.price || 0), 0)
-        const totalRequired = stages.filter(st => st.completed && !st.invoice_sent)
+        const totalRequired = stages.filter(st => st.completed && st.price > 0 && !st.invoice_sent)
                                     .reduce((s, st) => s + (st.price || 0), 0)
 
         summaryContract += totalContract

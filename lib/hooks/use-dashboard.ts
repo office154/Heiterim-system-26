@@ -173,7 +173,8 @@ export function useDashboardData() {
           amount: stage.price ?? 0,
         }
 
-        if (stage.invoice_sent && !stage.paid) {
+        // Orange alert: completed + price > 0 + invoice sent + not paid
+        if (stage.completed && (stage.price ?? 0) > 0 && stage.invoice_sent && !stage.paid) {
           totalPendingCollection += stage.price ?? 0
           waitingPaymentProjectIds.add(stage.project_id)
           const daysSince = stage.completed_at
@@ -183,7 +184,8 @@ export function useDashboardData() {
           notPaidStages.push({ ...item, daysSince })
         }
 
-        if (stage.completed && !stage.invoice_sent) {
+        // Red alert: completed + price > 0 + invoice NOT sent
+        if (stage.completed && (stage.price ?? 0) > 0 && !stage.invoice_sent) {
           waitingInvoiceProjectIds.add(stage.project_id)
           waitingInvoiceItems.push(item)
           notInvoicedStages.push(item)
