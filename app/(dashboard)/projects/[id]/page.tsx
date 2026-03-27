@@ -65,7 +65,7 @@ export default function ProjectDetailPage() {
         </TabsList>
 
         <TabsContent value="general" className="mt-4">
-          <GeneralInfoTab project={project} />
+          <GeneralInfoTab project={project} onNavigate={setActiveTab} />
         </TabsContent>
 
         <TabsContent value="stages" className="mt-4">

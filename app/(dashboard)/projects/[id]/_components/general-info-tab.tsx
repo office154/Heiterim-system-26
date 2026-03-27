@@ -5,10 +5,12 @@ import { useUpdateClient } from '@/lib/hooks/use-clients'
 import { InlineEdit } from '@/components/inline-edit'
 import { Badge } from '@/components/ui/badge'
 import { TRACK_LABELS, STATUS_LABELS, STATUS_COLORS } from '@/lib/constants/tracks'
+import { ProjectOverview } from './project-overview'
 import type { ProjectWithClient, TrackValue } from '@/types/database'
 
 interface GeneralInfoTabProps {
   project: ProjectWithClient
+  onNavigate: (tab: string) => void
 }
 
 interface FieldRowProps {
@@ -25,7 +27,7 @@ function FieldRow({ label, children }: FieldRowProps) {
   )
 }
 
-export function GeneralInfoTab({ project }: GeneralInfoTabProps) {
+export function GeneralInfoTab({ project, onNavigate }: GeneralInfoTabProps) {
   const updateProject = useUpdateProject()
   const updateClient = useUpdateClient()
 
@@ -39,6 +41,8 @@ export function GeneralInfoTab({ project }: GeneralInfoTabProps) {
   }
 
   return (
+    <div className="space-y-6">
+      <ProjectOverview projectId={project.id} onNavigate={onNavigate} />
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       {/* Project Info */}
       <div
@@ -188,6 +192,7 @@ export function GeneralInfoTab({ project }: GeneralInfoTabProps) {
           </dl>
         )}
       </div>
+    </div>
     </div>
   )
 }
