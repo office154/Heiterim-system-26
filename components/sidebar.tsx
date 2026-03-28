@@ -66,10 +66,11 @@ function ProjectsSubNav({ pathname }: { pathname: string }) {
           פרויקטים
         </Link>
         <button
-          className="px-2 py-2 text-[10px] text-[#aaa] hover:text-[#666] select-none"
+          className="px-2 py-2 text-[10px] text-[#aaa] hover:text-[#666] select-none transition-transform"
           tabIndex={-1}
+          style={{ transform: open ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
         >
-          {open ? '▲' : '▼'}
+          ▶
         </button>
       </div>
 
