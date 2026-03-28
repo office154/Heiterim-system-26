@@ -79,6 +79,18 @@ function TrashIcon() {
 
 function ReqRow({ req, projectId }: { req: StatusRequirement; projectId: string }) {
   const deleteReq = useDeleteRequirement()
+  const [confirm, setConfirm] = useState(false)
+
+  async function handleDelete() {
+    try {
+      await deleteReq.mutateAsync({ id: req.id, projectId })
+    } catch (err) {
+      console.error('Delete failed:', err)
+      alert('שגיאה במחיקה. נסה שוב.')
+    }
+    setConfirm(false)
+  }
+
   return (
     <div className="flex items-center justify-between py-1.5 border-b border-[#f5f5f5] last:border-0">
       <span className="text-[11px] text-[#333] truncate ml-2">
@@ -87,14 +99,31 @@ function ReqRow({ req, projectId }: { req: StatusRequirement; projectId: string 
       </span>
       <div className="flex items-center gap-2 shrink-0">
         <InlineStatusSelect req={req} projectId={projectId} />
-        <button
-          onClick={() => deleteReq.mutateAsync({ id: req.id, projectId })}
-          disabled={deleteReq.isPending}
-          className="text-[#ccc] hover:text-[#C0392B] hover:bg-[#fdf0ef] rounded-[2px] p-0.5 transition-colors disabled:opacity-40"
-          title="מחק שורה"
-        >
-          <TrashIcon />
-        </button>
+        {confirm ? (
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handleDelete}
+              disabled={deleteReq.isPending}
+              className="rounded-[2px] bg-[#C0392B] px-1.5 py-0.5 text-[9px] font-bold text-white hover:bg-[#a93226] disabled:opacity-50"
+            >
+              {deleteReq.isPending ? '...' : 'מחק'}
+            </button>
+            <button
+              onClick={() => setConfirm(false)}
+              className="rounded-[2px] px-1.5 py-0.5 text-[9px] text-[#888] hover:text-[#333]"
+            >
+              ביטול
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setConfirm(true)}
+            className="text-[#ccc] hover:text-[#C0392B] hover:bg-[#fdf0ef] rounded-[2px] p-0.5 transition-colors"
+            title="מחק שורה"
+          >
+            <TrashIcon />
+          </button>
+        )}
       </div>
     </div>
   )

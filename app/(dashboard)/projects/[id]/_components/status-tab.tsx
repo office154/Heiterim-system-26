@@ -211,6 +211,100 @@ function ContactsTable({ projectId }: { projectId: string }) {
   )
 }
 
+function TrashIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6l-1 14H6L5 6" />
+      <path d="M10 11v6M14 11v6" />
+      <path d="M9 6V4h6v2" />
+    </svg>
+  )
+}
+
+function ReqTableRow({
+  req, idx, sectionIndex, projectId, onSave, onStatusChange, onDelete, isDeleting,
+}: {
+  req: StatusRequirement
+  idx: number
+  sectionIndex: number
+  projectId: string
+  onSave: (req: StatusRequirement, field: string, value: string | boolean | null) => Promise<void>
+  onStatusChange: (req: StatusRequirement, status: RequirementStatus, date: string) => Promise<void>
+  onDelete: () => Promise<void>
+  isDeleting: boolean
+}) {
+  const [confirm, setConfirm] = useState(false)
+
+  return (
+    <tr className="hover:bg-[#f8f8f8]">
+      <td className="px-3 py-1.5 text-center text-xs text-[#aaaaaa]">
+        {sectionIndex > 0 ? `${sectionIndex}.${idx + 1}` : idx + 1}
+      </td>
+      <td className="px-3 py-1.5 text-center">
+        <div className="flex justify-center">
+          <Checkbox
+            checked={req.uploaded}
+            onCheckedChange={(v) => onSave(req, 'uploaded', !!v)}
+          />
+        </div>
+      </td>
+      <td className="px-3 py-1.5">
+        <RequirementInput
+          value={req.requirement}
+          onSave={(v) => onSave(req, 'requirement', v)}
+        />
+      </td>
+      <td className="px-3 py-1.5 text-center">
+        <StatusCell
+          value={req.status}
+          onSave={(status, date) => onStatusChange(req, status, date)}
+        />
+      </td>
+      <td className="px-3 py-1.5 text-center">
+        <DateCell
+          value={req.status_date}
+          onSave={(v) => onSave(req, 'status_date', v)}
+        />
+      </td>
+      <td className="px-3 py-1.5">
+        <InlineEdit
+          value={req.notes}
+          onSave={(v) => onSave(req, 'notes', v)}
+          emptyText="—"
+        />
+      </td>
+      <td className="print:hidden px-3 py-1.5">
+        {confirm ? (
+          <div className="flex items-center gap-1">
+            <button
+              onClick={onDelete}
+              disabled={isDeleting}
+              className="rounded-[2px] bg-[#C0392B] px-1.5 py-0.5 text-[9px] font-bold text-white hover:bg-[#a93226] disabled:opacity-50"
+            >
+              {isDeleting ? '...' : 'מחק'}
+            </button>
+            <button
+              onClick={() => setConfirm(false)}
+              className="rounded-[2px] px-1.5 py-0.5 text-[9px] text-[#888] hover:text-[#333]"
+            >
+              ביטול
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setConfirm(true)}
+            className="text-[#ccc] hover:text-[#C0392B] hover:bg-[#fdf0ef] rounded-[2px] p-0.5 transition-colors"
+            title="מחק שורה"
+          >
+            <TrashIcon />
+          </button>
+        )}
+      </td>
+    </tr>
+  )
+}
+
 // Requirements section
 function RequirementsSection({
   section,
@@ -268,59 +362,24 @@ function RequirementsSection({
         </thead>
         <tbody className="divide-y divide-[#f4f4f4]">
           {requirements.map((req, idx) => (
-            <tr key={req.id} className="group hover:bg-[#f8f8f8]">
-              <td className="px-3 py-1.5 text-center text-xs text-[#aaaaaa]">
-                {sectionIndex > 0 ? `${sectionIndex}.${idx + 1}` : idx + 1}
-              </td>
-              <td className="px-3 py-1.5 text-center">
-                <div className="flex justify-center">
-                  <Checkbox
-                    checked={req.uploaded}
-                    onCheckedChange={(v) => saveReq(req, 'uploaded', !!v)}
-                  />
-                </div>
-              </td>
-              <td className="px-3 py-1.5">
-                <RequirementInput
-                  value={req.requirement}
-                  onSave={(v) => saveReq(req, 'requirement', v)}
-                />
-              </td>
-              <td className="px-3 py-1.5 text-center">
-                <StatusCell
-                  value={req.status}
-                  onSave={(status, date) => handleStatusChange(req, status, date)}
-                />
-              </td>
-              <td className="px-3 py-1.5 text-center">
-                <DateCell
-                  value={req.status_date}
-                  onSave={(v) => saveReq(req, 'status_date', v)}
-                />
-              </td>
-              <td className="px-3 py-1.5">
-                <InlineEdit
-                  value={req.notes}
-                  onSave={(v) => saveReq(req, 'notes', v)}
-                  emptyText="—"
-                />
-              </td>
-              <td className="print:hidden px-3 py-1.5">
-                <button
-                  onClick={() => deleteReq.mutateAsync({ id: req.id, projectId })}
-                  disabled={deleteReq.isPending}
-                  className="text-[#ccc] hover:text-[#C0392B] hover:bg-[#fdf0ef] rounded-[2px] p-0.5 transition-colors disabled:opacity-40"
-                  title="מחק שורה"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6l-1 14H6L5 6" />
-                    <path d="M10 11v6M14 11v6" />
-                    <path d="M9 6V4h6v2" />
-                  </svg>
-                </button>
-              </td>
-            </tr>
+            <ReqTableRow
+              key={req.id}
+              req={req}
+              idx={idx}
+              sectionIndex={sectionIndex}
+              projectId={projectId}
+              onSave={saveReq}
+              onStatusChange={handleStatusChange}
+              onDelete={async () => {
+                try {
+                  await deleteReq.mutateAsync({ id: req.id, projectId })
+                } catch (err) {
+                  console.error('Delete failed:', err)
+                  alert('שגיאה במחיקה. נסה שוב.')
+                }
+              }}
+              isDeleting={deleteReq.isPending}
+            />
           ))}
         </tbody>
       </table>
