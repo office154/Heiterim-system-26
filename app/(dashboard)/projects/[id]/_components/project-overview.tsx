@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useProjectStages } from '@/lib/hooks/use-stages'
-import { useStatusRequirements, useUpdateRequirement, useCreateRequirement } from '@/lib/hooks/use-requirements'
+import { useStatusRequirements, useUpdateRequirement, useCreateRequirement, useDeleteRequirement } from '@/lib/hooks/use-requirements'
 import { useProjectFiles, getSignedUrl } from '@/lib/hooks/use-files'
 import { useCurrentRole } from '@/lib/hooks/use-profile'
 import type { RequirementStatus, StatusRequirement } from '@/types/database'
@@ -63,6 +63,28 @@ function InlineStatusSelect({ req, projectId }: { req: StatusRequirement; projec
         <option key={s} value={s}>{s}</option>
       ))}
     </select>
+  )
+}
+
+function ReqRow({ req, projectId }: { req: StatusRequirement; projectId: string }) {
+  const deleteReq = useDeleteRequirement()
+  return (
+    <div className="group flex items-center justify-between py-1.5 border-b border-[#f5f5f5] last:border-0">
+      <span className="text-[11px] text-[#333] truncate ml-2">
+        <span className="text-[9px] text-[#bbb] font-medium">{req.section} / </span>
+        {req.requirement}
+      </span>
+      <div className="flex items-center gap-1.5 shrink-0">
+        <InlineStatusSelect req={req} projectId={projectId} />
+        <button
+          onClick={() => deleteReq.mutate({ id: req.id, projectId })}
+          className="opacity-0 group-hover:opacity-100 text-[#ccc] hover:text-[#C0392B] transition-opacity text-[11px] leading-none"
+          title="מחק"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -242,16 +264,7 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
               <p className="text-[11px] text-[#aaa] italic py-2">אין דרישות</p>
             ) : (
               previewReqs.map((req) => (
-                <div
-                  key={req.id}
-                  className="flex items-center justify-between py-1.5 border-b border-[#f5f5f5] last:border-0"
-                >
-                  <span className="text-[11px] text-[#333] truncate ml-2">
-                    <span className="text-[9px] text-[#bbb] font-medium">{req.section} / </span>
-                    {req.requirement}
-                  </span>
-                  <InlineStatusSelect req={req} projectId={projectId} />
-                </div>
+                <ReqRow key={req.id} req={req} projectId={projectId} />
               ))
             )}
             {requirements.length > 4 && (
