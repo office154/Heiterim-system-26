@@ -66,22 +66,34 @@ function InlineStatusSelect({ req, projectId }: { req: StatusRequirement; projec
   )
 }
 
+function TrashIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6l-1 14H6L5 6" />
+      <path d="M10 11v6M14 11v6" />
+      <path d="M9 6V4h6v2" />
+    </svg>
+  )
+}
+
 function ReqRow({ req, projectId }: { req: StatusRequirement; projectId: string }) {
   const deleteReq = useDeleteRequirement()
   return (
-    <div className="group flex items-center justify-between py-1.5 border-b border-[#f5f5f5] last:border-0">
+    <div className="flex items-center justify-between py-1.5 border-b border-[#f5f5f5] last:border-0">
       <span className="text-[11px] text-[#333] truncate ml-2">
         <span className="text-[9px] text-[#bbb] font-medium">{req.section} / </span>
         {req.requirement}
       </span>
-      <div className="flex items-center gap-1.5 shrink-0">
+      <div className="flex items-center gap-2 shrink-0">
         <InlineStatusSelect req={req} projectId={projectId} />
         <button
-          onClick={() => deleteReq.mutate({ id: req.id, projectId })}
-          className="opacity-0 group-hover:opacity-100 text-[#ccc] hover:text-[#C0392B] transition-opacity text-[11px] leading-none"
-          title="מחק"
+          onClick={() => deleteReq.mutateAsync({ id: req.id, projectId })}
+          disabled={deleteReq.isPending}
+          className="text-[#ccc] hover:text-[#C0392B] hover:bg-[#fdf0ef] rounded-[2px] p-0.5 transition-colors disabled:opacity-40"
+          title="מחק שורה"
         >
-          ✕
+          <TrashIcon />
         </button>
       </div>
     </div>

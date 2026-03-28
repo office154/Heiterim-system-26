@@ -307,10 +307,17 @@ function RequirementsSection({
               </td>
               <td className="print:hidden px-3 py-1.5">
                 <button
-                  onClick={() => deleteReq.mutate({ id: req.id, projectId })}
-                  className="hidden text-[#aaaaaa] hover:text-[#C0392B] group-hover:block"
+                  onClick={() => deleteReq.mutateAsync({ id: req.id, projectId })}
+                  disabled={deleteReq.isPending}
+                  className="text-[#ccc] hover:text-[#C0392B] hover:bg-[#fdf0ef] rounded-[2px] p-0.5 transition-colors disabled:opacity-40"
+                  title="מחק שורה"
                 >
-                  ✕
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14H6L5 6" />
+                    <path d="M10 11v6M14 11v6" />
+                    <path d="M9 6V4h6v2" />
+                  </svg>
                 </button>
               </td>
             </tr>
