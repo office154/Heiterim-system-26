@@ -4,10 +4,11 @@ import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useProject, useUpdateProject } from '@/lib/hooks/use-projects'
 import { useProjectContacts, useCreateContact, useUpdateContact, useDeleteContact } from '@/lib/hooks/use-contacts'
 import { useStatusRequirements, useCreateRequirement, useUpdateRequirement, useDeleteRequirement } from '@/lib/hooks/use-requirements'
+import { useRequirementSteps, useCreateStep, useUpdateStep, useDeleteStep } from '@/lib/hooks/use-requirement-steps'
 import { InlineEdit } from '@/components/inline-edit'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
-import type { RequirementStatus, ProjectContact, StatusRequirement } from '@/types/database'
+import type { RequirementStatus, ProjectContact, StatusRequirement, RequirementStep } from '@/types/database'
 import { ProjectTimeline } from '@/components/features/projects/ProjectTimeline'
 
 interface StatusTabProps {
@@ -222,6 +223,173 @@ function TrashIcon() {
   )
 }
 
+// Step rows for a single requirement
+function StepRows({ requirementId, projectId }: { requirementId: string; projectId: string }) {
+  const { data: steps } = useRequirementSteps(requirementId)
+  const createStep = useCreateStep()
+  const updateStep = useUpdateStep()
+  const deleteStep = useDeleteStep()
+
+  const [addingStep, setAddingStep] = useState(false)
+  const [newStepDetail, setNewStepDetail] = useState('')
+  const addInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (addingStep) addInputRef.current?.focus()
+  }, [addingStep])
+
+  async function handleConfirmAdd() {
+    const detail = newStepDetail.trim()
+    if (!detail) return
+    const maxIndex = steps && steps.length > 0
+      ? Math.max(...steps.map((s) => s.order_index))
+      : 0
+    await createStep.mutateAsync({
+      requirement_id: requirementId,
+      project_id: projectId,
+      detail,
+      order_index: maxIndex + 1,
+      step_date: null,
+    })
+    setNewStepDetail('')
+    setAddingStep(false)
+  }
+
+  return (
+    <>
+      {(steps ?? []).map((step) => (
+        <StepRow
+          key={step.id}
+          step={step}
+          onToggleDone={() =>
+            updateStep.mutate({ id: step.id, requirementId, done: !step.done })
+          }
+          onSaveDetail={async (detail) => {
+            if (detail !== step.detail) {
+              await updateStep.mutateAsync({ id: step.id, requirementId, detail })
+            }
+          }}
+          onDelete={() => deleteStep.mutate({ id: step.id, requirementId })}
+        />
+      ))}
+
+      {/* Add step row */}
+      <tr className="bg-[#f5fdf8] border-b border-[#f0f9f4]">
+        <td className="print:hidden" />
+        <td />
+        <td />
+        <td colSpan={4} className="px-3 py-1.5">
+          {addingStep ? (
+            <div className="flex items-center gap-2">
+              <input
+                ref={addInputRef}
+                type="text"
+                value={newStepDetail}
+                onChange={(e) => setNewStepDetail(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleConfirmAdd()
+                  if (e.key === 'Escape') { setAddingStep(false); setNewStepDetail('') }
+                }}
+                placeholder="פירוט שלב..."
+                className="flex-1 rounded-[2px] border border-[#2E7D5B] bg-white px-2 py-1 text-[12px] text-[#1a1a1a] placeholder:text-[#aaaaaa] focus:outline-none focus:ring-2 focus:ring-[#2E7D5B]/20"
+              />
+              <button
+                onClick={handleConfirmAdd}
+                disabled={createStep.isPending}
+                className="rounded-[2px] bg-[#2E7D5B] px-2 py-1 text-[11px] font-bold text-white hover:bg-[#1e5a3f] disabled:opacity-50"
+              >
+                הוסף
+              </button>
+              <button
+                onClick={() => { setAddingStep(false); setNewStepDetail('') }}
+                className="text-[11px] text-[#aaaaaa] hover:text-[#666]"
+              >
+                ביטול
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setAddingStep(true)}
+              className="text-[11px] text-[#2E7D5B] hover:underline"
+            >
+              + הוסף שלב מעקב
+            </button>
+          )}
+        </td>
+        <td className="print:hidden" />
+      </tr>
+    </>
+  )
+}
+
+function StepRow({
+  step,
+  onToggleDone,
+  onSaveDetail,
+  onDelete,
+}: {
+  step: RequirementStep
+  onToggleDone: () => void
+  onSaveDetail: (detail: string) => Promise<void>
+  onDelete: () => void
+}) {
+  const [localDetail, setLocalDetail] = useState(step.detail)
+  useEffect(() => { setLocalDetail(step.detail) }, [step.detail])
+
+  return (
+    <tr className="bg-[#f5fdf8] border-b border-[#f0f9f4] group">
+      {/* toggle column placeholder */}
+      <td className="print:hidden" />
+      {/* # column placeholder */}
+      <td />
+      {/* uploaded column placeholder */}
+      <td />
+      {/* detail with circle check */}
+      <td colSpan={4} className="px-3 py-1.5">
+        <div className="flex items-center gap-2 pr-4">
+          {/* circle check */}
+          <button
+            onClick={onToggleDone}
+            className="flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
+            style={{
+              backgroundColor: step.done ? '#2E7D5B' : 'white',
+              borderColor: step.done ? '#2E7D5B' : '#ccc',
+              color: step.done ? 'white' : 'transparent',
+            }}
+            title={step.done ? 'סמן כלא בוצע' : 'סמן כבוצע'}
+          >
+            {step.done && (
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="2 6 5 9 10 3" />
+              </svg>
+            )}
+          </button>
+          {/* detail input */}
+          <input
+            type="text"
+            value={localDetail}
+            onChange={(e) => setLocalDetail(e.target.value)}
+            onBlur={() => onSaveDetail(localDetail)}
+            onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
+            className="flex-1 rounded-[2px] border border-transparent bg-transparent px-1 py-0.5 text-[12px] text-[#444] focus:border-[#2E7D5B] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D5B]/20"
+            style={{ textDecoration: step.done ? 'line-through' : 'none', color: step.done ? '#aaa' : '#444' }}
+          />
+        </div>
+      </td>
+      {/* delete */}
+      <td className="print:hidden px-2 py-1.5">
+        <button
+          onClick={onDelete}
+          className="hidden text-[#ccc] hover:text-[#C0392B] group-hover:block rounded-[2px] p-0.5 transition-colors"
+          title="מחק שלב"
+        >
+          <TrashIcon />
+        </button>
+      </td>
+    </tr>
+  )
+}
+
 function ReqTableRow({
   req, idx, sectionIndex, projectId, onSave, onStatusChange, onDelete, isDeleting,
 }: {
@@ -235,73 +403,86 @@ function ReqTableRow({
   isDeleting: boolean
 }) {
   const [confirm, setConfirm] = useState(false)
+  const [expanded, setExpanded] = useState(false)
 
   return (
-    <tr className="hover:bg-[#f8f8f8]">
-      <td className="px-3 py-1.5 text-center text-xs text-[#aaaaaa]">
-        {sectionIndex > 0 ? `${sectionIndex}.${idx + 1}` : idx + 1}
-      </td>
-      <td className="px-3 py-1.5 text-center">
-        <div className="flex justify-center">
-          <Checkbox
-            checked={req.uploaded}
-            onCheckedChange={(v) => onSave(req, 'uploaded', !!v)}
-          />
-        </div>
-      </td>
-      <td className="px-3 py-1.5">
-        <RequirementInput
-          value={req.requirement}
-          onSave={(v) => onSave(req, 'requirement', v)}
-        />
-      </td>
-      <td className="px-3 py-1.5 text-center">
-        <StatusCell
-          value={req.status}
-          onSave={(status, date) => onStatusChange(req, status, date)}
-        />
-      </td>
-      <td className="px-3 py-1.5 text-center">
-        <DateCell
-          value={req.status_date}
-          onSave={(v) => onSave(req, 'status_date', v)}
-        />
-      </td>
-      <td className="px-3 py-1.5">
-        <InlineEdit
-          value={req.notes}
-          onSave={(v) => onSave(req, 'notes', v)}
-          emptyText="—"
-        />
-      </td>
-      <td className="print:hidden px-3 py-1.5">
-        {confirm ? (
-          <div className="flex items-center gap-1">
-            <button
-              onClick={onDelete}
-              disabled={isDeleting}
-              className="rounded-[2px] bg-[#C0392B] px-1.5 py-0.5 text-[9px] font-bold text-white hover:bg-[#a93226] disabled:opacity-50"
-            >
-              {isDeleting ? '...' : 'מחק'}
-            </button>
-            <button
-              onClick={() => setConfirm(false)}
-              className="rounded-[2px] px-1.5 py-0.5 text-[9px] text-[#888] hover:text-[#333]"
-            >
-              ביטול
-            </button>
-          </div>
-        ) : (
+    <>
+      <tr className="hover:bg-[#f8f8f8]">
+        <td className="px-2 py-1.5 text-center print:hidden">
           <button
-            onClick={() => setConfirm(true)}
-            className="text-[#ccc] hover:text-[#C0392B] hover:bg-[#fdf0ef] rounded-[2px] p-0.5 transition-colors"
-            title="מחק שורה"
+            onClick={() => setExpanded((v) => !v)}
+            className="text-[10px] text-[#ccc] hover:text-[#888] inline-block"
+            style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.15s' }}
           >
-            <TrashIcon />
+            ▶
           </button>
-        )}
-      </td>
-    </tr>
+        </td>
+        <td className="px-3 py-1.5 text-center text-xs text-[#aaaaaa]">
+          {sectionIndex > 0 ? `${sectionIndex}.${idx + 1}` : idx + 1}
+        </td>
+        <td className="px-3 py-1.5 text-center">
+          <div className="flex justify-center">
+            <Checkbox
+              checked={req.uploaded}
+              onCheckedChange={(v) => onSave(req, 'uploaded', !!v)}
+            />
+          </div>
+        </td>
+        <td className="px-3 py-1.5">
+          <RequirementInput
+            value={req.requirement}
+            onSave={(v) => onSave(req, 'requirement', v)}
+          />
+        </td>
+        <td className="px-3 py-1.5 text-center">
+          <StatusCell
+            value={req.status}
+            onSave={(status, date) => onStatusChange(req, status, date)}
+          />
+        </td>
+        <td className="px-3 py-1.5 text-center">
+          <DateCell
+            value={req.status_date}
+            onSave={(v) => onSave(req, 'status_date', v)}
+          />
+        </td>
+        <td className="px-3 py-1.5">
+          <InlineEdit
+            value={req.notes}
+            onSave={(v) => onSave(req, 'notes', v)}
+            emptyText="—"
+          />
+        </td>
+        <td className="print:hidden px-3 py-1.5">
+          {confirm ? (
+            <div className="flex items-center gap-1">
+              <button
+                onClick={onDelete}
+                disabled={isDeleting}
+                className="rounded-[2px] bg-[#C0392B] px-1.5 py-0.5 text-[9px] font-bold text-white hover:bg-[#a93226] disabled:opacity-50"
+              >
+                {isDeleting ? '...' : 'מחק'}
+              </button>
+              <button
+                onClick={() => setConfirm(false)}
+                className="rounded-[2px] px-1.5 py-0.5 text-[9px] text-[#888] hover:text-[#333]"
+              >
+                ביטול
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirm(true)}
+              className="text-[#ccc] hover:text-[#C0392B] hover:bg-[#fdf0ef] rounded-[2px] p-0.5 transition-colors"
+              title="מחק שורה"
+            >
+              <TrashIcon />
+            </button>
+          )}
+        </td>
+      </tr>
+      {expanded && <StepRows requirementId={req.id} projectId={projectId} />}
+    </>
   )
 }
 
@@ -351,6 +532,7 @@ function RequirementsSection({
       <table className="w-full text-sm">
         <thead className="bg-[#f8f8f8] text-[10px] text-[#aaaaaa]">
           <tr>
+            <th className="w-8 px-2 py-2 print:hidden" />
             <th className="w-8 px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">#</th>
             <th className="w-20 px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">עלה למערכת</th>
             <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">פירוט</th>

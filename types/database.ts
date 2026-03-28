@@ -265,6 +265,35 @@ export interface Database {
         }
         Relationships: []
       }
+      requirement_steps: {
+        Row: {
+          id: string
+          requirement_id: string
+          project_id: string
+          detail: string
+          step_date: string | null
+          done: boolean
+          order_index: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          requirement_id: string
+          project_id: string
+          detail?: string
+          step_date?: string | null
+          done?: boolean
+          order_index?: number
+        }
+        Update: {
+          id?: string
+          detail?: string
+          step_date?: string | null
+          done?: boolean
+          order_index?: number
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
@@ -281,6 +310,17 @@ export type ProjectStage = Database['public']['Tables']['project_stages']['Row']
 export type StatusRequirement = Database['public']['Tables']['status_requirements']['Row']
 export type ProjectContact = Database['public']['Tables']['project_contacts']['Row']
 export type ProjectFile = Database['public']['Tables']['project_files']['Row']
+
+export interface RequirementStep {
+  id: string
+  requirement_id: string
+  project_id: string
+  detail: string
+  step_date: string | null
+  done: boolean
+  order_index: number
+  created_at: string
+}
 
 // Joined types used in queries
 export type ProjectWithClient = Project & {
