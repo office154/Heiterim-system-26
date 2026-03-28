@@ -77,8 +77,13 @@ export function useDeleteRequirement() {
   return useMutation({
     mutationFn: async ({ id, projectId }: { id: string; projectId: string }) => {
       const supabase = createClient()
-      const { error } = await supabase.from('status_requirements').delete().eq('id', id)
+      const { data, error } = await supabase
+        .from('status_requirements')
+        .delete()
+        .eq('id', id)
+        .select()
       if (error) throw error
+      if (!data || data.length === 0) throw new Error('RLS_BLOCK: אין הרשאת מחיקה לשורה זו')
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
