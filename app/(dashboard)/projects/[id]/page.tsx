@@ -56,7 +56,7 @@ export default function ProjectDetailPage() {
         )}
       </div>
 
-      <Tabs defaultValue="general" onValueChange={setActiveTab} dir="rtl">
+      <Tabs defaultValue="general" value={activeTab} onValueChange={setActiveTab} dir="rtl">
         <TabsList className="w-full justify-start print:hidden">
           <TabsTrigger value="general">מידע כללי</TabsTrigger>
           <TabsTrigger value="stages">תשלומים</TabsTrigger>

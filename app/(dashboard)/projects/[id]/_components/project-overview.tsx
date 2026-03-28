@@ -1,10 +1,13 @@
 'use client'
 
+import { useState, useRef, useEffect } from 'react'
 import { useProjectStages } from '@/lib/hooks/use-stages'
-import { useStatusRequirements } from '@/lib/hooks/use-requirements'
-import { useProjectFiles } from '@/lib/hooks/use-files'
+import { useStatusRequirements, useUpdateRequirement, useCreateRequirement } from '@/lib/hooks/use-requirements'
+import { useProjectFiles, getSignedUrl } from '@/lib/hooks/use-files'
 import { useCurrentRole } from '@/lib/hooks/use-profile'
-import type { RequirementStatus } from '@/types/database'
+import type { RequirementStatus, StatusRequirement } from '@/types/database'
+
+const PREDEFINED_SECTIONS = ['תיק מידע', 'בקשה להיתר', 'הערות ועדה', 'בדיקת תכן', 'אחר']
 
 interface ProjectOverviewProps {
   projectId: string
@@ -15,24 +18,16 @@ function formatPrice(n: number) {
   return `₪${n.toLocaleString('he-IL')}`
 }
 
-const REQ_STATUS_STYLE: Record<RequirementStatus, { bg: string; color: string }> = {
-  'ממתין':       { bg: '#f3f4f6', color: '#6b7280' },
-  'בטיפול':     { bg: '#dbeafe', color: '#1e40af' },
-  'הוגש':       { bg: '#fef9c3', color: '#854d0e' },
-  'התקבל':      { bg: '#dcfce7', color: '#166534' },
-  'חזרו הערות': { bg: '#fee2e2', color: '#991b1b' },
-}
+const REQUIREMENT_STATUSES: RequirementStatus[] = [
+  'ממתין', 'בטיפול', 'הוגש', 'התקבל', 'חזרו הערות',
+]
 
-function StatusBadge({ status }: { status: RequirementStatus }) {
-  const s = REQ_STATUS_STYLE[status] ?? REQ_STATUS_STYLE['ממתין']
-  return (
-    <span
-      style={{ background: s.bg, color: s.color }}
-      className="rounded-[2px] px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap"
-    >
-      {status}
-    </span>
-  )
+const STATUS_STYLES: Record<RequirementStatus, string> = {
+  'ממתין':       'bg-[#f4f4f4] text-[#666666]',
+  'בטיפול':     'bg-[#fef3e0] text-[#D4820A]',
+  'הוגש':       'bg-[#E8F5F3] text-[#1A7A6E]',
+  'התקבל':      'bg-[#E8F5F3] text-[#1A7A6E]',
+  'חזרו הערות': 'bg-[#fdf0ef] text-[#C0392B]',
 }
 
 function StageBadge({ stage }: { stage: { paid: boolean; invoice_sent: boolean; completed: boolean } }) {
@@ -43,6 +38,110 @@ function StageBadge({ stage }: { stage: { paid: boolean; invoice_sent: boolean; 
   if (stage.completed)
     return <span style={{ background: '#dbeafe', color: '#1e40af' }} className="rounded-[2px] px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap">בוצע</span>
   return <span style={{ background: '#f3f4f6', color: '#6b7280' }} className="rounded-[2px] px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap">ממתין</span>
+}
+
+function InlineStatusSelect({ req, projectId }: { req: StatusRequirement; projectId: string }) {
+  const updateReq = useUpdateRequirement()
+
+  async function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    await updateReq.mutateAsync({
+      id: req.id,
+      projectId,
+      status: e.target.value as RequirementStatus,
+      status_date: new Date().toISOString().split('T')[0],
+    })
+  }
+
+  return (
+    <select
+      value={req.status}
+      onChange={handleChange}
+      onClick={(e) => e.stopPropagation()}
+      className={`rounded-[2px] px-1.5 py-0.5 text-[10px] font-semibold focus:outline-none cursor-pointer ${STATUS_STYLES[req.status]}`}
+    >
+      {REQUIREMENT_STATUSES.map((s) => (
+        <option key={s} value={s}>{s}</option>
+      ))}
+    </select>
+  )
+}
+
+function AddRequirementRow({ projectId, requirements }: { projectId: string; requirements: StatusRequirement[] }) {
+  const createReq = useCreateRequirement()
+  const [section, setSection] = useState(PREDEFINED_SECTIONS[0])
+  const [text, setText] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  async function handleAdd() {
+    const trimmed = text.trim()
+    if (!trimmed) return
+    const nextIndex = requirements.length > 0
+      ? Math.max(...requirements.map((r) => r.order_index)) + 1
+      : 1
+    await createReq.mutateAsync({ project_id: projectId, section, requirement: trimmed, order_index: nextIndex })
+    setText('')
+    inputRef.current?.focus()
+  }
+
+  return (
+    <div className="mt-3 rounded-[2px] border border-[#e8e8e8] bg-[#fafafa] p-2.5">
+      <p className="text-[9px] font-semibold text-[#bbb] uppercase tracking-[0.07em] mb-2">הוסף לדוח סטטוס</p>
+      <div className="flex gap-1.5 items-center">
+        <select
+          value={section}
+          onChange={(e) => setSection(e.target.value)}
+          className="rounded-[2px] border border-[#e0e0e0] bg-white px-1.5 py-1 text-[10px] text-[#555] focus:outline-none focus:border-[#ccc] shrink-0"
+          style={{ maxWidth: 90 }}
+        >
+          {PREDEFINED_SECTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <input
+          ref={inputRef}
+          type="text"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') handleAdd() }}
+          placeholder="פירוט הדרישה..."
+          className="flex-1 min-w-0 rounded-[2px] border border-[#e0e0e0] bg-white px-2 py-1 text-[11px] text-[#1a1a1a] placeholder:text-[#bbb] focus:outline-none focus:border-[#ccc]"
+        />
+        <button
+          onClick={handleAdd}
+          disabled={createReq.isPending || !text.trim()}
+          className="shrink-0 rounded-[2px] bg-[#1a1a1a] px-2.5 py-1 text-[10px] font-semibold text-white hover:bg-[#333] disabled:opacity-30 transition-colors"
+        >
+          {createReq.isPending ? '...' : '+ הוסף'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function FileRow({ file }: { file: { id: string; file_name: string; file_size: number | null; file_path: string } }) {
+  async function handleOpen() {
+    try {
+      const url = await getSignedUrl(file.file_path)
+      window.open(url, '_blank')
+    } catch {
+      alert('שגיאה בפתיחת הקובץ')
+    }
+  }
+
+  return (
+    <div className="flex items-center justify-between py-1.5 border-b border-[#f5f5f5] last:border-0 group/file">
+      <span className="text-[11px] text-[#333] truncate ml-2">{file.file_name}</span>
+      <div className="flex items-center gap-2 shrink-0">
+        <span className="text-[10px] text-[#aaa]">
+          {file.file_size ? `${(file.file_size / 1024).toFixed(0)}KB` : ''}
+        </span>
+        <button
+          onClick={handleOpen}
+          className="text-[10px] text-[#E8C420] font-semibold opacity-0 group-hover/file:opacity-100 hover:underline transition-opacity"
+        >
+          פתח
+        </button>
+      </div>
+    </div>
+  )
 }
 
 export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps) {
@@ -112,17 +211,20 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
 
       {/* ── Panels ── */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        {/* Status */}
+
+        {/* Status — interactive, no panel-click */}
         <div
-          className="rounded-[2px] border border-[#dddddd] bg-white overflow-hidden cursor-pointer group transition-shadow hover:shadow-md"
+          className="rounded-[2px] border border-[#dddddd] bg-white overflow-hidden"
           style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 12px rgba(0,0,0,0.05)' }}
-          onClick={() => onNavigate('status')}
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#f0f0f0]">
             <span className="text-[12px] font-bold text-[#1a1a1a]">דוח סטטוס</span>
-            <span className="text-[11px] text-[#E8C420] font-semibold group-hover:underline">
+            <button
+              onClick={() => onNavigate('status')}
+              className="text-[11px] text-[#E8C420] font-semibold hover:underline cursor-pointer"
+            >
               לדוח המלא ←
-            </span>
+            </button>
           </div>
           {requirements.length > 0 && (
             <div className="px-4 pt-3 pb-1">
@@ -144,28 +246,34 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
                   key={req.id}
                   className="flex items-center justify-between py-1.5 border-b border-[#f5f5f5] last:border-0"
                 >
-                  <span className="text-[11px] text-[#333] truncate ml-2">{req.requirement}</span>
-                  <StatusBadge status={req.status} />
+                  <span className="text-[11px] text-[#333] truncate ml-2">
+                    <span className="text-[9px] text-[#bbb] font-medium">{req.section} / </span>
+                    {req.requirement}
+                  </span>
+                  <InlineStatusSelect req={req} projectId={projectId} />
                 </div>
               ))
             )}
             {requirements.length > 4 && (
               <p className="text-[10px] text-[#aaa] pt-1">+ {requirements.length - 4} דרישות נוספות</p>
             )}
+            <AddRequirementRow projectId={projectId} requirements={requirements} />
           </div>
         </div>
 
-        {/* Payments */}
+        {/* Payments — no cursor-pointer on panel, only on link */}
         <div
-          className="rounded-[2px] border border-[#dddddd] bg-white overflow-hidden cursor-pointer group transition-shadow hover:shadow-md"
+          className="rounded-[2px] border border-[#dddddd] bg-white overflow-hidden"
           style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 12px rgba(0,0,0,0.05)' }}
-          onClick={() => onNavigate('stages')}
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#f0f0f0]">
             <span className="text-[12px] font-bold text-[#1a1a1a]">תשלומים</span>
-            <span className="text-[11px] text-[#E8C420] font-semibold group-hover:underline">
+            <button
+              onClick={() => onNavigate('stages')}
+              className="text-[11px] text-[#E8C420] font-semibold hover:underline cursor-pointer"
+            >
               לכל התשלומים ←
-            </span>
+            </button>
           </div>
           {isAdmin && totalContract > 0 && (
             <div className="px-4 pt-3 pb-1">
@@ -198,32 +306,26 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
           </div>
         </div>
 
-        {/* Files */}
+        {/* Files — open directly */}
         <div
-          className="rounded-[2px] border border-[#dddddd] bg-white overflow-hidden cursor-pointer group transition-shadow hover:shadow-md"
+          className="rounded-[2px] border border-[#dddddd] bg-white overflow-hidden"
           style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 12px rgba(0,0,0,0.05)' }}
-          onClick={() => onNavigate('files')}
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#f0f0f0]">
             <span className="text-[12px] font-bold text-[#1a1a1a]">קבצים</span>
-            <span className="text-[11px] text-[#E8C420] font-semibold group-hover:underline">
+            <button
+              onClick={() => onNavigate('files')}
+              className="text-[11px] text-[#E8C420] font-semibold hover:underline cursor-pointer"
+            >
               לכל הקבצים ←
-            </span>
+            </button>
           </div>
           <div className="px-4 py-2">
             {previewFiles.length === 0 ? (
               <p className="text-[11px] text-[#aaa] italic py-2">אין קבצים</p>
             ) : (
               previewFiles.map((file) => (
-                <div
-                  key={file.id}
-                  className="flex items-center justify-between py-1.5 border-b border-[#f5f5f5] last:border-0"
-                >
-                  <span className="text-[11px] text-[#333] truncate ml-2">{file.file_name}</span>
-                  <span className="text-[10px] text-[#aaa] whitespace-nowrap">
-                    {file.file_size ? `${(file.file_size / 1024).toFixed(0)}KB` : ''}
-                  </span>
-                </div>
+                <FileRow key={file.id} file={file} />
               ))
             )}
             {files.length > 4 && (
@@ -231,6 +333,7 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
             )}
           </div>
         </div>
+
       </div>
     </div>
   )

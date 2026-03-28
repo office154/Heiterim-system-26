@@ -15,26 +15,29 @@ const TabsContext = React.createContext<TabsContextValue>({
 
 function Tabs({
   defaultValue,
+  value,
   onValueChange,
   children,
   className,
   dir,
 }: {
-  defaultValue: string
+  defaultValue?: string
+  value?: string
   onValueChange?: (value: string) => void
   children: React.ReactNode
   className?: string
   dir?: string
 }) {
-  const [activeTab, setActiveTab] = React.useState(defaultValue)
+  const [internalTab, setInternalTab] = React.useState(defaultValue ?? '')
+  const activeTab = value ?? internalTab
 
   function handleSetActiveTab(tab: string) {
-    setActiveTab(tab)
+    if (value === undefined) setInternalTab(tab)
     onValueChange?.(tab)
   }
 
   return (
-    <TabsContext.Provider value={{ activeTab, setActiveTab: handleSetActiveTab }}>
+    <TabsContext.Provider value={{ activeTab: activeTab, setActiveTab: handleSetActiveTab }}>
       <div className={cn('flex flex-col gap-2', className)} dir={dir}>
         {children}
       </div>
