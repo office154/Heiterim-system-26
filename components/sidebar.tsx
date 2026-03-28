@@ -1,12 +1,13 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { UserRole } from '@/types/database'
 import { createClient } from '@/lib/supabase/client'
+import { useProjects } from '@/lib/hooks/use-projects'
 
 interface NavItem {
   label: string
@@ -27,6 +28,104 @@ const navItems: NavItem[] = [
 interface SidebarProps {
   role: UserRole
   fullName: string
+}
+
+function ProjectsSubNav({ pathname }: { pathname: string }) {
+  const { data: projects = [] } = useProjects()
+  const [search, setSearch] = useState('')
+  const [open, setOpen] = useState(pathname.startsWith('/projects'))
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    if (!q) return projects
+    return projects.filter((p) => p.title.toLowerCase().includes(q))
+  }, [projects, search])
+
+  const isProjectsActive = pathname.startsWith('/projects')
+
+  return (
+    <div>
+      {/* "פרויקטים" row with toggle arrow */}
+      <div
+        className="flex items-center justify-between rounded-[2px] cursor-pointer"
+        style={isProjectsActive ? {
+          background: '#d8d8d8',
+          borderRight: '3px solid #E8C420',
+        } : {}}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <Link
+          href="/projects"
+          onClick={(e) => e.stopPropagation()}
+          className={cn(
+            'flex-1 px-3 py-2 text-[13px]',
+            isProjectsActive ? 'font-bold text-[#1a1a1a]' : 'font-medium text-[#888888]'
+          )}
+          style={isProjectsActive ? { paddingRight: 9 } : {}}
+        >
+          פרויקטים
+        </Link>
+        <button
+          className="px-2 py-2 text-[10px] text-[#aaa] hover:text-[#666] select-none"
+          tabIndex={-1}
+        >
+          {open ? '▲' : '▼'}
+        </button>
+      </div>
+
+      {/* Expanded list */}
+      {open && (
+        <div style={{ background: '#dcdcdc', borderTop: '1px solid #d0d0d0' }}>
+          {/* Search */}
+          <div className="px-3 py-1.5">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="חיפוש פרויקט..."
+              className="w-full rounded-[2px] border border-[#ccc] bg-[#e8e8e8] px-2 py-1 text-[10px] text-[#555] placeholder:text-[#aaa] focus:outline-none focus:border-[#bbb]"
+            />
+          </div>
+
+          {/* Project list */}
+          <div style={{ maxHeight: 220, overflowY: 'auto' }}>
+            {filtered.length === 0 && (
+              <p className="px-3 py-2 text-[10px] text-[#aaa] italic">לא נמצאו פרויקטים</p>
+            )}
+            {filtered.map((project) => {
+              const isCur = pathname === `/projects/${project.id}` || pathname.startsWith(`/projects/${project.id}/`)
+              return (
+                <Link
+                  key={project.id}
+                  href={`/projects/${project.id}`}
+                  className="flex items-center gap-2 px-3 py-1.5 text-[11px] truncate"
+                  style={{
+                    color: isCur ? '#1a1a1a' : '#666',
+                    fontWeight: isCur ? 600 : 400,
+                    background: isCur ? '#cacaca' : 'transparent',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isCur) (e.currentTarget as HTMLElement).style.background = '#d4d4d4'
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isCur) (e.currentTarget as HTMLElement).style.background = 'transparent'
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 5, height: 5, borderRadius: '50%', flexShrink: 0,
+                      background: isCur ? '#E8C420' : '#c0c0c0',
+                    }}
+                  />
+                  <span className="truncate">{project.title}</span>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function Sidebar({ role, fullName }: SidebarProps) {
@@ -74,6 +173,10 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
       {/* Nav */}
       <nav className="flex-1 px-3 py-3 space-y-0.5">
         {visibleItems.map((item) => {
+          if (item.href === '/projects') {
+            return <ProjectsSubNav key="/projects" pathname={pathname} />
+          }
+
           const prefix = item.activePrefix ?? item.href
           const isActive = prefix === '/'
             ? pathname === '/'
@@ -84,9 +187,7 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
               href={item.href}
               className={cn(
                 'flex items-center px-3 py-2 rounded-[2px] text-[13px] transition-colors relative',
-                isActive
-                  ? 'font-bold'
-                  : 'font-medium'
+                isActive ? 'font-bold' : 'font-medium'
               )}
               style={isActive ? {
                 color: '#1a1a1a',
