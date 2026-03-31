@@ -411,8 +411,9 @@ function ReqTableRow({
         <td className="px-2 py-1.5 text-center print:hidden">
           <button
             onClick={() => setExpanded((v) => !v)}
-            className="text-[10px] text-[#ccc] hover:text-[#888] inline-block"
-            style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.15s' }}
+            className="text-[11px] text-[#999] hover:text-[#2E7D5B] hover:bg-[#edf7f1] rounded-[2px] px-1 py-0.5 inline-block transition-colors"
+            style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.15s, color 0.15s, background-color 0.15s' }}
+            title="פרט שלבי מעקב"
           >
             ▶
           </button>
