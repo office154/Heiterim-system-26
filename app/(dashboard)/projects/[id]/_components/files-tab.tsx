@@ -81,7 +81,7 @@ export function FilesTab({ projectId }: FilesTabProps) {
           <button
             onClick={() => inputRef.current?.click()}
             disabled={uploadFile.isPending}
-            className="inline-flex items-center gap-1.5 rounded-[2px] bg-[#E8C420] px-3 py-1.5 text-[13px] font-extrabold text-[#1a1a1a] hover:bg-[#D4B010] disabled:opacity-40 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#3D6A9E] px-3 py-1.5 text-[13px] font-extrabold text-[#1a1a1a] hover:bg-[#D4B010] disabled:opacity-40 transition-colors"
           >
             + העלה קובץ
           </button>
@@ -97,8 +97,8 @@ export function FilesTab({ projectId }: FilesTabProps) {
 
       {/* File list */}
       <div
-        className="rounded-[2px] border border-[#dddddd] bg-white overflow-hidden"
-        style={{ boxShadow: '0 2px 0 #cccccc, 0 3px 10px rgba(0,0,0,0.05)' }}
+        className="rounded-lg border border-[#dddddd] bg-white overflow-hidden"
+        style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
       >
         {isLoading ? (
           <div className="py-10 text-center text-[13px] text-[#666666]">טוען קבצים...</div>
@@ -150,7 +150,7 @@ export function FilesTab({ projectId }: FilesTabProps) {
                           }
                         }}
                         title="תצוגה מקדימה"
-                        className="flex h-7 w-7 items-center justify-center rounded-[2px] hover:bg-[#fef9e0] text-[#E8C420] hover:text-[#D4B010] transition-colors"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-[#EBF1F9] text-[#3D6A9E] hover:text-[#D4B010] transition-colors"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
@@ -167,7 +167,7 @@ export function FilesTab({ projectId }: FilesTabProps) {
                           a.click()
                         }}
                         title="הורדה"
-                        className="flex h-7 w-7 items-center justify-center rounded-[2px] hover:bg-[#f0f0f0] text-[#666666] hover:text-[#1a1a1a] transition-colors"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-[#F0F2F5] text-[#666666] hover:text-[#1a1a1a] transition-colors"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -180,7 +180,7 @@ export function FilesTab({ projectId }: FilesTabProps) {
                         onClick={() => handleDelete(file.id, file.file_path)}
                         disabled={deletingId === file.id}
                         title="מחיקה"
-                        className="flex h-7 w-7 items-center justify-center rounded-[2px] hover:bg-[#fdf0ef] text-[#aaaaaa] hover:text-[#C0392B] transition-colors disabled:opacity-40"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-[#fdf0ef] text-[#aaaaaa] hover:text-[#C0392B] transition-colors disabled:opacity-40"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="3 6 5 6 21 6"/>
@@ -206,7 +206,7 @@ export function FilesTab({ projectId }: FilesTabProps) {
         >
           <div
             className="relative max-h-[90vh] max-w-[90vw] overflow-auto bg-white"
-            style={{ borderRadius: '4px', border: '1px solid #dddddd', boxShadow: '0 8px 40px rgba(0,0,0,0.15)' }}
+            style={{ borderRadius: '10px', border: '1px solid #E5E7EB', boxShadow: '0 8px 40px rgba(0,0,0,0.15)' }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-[#dddddd] px-5 py-3">

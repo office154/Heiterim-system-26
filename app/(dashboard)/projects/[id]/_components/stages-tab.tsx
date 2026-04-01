@@ -59,7 +59,7 @@ function PriceInput({
           if (e.key === 'Escape') { setLocalValue(String(value || '')); setEditing(false) }
         }}
         dir="ltr"
-        className="w-24 rounded-[2px] border border-[#1A7A6E] px-2 py-1 text-center text-sm focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/20"
+        className="w-24 rounded-lg border border-[#3D6A9E] px-2 py-1 text-center text-sm focus:outline-none focus:ring-2 focus:ring-[#3D6A9E]/20"
       />
     )
   }
@@ -68,7 +68,7 @@ function PriceInput({
     <button
       onClick={() => setEditing(true)}
       title="לחץ לעריכה"
-      className="rounded-[2px] px-2 py-1 text-sm transition-all hover:bg-[#f0f0f0] hover:ring-1 hover:ring-[#dddddd]"
+      className="rounded-lg px-2 py-1 text-sm transition-all hover:bg-[#F0F2F5] hover:ring-1 hover:ring-[#dddddd]"
     >
       {formatPrice(value)}
     </button>
@@ -105,7 +105,7 @@ function NewStageInput({
       }}
       onBlur={confirm}
       placeholder="שם שלב..."
-      className="w-28 rounded-[2px] border border-[#E8C420] bg-[#fef9e0] px-2 py-1 text-center text-xs font-medium text-[#1a1a1a] placeholder:text-[#aaaaaa] focus:outline-none focus:ring-2 focus:ring-[#E8C420]/40"
+      className="w-28 rounded-lg border border-[#3D6A9E] bg-[#EBF1F9] px-2 py-1 text-center text-xs font-medium text-[#1a1a1a] placeholder:text-[#aaaaaa] focus:outline-none focus:ring-2 focus:ring-[#3D6A9E]/40"
     />
   )
 }
@@ -182,11 +182,11 @@ function TrackSection({
   }
 
   return (
-    <div className="overflow-hidden rounded-[2px] border border-[#dddddd] bg-white">
+    <div className="overflow-hidden rounded-lg border border-[#dddddd] bg-white">
       {/* Track header — only when multiple tracks */}
       {showHeader && (
-        <div className="flex items-center justify-between bg-[#1a1a1a] px-4 py-2">
-          <h3 className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#E8C420]">{TRACK_LABELS[track]}</h3>
+        <div className="flex items-center justify-between px-4 py-2" style={{ background: '#EBF1F9', borderRight: '4px solid #3D6A9E' }}>
+          <h3 className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#3D6A9E]">{TRACK_LABELS[track]}</h3>
           <button
             onClick={handleRemoveTrack}
             disabled={removeTrack.isPending}
@@ -215,7 +215,7 @@ function TrackSection({
                       onClick={() => handleDeleteStage(stage)}
                       disabled={deleteStage.isPending}
                       title={`מחק שלב "${stage.name}"`}
-                      className="h-4 w-4 flex items-center justify-center rounded-[2px] text-[#aaaaaa] hover:bg-[#fdf0ef] hover:text-[#C0392B] transition-colors text-[10px] leading-none disabled:opacity-40"
+                      className="h-4 w-4 flex items-center justify-center rounded-lg text-[#aaaaaa] hover:bg-[#fdf0ef] hover:text-[#C0392B] transition-colors text-[10px] leading-none disabled:opacity-40"
                     >
                       ✕
                     </button>
@@ -239,7 +239,7 @@ function TrackSection({
                   <button
                     onClick={() => setAddingStage(true)}
                     disabled={addStage.isPending}
-                    className="whitespace-nowrap rounded-[2px] border border-dashed border-[#E8C420] px-2.5 py-1 text-[11px] font-semibold text-[#E8C420] hover:bg-[#fef9e0] transition-colors disabled:opacity-40"
+                    className="whitespace-nowrap rounded-lg border border-dashed border-[#3D6A9E] px-2.5 py-1 text-[11px] font-semibold text-[#3D6A9E] hover:bg-[#EBF1F9] transition-colors disabled:opacity-40"
                   >
                     + הוסף שלב
                   </button>
@@ -397,7 +397,7 @@ function TrackSection({
                       <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2 text-right text-xs font-semibold text-[#1a1a1a]">
                         סה״כ שולם
                       </td>
-                      <td colSpan={stages.length + 1} className="px-4 py-2 text-right text-sm font-black text-[#2E7D5B]">
+                      <td colSpan={stages.length + 1} className="px-4 py-2 text-right text-sm font-black text-[#3D6A9E]">
                         {formatPrice(totalPaid)}
                       </td>
                     </tr>
@@ -407,7 +407,7 @@ function TrackSection({
                       </td>
                       <td
                         colSpan={stages.length + 1}
-                        className={`px-4 py-2 text-right text-sm font-black ${balance > 0 ? 'text-[#C62828]' : 'text-[#2E7D5B]'}`}
+                        className={`px-4 py-2 text-right text-sm font-black ${balance > 0 ? 'text-[#C62828]' : 'text-[#3D6A9E]'}`}
                       >
                         {formatPrice(balance)}
                       </td>

@@ -42,7 +42,7 @@ function NoteEdit({ stageId, projectId, note }: { stageId: string; projectId: st
         onBlur={handleBlur}
         onKeyDown={(e) => { if (e.key === 'Escape') { setValue(note ?? ''); setEditing(false) } }}
         rows={2}
-        className="w-full mt-1 text-[11px] text-[#1a1a1a] border border-[#E8C420] rounded-[2px] px-2 py-1 resize-none focus:outline-none bg-white"
+        className="w-full mt-1 text-[11px] text-[#1a1a1a] border border-[#3D6A9E] rounded-lg px-2 py-1 resize-none focus:outline-none bg-white"
         placeholder="הוסף הערה..."
       />
     )
@@ -63,7 +63,7 @@ function NoteEdit({ stageId, projectId, note }: { stageId: string; projectId: st
   return (
     <button
       onClick={(e) => { e.stopPropagation(); setEditing(true) }}
-      className="mt-1 text-[10px] text-[#aaaaaa] hover:text-[#E8C420] transition-colors"
+      className="mt-1 text-[10px] text-[#aaaaaa] hover:text-[#3D6A9E] transition-colors"
     >
       + הוסף הערה
     </button>
@@ -72,7 +72,7 @@ function NoteEdit({ stageId, projectId, note }: { stageId: string; projectId: st
 
 // ─── Status config ────────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<ProjectStatus, { dot: string; label: string; text: string }> = {
-  active:    { dot: 'bg-[#1A7A6E]', label: 'פעיל',  text: 'text-[#1A7A6E]' },
+  active:    { dot: 'bg-[#3D6A9E]', label: 'פעיל',  text: 'text-[#3D6A9E]' },
   completed: { dot: 'bg-[#aaaaaa]', label: 'הושלם', text: 'text-[#aaaaaa]' },
   on_hold:   { dot: 'bg-[#D4820A]', label: 'מושהה', text: 'text-[#D4820A]' },
 }
@@ -125,13 +125,13 @@ function TimelineContent({
                   )}
                   <div className="flex-shrink-0 mt-0.5 z-10">
                     {state === 'done' ? (
-                      <div className="w-3 h-3 rounded-full bg-[#1a1a1a] flex items-center justify-center">
+                      <div className="w-3 h-3 rounded-full bg-[#3D6A9E] flex items-center justify-center">
                         <svg width="7" height="6" viewBox="0 0 7 6" fill="none">
                           <polyline points="1,3 2.8,5 6,1" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </div>
                     ) : state === 'active' ? (
-                      <div className="w-3 h-3 rounded-full border-2 border-[#E8C420] bg-white" />
+                      <div className="w-3 h-3 rounded-full border-2 border-[#3D6A9E] bg-white" />
                     ) : (
                       <div className="w-3 h-3 rounded-full border border-[#dddddd] bg-white" />
                     )}
@@ -158,7 +158,7 @@ function TimelineContent({
                       <span className={`block text-[10px] mt-0.5 ${
                         stage.completed && !stage.invoice_sent ? 'text-[#D4820A]' :
                         stage.invoice_sent && !stage.paid      ? 'text-[#C0392B]' :
-                        stage.paid                             ? 'text-[#1A7A6E]' : ''
+                        stage.paid                             ? 'text-[#3D6A9E]' : ''
                       }`}>
                         {stage.completed && !stage.invoice_sent ? '⚠ חשבונית לא נשלחה' :
                          stage.invoice_sent && !stage.paid      ? '⚠ לא שולם' :
@@ -212,7 +212,7 @@ function TimelinePanel({
   }
 
   return (
-    <div className="flex-shrink-0 w-72 bg-white border-r border-[#dddddd] flex flex-col overflow-hidden rounded-[2px] border border-[#dddddd]">
+    <div className="flex-shrink-0 w-72 bg-white border-r border-[#dddddd] flex flex-col overflow-hidden rounded-lg border border-[#dddddd]">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-[#dddddd] flex-shrink-0">
         <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#666666]">ציר זמן</span>
@@ -251,7 +251,7 @@ function TimelinePanel({
           <div className="px-4 py-3 border-t border-[#dddddd] flex-shrink-0">
             <Link
               href={`/projects/${project.id}`}
-              className="flex items-center justify-center w-full py-2 bg-[#E8C420] text-[#1a1a1a] text-[12px] font-extrabold rounded-[2px] hover:bg-[#D4B010] transition-colors"
+              className="flex items-center justify-center w-full py-2 bg-[#3D6A9E] text-[#1a1a1a] text-[12px] font-extrabold rounded-lg hover:bg-[#D4B010] transition-colors"
             >
               פתח פרויקט מלא
             </Link>
@@ -299,7 +299,7 @@ function ProjectRow({
       )}
       {/* Hover indicator */}
       {isHovered && (
-        <span className="absolute left-0 top-2.5 bottom-2.5 w-[3px] bg-[#E8C420] rounded-r-full" />
+        <span className="absolute left-0 top-2.5 bottom-2.5 w-[3px] bg-[#3D6A9E] rounded-r-full" />
       )}
 
       <div className="flex-1 min-w-0">
@@ -363,7 +363,7 @@ export default function ProjectsPage() {
         <h1 className="text-[20px] font-black text-[#1a1a1a] tracking-tight">פרויקטים</h1>
         <Link
           href="/projects/new"
-          className="inline-flex items-center px-4 py-2 bg-[#E8C420] text-[#1a1a1a] text-[13px] font-extrabold rounded-[2px] hover:bg-[#D4B010] transition-colors"
+          className="inline-flex items-center px-4 py-2 bg-[#3D6A9E] text-[#1a1a1a] text-[13px] font-extrabold rounded-lg hover:bg-[#D4B010] transition-colors"
         >
           + פרויקט חדש
         </Link>
@@ -371,12 +371,12 @@ export default function ProjectsPage() {
 
       {/* Alert banner */}
       {role === 'admin' && (alerts?.length ?? 0) > 0 && (
-        <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#dddddd] rounded-[2px] border-r-[3px] border-r-[#D4820A]">
+        <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#dddddd] rounded-lg border-r-[3px] border-r-[#D4820A]">
           <span className="w-2 h-2 rounded-full bg-[#D4820A] flex-shrink-0" />
           <span className="text-[13px] text-[#1a1a1a] font-medium">
             {alerts!.length} {alerts!.length === 1 ? 'פרויקט דורש' : 'פרויקטים דורשים'} טיפול
           </span>
-          <Link href="/reports" className="mr-auto text-[12px] font-medium text-[#E8C420] hover:underline">
+          <Link href="/reports" className="mr-auto text-[12px] font-medium text-[#3D6A9E] hover:underline">
             לדוחות
           </Link>
         </div>
@@ -388,12 +388,12 @@ export default function ProjectsPage() {
           placeholder="חיפוש לפי שם..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-xs h-9 text-[13px] border-[#dddddd] bg-white text-[#1a1a1a] placeholder:text-[#aaaaaa] focus-visible:ring-[#1A7A6E]"
+          className="max-w-xs h-9 text-[13px] border-[#dddddd] bg-white text-[#1a1a1a] placeholder:text-[#aaaaaa] focus-visible:ring-[#3D6A9E]"
         />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as ProjectStatus | 'all')}
-          className="h-9 px-3 text-[13px] border border-[#dddddd] rounded-[2px] bg-white text-[#1a1a1a] focus:outline-none focus:ring-1 focus:ring-[#1A7A6E]"
+          className="h-9 px-3 text-[13px] border border-[#dddddd] rounded-lg bg-white text-[#1a1a1a] focus:outline-none focus:ring-1 focus:ring-[#3D6A9E]"
         >
           <option value="all">כל הסטטוסים</option>
           <option value="active">פעיל</option>
@@ -419,8 +419,8 @@ export default function ProjectsPage() {
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#666666] mb-2">פעילים</p>
                   <div
-                    className="bg-white border border-[#dddddd] rounded-[2px] overflow-hidden"
-                    style={{ boxShadow: '0 2px 0 #cccccc, 0 3px 10px rgba(0,0,0,0.05)' }}
+                    className="bg-white border border-[#dddddd] rounded-lg overflow-hidden"
+                    style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
                   >
                     {active.map((p) => (
                       <ProjectRow
@@ -441,8 +441,8 @@ export default function ProjectsPage() {
                     {active.length > 0 ? 'אחרים' : 'פרויקטים'}
                   </p>
                   <div
-                    className="bg-white border border-[#dddddd] rounded-[2px] overflow-hidden"
-                    style={{ boxShadow: '0 2px 0 #cccccc, 0 3px 10px rgba(0,0,0,0.05)' }}
+                    className="bg-white border border-[#dddddd] rounded-lg overflow-hidden"
+                    style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
                   >
                     {others.map((p) => (
                       <ProjectRow

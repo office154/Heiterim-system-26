@@ -22,8 +22,8 @@ const REQUIREMENT_STATUSES: RequirementStatus[] = [
 const STATUS_STYLES: Record<RequirementStatus, string> = {
   'ממתין': 'bg-[#f4f4f4] text-[#666666]',
   'בטיפול': 'bg-[#fef3e0] text-[#D4820A]',
-  'הוגש': 'bg-[#E8F5F3] text-[#1A7A6E]',
-  'התקבל': 'bg-[#E8F5F3] text-[#1A7A6E]',
+  'הוגש': 'bg-[#EBF1F9] text-[#3D6A9E]',
+  'התקבל': 'bg-[#EBF1F9] text-[#3D6A9E]',
   'חזרו הערות': 'bg-[#fdf0ef] text-[#C0392B]',
 }
 
@@ -63,7 +63,7 @@ function DateCell({
         onBlur={async () => { await onSave(local); setEditing(false) }}
         onKeyDown={(e) => { if (e.key === 'Escape') setEditing(false) }}
         dir="ltr"
-        className="rounded-[2px] border border-[#1A7A6E] px-1 py-0.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/20"
+        className="rounded-lg border border-[#3D6A9E] px-1 py-0.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#3D6A9E]/20"
       />
     )
   }
@@ -71,7 +71,7 @@ function DateCell({
   return (
     <button
       onClick={() => setEditing(true)}
-      className="rounded-[2px] px-1 py-0.5 text-xs transition-all hover:bg-[#f0f0f0] hover:ring-1 hover:ring-[#dddddd] print:cursor-default"
+      className="rounded-lg px-1 py-0.5 text-xs transition-all hover:bg-[#F0F2F5] hover:ring-1 hover:ring-[#dddddd] print:cursor-default"
     >
       {value ? formatDate(value) : <span className="italic text-[#aaaaaa]">—</span>}
     </button>
@@ -94,7 +94,7 @@ function StatusCell({
     <select
       value={value}
       onChange={handleChange}
-      className={`rounded-[2px] px-2 py-1 text-xs font-medium focus:outline-none ${STATUS_STYLES[value]} print:border-none print:bg-transparent`}
+      className={`rounded-lg px-2 py-1 text-xs font-medium focus:outline-none ${STATUS_STYLES[value]} print:border-none print:bg-transparent`}
     >
       {REQUIREMENT_STATUSES.map((s) => (
         <option key={s} value={s}>{s}</option>
@@ -126,7 +126,7 @@ function RequirementInput({
       onBlur={handleBlur}
       onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
       placeholder="הקלד פירוט..."
-      className="w-full rounded-[2px] border border-[#cccccc] bg-[#f8f8f8] px-2 py-1.5 text-[13px] text-[#1a1a1a] placeholder:text-[#aaaaaa] focus:border-[#1A7A6E] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/12"
+      className="w-full rounded-lg border border-[#cccccc] bg-[#f8f8f8] px-2 py-1.5 text-[13px] text-[#1a1a1a] placeholder:text-[#aaaaaa] focus:border-[#3D6A9E] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3D6A9E]/12"
     />
   )
 }
@@ -149,7 +149,7 @@ function ContactsTable({ projectId }: { projectId: string }) {
   return (
     <div className="print:hidden">
       <h2 className="mb-3 text-base font-semibold text-[#1a1a1a]">אנשי קשר</h2>
-      <div className="overflow-hidden rounded-[2px] border border-[#dddddd] bg-white">
+      <div className="overflow-hidden rounded-lg border border-[#dddddd] bg-white">
         <table className="w-full text-sm">
           <thead className="bg-[#f8f8f8] text-[10px] text-[#aaaaaa]">
             <tr>
@@ -291,12 +291,12 @@ function StepRows({ requirementId, projectId }: { requirementId: string; project
                   if (e.key === 'Escape') { setAddingStep(false); setNewStepDetail('') }
                 }}
                 placeholder="פירוט שלב..."
-                className="flex-1 rounded-[2px] border border-[#2E7D5B] bg-white px-2 py-1 text-[12px] text-[#1a1a1a] placeholder:text-[#aaaaaa] focus:outline-none focus:ring-2 focus:ring-[#2E7D5B]/20"
+                className="flex-1 rounded-lg border border-[#3D6A9E] bg-white px-2 py-1 text-[12px] text-[#1a1a1a] placeholder:text-[#aaaaaa] focus:outline-none focus:ring-2 focus:ring-[#3D6A9E]/20"
               />
               <button
                 onClick={handleConfirmAdd}
                 disabled={createStep.isPending}
-                className="rounded-[2px] bg-[#2E7D5B] px-2 py-1 text-[11px] font-bold text-white hover:bg-[#1e5a3f] disabled:opacity-50"
+                className="rounded-lg bg-[#3D6A9E] px-2 py-1 text-[11px] font-bold text-white hover:bg-[#1e5a3f] disabled:opacity-50"
               >
                 הוסף
               </button>
@@ -310,7 +310,7 @@ function StepRows({ requirementId, projectId }: { requirementId: string; project
           ) : (
             <button
               onClick={() => setAddingStep(true)}
-              className="text-[11px] text-[#2E7D5B] hover:underline"
+              className="text-[11px] text-[#3D6A9E] hover:underline"
             >
               + הוסף שלב מעקב
             </button>
@@ -352,8 +352,8 @@ function StepRow({
             onClick={onToggleDone}
             className="flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
             style={{
-              backgroundColor: step.done ? '#2E7D5B' : 'white',
-              borderColor: step.done ? '#2E7D5B' : '#ccc',
+              backgroundColor: step.done ? '#3D6A9E' : 'white',
+              borderColor: step.done ? '#3D6A9E' : '#ccc',
               color: step.done ? 'white' : 'transparent',
             }}
             title={step.done ? 'סמן כלא בוצע' : 'סמן כבוצע'}
@@ -371,7 +371,7 @@ function StepRow({
             onChange={(e) => setLocalDetail(e.target.value)}
             onBlur={() => onSaveDetail(localDetail)}
             onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
-            className="flex-1 rounded-[2px] border border-transparent bg-transparent px-1 py-0.5 text-[12px] text-[#444] focus:border-[#2E7D5B] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#2E7D5B]/20"
+            className="flex-1 rounded-lg border border-transparent bg-transparent px-1 py-0.5 text-[12px] text-[#444] focus:border-[#3D6A9E] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#3D6A9E]/20"
             style={{ textDecoration: step.done ? 'line-through' : 'none', color: step.done ? '#aaa' : '#444' }}
           />
         </div>
@@ -380,7 +380,7 @@ function StepRow({
       <td className="print:hidden px-2 py-1.5">
         <button
           onClick={onDelete}
-          className="hidden text-[#ccc] hover:text-[#C0392B] group-hover:block rounded-[2px] p-0.5 transition-colors"
+          className="hidden text-[#ccc] hover:text-[#C0392B] group-hover:block rounded-lg p-0.5 transition-colors"
           title="מחק שלב"
         >
           <TrashIcon />
@@ -411,7 +411,7 @@ function ReqTableRow({
         <td className="px-2 py-1.5 text-center print:hidden">
           <button
             onClick={() => setExpanded((v) => !v)}
-            className="text-[11px] text-[#999] hover:text-[#2E7D5B] hover:bg-[#edf7f1] rounded-[2px] px-1 py-0.5 inline-block transition-colors"
+            className="text-[11px] text-[#999] hover:text-[#3D6A9E] hover:bg-[#edf7f1] rounded-lg px-1 py-0.5 inline-block transition-colors"
             style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.15s, color 0.15s, background-color 0.15s' }}
             title="פרט שלבי מעקב"
           >
@@ -460,13 +460,13 @@ function ReqTableRow({
               <button
                 onClick={onDelete}
                 disabled={isDeleting}
-                className="rounded-[2px] bg-[#C0392B] px-1.5 py-0.5 text-[9px] font-bold text-white hover:bg-[#a93226] disabled:opacity-50"
+                className="rounded-lg bg-[#C0392B] px-1.5 py-0.5 text-[9px] font-bold text-white hover:bg-[#a93226] disabled:opacity-50"
               >
                 {isDeleting ? '...' : 'מחק'}
               </button>
               <button
                 onClick={() => setConfirm(false)}
-                className="rounded-[2px] px-1.5 py-0.5 text-[9px] text-[#888] hover:text-[#333]"
+                className="rounded-lg px-1.5 py-0.5 text-[9px] text-[#888] hover:text-[#333]"
               >
                 ביטול
               </button>
@@ -474,7 +474,7 @@ function ReqTableRow({
           ) : (
             <button
               onClick={() => setConfirm(true)}
-              className="text-[#ccc] hover:text-[#C0392B] hover:bg-[#fdf0ef] rounded-[2px] p-0.5 transition-colors"
+              className="text-[#ccc] hover:text-[#C0392B] hover:bg-[#fdf0ef] rounded-lg p-0.5 transition-colors"
               title="מחק שורה"
             >
               <TrashIcon />
@@ -524,10 +524,10 @@ function RequirementsSection({
   }
 
   return (
-    <div className="overflow-hidden rounded-[2px] border border-[#dddddd] bg-white print:break-inside-avoid">
+    <div className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white print:break-inside-avoid shadow-card">
       {/* Section header */}
-      <div className="border-b border-[#dddddd] bg-[#1a1a1a] px-4 py-2">
-        <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#E8C420]">{section}</span>
+      <div className="border-b border-[#E5E7EB] px-4 py-2" style={{ background: '#EBF1F9', borderRight: '4px solid #3D6A9E' }}>
+        <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#3D6A9E]">{section}</span>
       </div>
 
       <table className="w-full text-sm">
@@ -658,7 +658,7 @@ export function StatusTab({ projectId }: StatusTabProps) {
           <Button
             variant="outline"
             onClick={() => window.print()}
-            className="border-[#cccccc] text-[#666666] hover:bg-[#f0f0f0] rounded-[2px]"
+            className="border-[#cccccc] text-[#666666] hover:bg-[#F0F2F5] rounded-lg"
           >
             🖨️ הורד דוח PDF
           </Button>
@@ -666,8 +666,8 @@ export function StatusTab({ projectId }: StatusTabProps) {
 
         {/* Report header */}
         <div
-          className="rounded-[2px] border border-[#dddddd] bg-white p-5"
-          style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)' }}
+          className="rounded-lg border border-[#dddddd] bg-white p-5"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
         >
           <h2 className="mb-4 text-base font-semibold text-[#1a1a1a] print:hidden">פרטי דוח</h2>
           <dl className="grid grid-cols-2 gap-x-8 gap-y-2">
@@ -732,12 +732,12 @@ export function StatusTab({ projectId }: StatusTabProps) {
                 + הוסף שלב
               </Button>
             ) : (
-              <div className="flex flex-wrap items-center gap-2 rounded-[2px] border border-dashed border-[#dddddd] p-3">
+              <div className="flex flex-wrap items-center gap-2 rounded-lg border border-dashed border-[#dddddd] p-3">
                 {availablePredefined.map((s) => (
                   <button
                     key={s}
                     onClick={() => handleAddPredefined(s)}
-                    className="rounded-[2px] border border-[#dddddd] bg-white px-3 py-1 text-sm hover:bg-[#f0f0f0]"
+                    className="rounded-lg border border-[#dddddd] bg-white px-3 py-1 text-sm hover:bg-[#F0F2F5]"
                   >
                     {s}
                   </button>
@@ -746,7 +746,7 @@ export function StatusTab({ projectId }: StatusTabProps) {
                 {!showCustomInput ? (
                   <button
                     onClick={() => setShowCustomInput(true)}
-                    className="rounded-[2px] border border-[#1A7A6E] bg-[#E8F5F3] px-3 py-1 text-sm text-[#1A7A6E] hover:bg-[#a8d4d0]/30"
+                    className="rounded-lg border border-[#3D6A9E] bg-[#EBF1F9] px-3 py-1 text-sm text-[#3D6A9E] hover:bg-[#a8d4d0]/30"
                   >
                     + מותאם אישית
                   </button>
@@ -765,11 +765,11 @@ export function StatusTab({ projectId }: StatusTabProps) {
                         }
                       }}
                       placeholder="שם השלב..."
-                      className="rounded-[2px] border border-[#1A7A6E] px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A7A6E]/20"
+                      className="rounded-lg border border-[#3D6A9E] px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#3D6A9E]/20"
                     />
                     <button
                       onClick={handleAddCustom}
-                      className="rounded-[2px] bg-[#1a1a1a] px-3 py-1 text-sm text-white hover:bg-[#333]"
+                      className="rounded-lg bg-[#3D6A9E] px-3 py-1 text-sm text-white hover:bg-[#2F5A8A]"
                     >
                       הוסף
                     </button>

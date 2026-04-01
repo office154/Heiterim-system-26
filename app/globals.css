@@ -21,59 +21,58 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
   --radius-xl: calc(var(--radius) + 4px);
 }
 
 @layer base {
   :root {
     /* ── Heiterim Architects design tokens ── */
-    --bg-base:             #f0f0f0;
-    --bg-surface:          #e4e4e4;
+    --bg-base:             #F0F2F5;
+    --bg-surface:          #F0F2F5;
     --bg-card:             #ffffff;
-    --bg-elevated:         #f8f8f8;
-    --bg-hover:            #dcdcdc;
-    --border:              #dddddd;
-    --border-strong:       #cccccc;
+    --bg-elevated:         #f8f9fa;
+    --bg-hover:            #EBF1F9;
+    --border:              #E5E7EB;
+    --border-strong:       #D1D5DB;
     --text-primary:        #1a1a1a;
-    --text-secondary:      #666666;
-    --text-muted:          #aaaaaa;
-    --accent-yellow:       #E8C420;
-    --accent-yellow-hover: #D4B010;
-    --accent-yellow-light: #fef9e0;
-    --accent-teal:         #1A7A6E;
-    --accent-teal-light:   #E8F5F3;
-    --accent-teal-border:  #a8d4d0;
+    --text-secondary:      #6B7280;
+    --text-muted:          #9CA3AF;
+    --accent-primary:      #3D6A9E;
+    --accent-primary-hover:#2F5A8A;
+    --accent-primary-light:#EBF1F9;
+    --accent-secondary:    #5C7A92;
+    --accent-secondary-light:#ECF0F4;
     --danger:              #C0392B;
     --danger-light:        #fdf0ef;
     --warning:             #D4820A;
     --warning-light:       #fef3e0;
-    --success:             #1A7A6E;
-    --shadow-sm:           0 2px 0 #cccccc, 0 3px 10px rgba(0,0,0,0.05);
-    --shadow-md:           0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06);
-    --shadow-accent:       0 2px 0 #cccccc, 0 4px 14px rgba(232,196,32,0.1);
+    --success:             #3D6A9E;
+    --shadow-sm:           0 1px 3px rgba(0,0,0,0.07);
+    --shadow-md:           0 2px 8px rgba(0,0,0,0.09);
+    --shadow-card:         0 1px 4px rgba(0,0,0,0.08);
 
     /* ── Tailwind theme tokens ── */
-    --background:          #f0f0f0;
+    --background:          #F0F2F5;
     --foreground:          #1a1a1a;
     --card:                #ffffff;
     --card-foreground:     #1a1a1a;
     --popover:             #ffffff;
     --popover-foreground:  #1a1a1a;
-    --primary:             #E8C420;
-    --primary-foreground:  #1a1a1a;
-    --secondary:           #f8f8f8;
-    --secondary-foreground: #1a1a1a;
-    --muted:               #f8f8f8;
-    --muted-foreground:    #aaaaaa;
-    --accent:              #E8C420;
-    --accent-foreground:   #1a1a1a;
+    --primary:             #3D6A9E;
+    --primary-foreground:  #ffffff;
+    --secondary:           #f8f9fa;
+    --secondary-foreground:#1a1a1a;
+    --muted:               #f8f9fa;
+    --muted-foreground:    #9CA3AF;
+    --accent:              #3D6A9E;
+    --accent-foreground:   #ffffff;
     --destructive:         #C0392B;
-    --input:               #dddddd;
-    --ring:                #1A7A6E;
-    --radius:              0.125rem;
+    --input:               #E5E7EB;
+    --ring:                #3D6A9E;
+    --radius:              0.5rem;
   }
 
   * {
@@ -96,13 +95,13 @@
   .text-balance {
     text-wrap: balance;
   }
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
   .shadow-brand-sm {
     box-shadow: var(--shadow-sm);
   }
   .shadow-brand-md {
     box-shadow: var(--shadow-md);
-  }
-  .shadow-brand-accent {
-    box-shadow: var(--shadow-accent);
   }
 }

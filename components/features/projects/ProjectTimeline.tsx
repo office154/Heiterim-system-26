@@ -9,7 +9,7 @@ interface ProjectTimelineProps {
 
 // ─── Payment status colors ────────────────────────────────────────────────────
 const DOT_COLORS = {
-  paid:     { bg: '#2E7D5B', border: '#2E7D5B', line: '#2E7D5B' },
+  paid:     { bg: '#3D6A9E', border: '#3D6A9E', line: '#3D6A9E' },
   invoiced: { bg: '#F59E0B', border: '#F59E0B', line: '#eeeeee' },
   pending:  { bg: '#C62828', border: '#C62828', line: '#eeeeee' },
   none:     { bg: '#ffffff', border: '#E0E0E0', line: '#eeeeee' },
@@ -46,10 +46,10 @@ export function ProjectTimeline({ projectId }: ProjectTimelineProps) {
       <div
         style={{
           background: '#ffffff',
-          border: '1px solid #dddddd',
-          borderRadius: 2,
+          border: '1px solid #E5E7EB',
+          borderRadius: 10,
           padding: '14px 16px',
-          boxShadow: '0 2px 0 #cccccc, 0 3px 8px rgba(0,0,0,0.05)',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
           position: 'sticky',
           top: 20,
         }}
@@ -69,10 +69,10 @@ export function ProjectTimeline({ projectId }: ProjectTimelineProps) {
       dir="rtl"
       style={{
         background: '#ffffff',
-        border: '1px solid #dddddd',
-        borderRadius: 2,
+        border: '1px solid #E5E7EB',
+        borderRadius: 10,
         padding: '14px 16px',
-        boxShadow: '0 2px 0 #cccccc, 0 3px 8px rgba(0,0,0,0.05)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
         position: 'sticky',
         top: 20,
       }}
@@ -125,10 +125,10 @@ export function ProjectTimeline({ projectId }: ProjectTimelineProps) {
                     style={{
                       display: 'inline-block',
                       marginTop: 4,
-                      background: '#fff4e0',
-                      color: '#c07000',
-                      border: '1px solid #E8C420',
-                      borderRadius: 2,
+                      background: '#EBF1F9',
+                      color: '#3D6A9E',
+                      border: '1px solid #3D6A9E',
+                      borderRadius: 10,
                       fontSize: 9,
                       fontWeight: 700,
                       padding: '1px 5px',
@@ -147,8 +147,8 @@ export function ProjectTimeline({ projectId }: ProjectTimelineProps) {
                       color: '#888888',
                       background: '#f8f8f8',
                       padding: '4px 6px',
-                      borderRadius: 2,
-                      borderRight: '2px solid #E8C420',
+                      borderRadius: 10,
+                      borderRight: '2px solid #3D6A9E',
                     }}
                   >
                     {stage.note}

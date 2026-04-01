@@ -28,7 +28,7 @@ export default function ClientsPage() {
         <h1 className="text-[20px] font-black text-[#1a1a1a] tracking-tight">לקוחות</h1>
         <button
           onClick={() => setShowModal(true)}
-          className="inline-flex items-center px-4 py-2 bg-[#E8C420] text-[#1a1a1a] text-[13px] font-extrabold rounded-[2px] hover:bg-[#D4B010] transition-colors"
+          className="inline-flex items-center px-4 py-2 bg-[#3D6A9E] text-[#1a1a1a] text-[13px] font-extrabold rounded-lg hover:bg-[#D4B010] transition-colors"
         >
           + לקוח חדש
         </button>
@@ -39,7 +39,7 @@ export default function ClientsPage() {
         placeholder="חיפוש לפי שם או חברה..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="max-w-xs h-9 text-[13px] border-[#dddddd] bg-white text-[#1a1a1a] placeholder:text-[#aaaaaa] focus-visible:ring-[#1A7A6E]"
+        className="max-w-xs h-9 text-[13px] border-[#dddddd] bg-white text-[#1a1a1a] placeholder:text-[#aaaaaa] focus-visible:ring-[#3D6A9E]"
       />
 
       {/* Table */}
@@ -51,8 +51,8 @@ export default function ClientsPage() {
         </div>
       ) : (
         <div
-          className="bg-white border border-[#dddddd] rounded-[2px] overflow-hidden"
-          style={{ boxShadow: '0 2px 0 #cccccc, 0 3px 10px rgba(0,0,0,0.05)' }}
+          className="bg-white border border-[#dddddd] rounded-lg overflow-hidden"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
         >
           <table className="w-full text-[13px]">
             <thead>
@@ -71,7 +71,7 @@ export default function ClientsPage() {
                   <td className="px-5 py-3.5">
                     <Link
                       href={`/clients/${client.id}`}
-                      className="font-semibold text-[#1a1a1a] hover:text-[#E8C420] transition-colors"
+                      className="font-semibold text-[#1a1a1a] hover:text-[#3D6A9E] transition-colors"
                     >
                       {client.name}
                     </Link>

@@ -16,14 +16,14 @@ const STATUS_CONFIG: Record<
   PaymentStatus,
   { color: string; bg: string; border: string; label: string }
 > = {
-  paid:     { color: '#2E7D5B', bg: '#E8F5EF', border: '#A8D4BC', label: 'שולם' },
+  paid:     { color: '#3D6A9E', bg: '#E8F5EF', border: '#A8D4BC', label: 'שולם' },
   invoiced: { color: '#B45309', bg: '#FEF3C7', border: '#FCD34D', label: 'יצאה חשבונית' },
   required: { color: '#C62828', bg: '#FDEAEA', border: '#F5A8A8', label: 'נדרש לתשלום' },
   pending:  { color: '#9CA3AF', bg: '#F4F4F4', border: '#E0E0E0', label: 'טרם טופל' },
 }
 
 const DOT_BG: Record<PaymentStatus, string> = {
-  paid:     '#2E7D5B',
+  paid:     '#3D6A9E',
   invoiced: '#F59E0B',
   required: '#C62828',
   pending:  '#ffffff',
@@ -52,10 +52,10 @@ function SummaryCard({
     <div
       style={{
         background: '#ffffff',
-        border: '1px solid #dddddd',
+        border: '1px solid #E5E7EB',
         borderTop: `3px solid ${topColor}`,
-        borderRadius: '2px',
-        boxShadow: '0 2px 0 #cccccc, 0 3px 8px rgba(0,0,0,0.04)',
+        borderRadius: '10px',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
         padding: '14px 16px',
       }}
     >
@@ -218,15 +218,15 @@ function ProjectCard({ proj }: { proj: PaymentProject }) {
       onClick={() => router.push(`/projects/${proj.id}`)}
       style={{
         background: '#ffffff',
-        border: '1px solid #dddddd',
-        borderRadius: '2px',
-        boxShadow: '0 2px 0 #cccccc, 0 3px 8px rgba(0,0,0,0.04)',
+        border: '1px solid #E5E7EB',
+        borderRadius: '10px',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
         cursor: 'pointer',
         transition: 'border-color 0.15s, box-shadow 0.15s',
       }}
       onMouseEnter={(e) => {
         const el = e.currentTarget as HTMLDivElement
-        el.style.borderColor = '#E8C420'
+        el.style.borderColor = '#3D6A9E'
         el.style.boxShadow   = '0 2px 0 #cccccc, 0 4px 12px rgba(232,196,32,0.12)'
       }}
       onMouseLeave={(e) => {
@@ -285,7 +285,7 @@ function ProjectCard({ proj }: { proj: PaymentProject }) {
           {/* Non-zero amounts only */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-end' }}>
             {proj.totalPaid > 0 && (
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#2E7D5B' }} dir="ltr">
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#3D6A9E' }} dir="ltr">
                 שולם: {fmt(proj.totalPaid)}
               </span>
             )}
@@ -346,14 +346,14 @@ export default function PaymentsPage() {
         <SummaryCard
           label='סה"כ חוזים'
           value={isLoading ? '—' : fmt(data?.totalContract ?? 0)}
-          topColor="#E8C420"
+          topColor="#3D6A9E"
           loading={isLoading}
         />
         <SummaryCard
           label='סה"כ שולם'
           value={isLoading ? '—' : fmt(data?.totalPaid ?? 0)}
-          topColor="#2E7D5B"
-          valueColor="#2E7D5B"
+          topColor="#3D6A9E"
+          valueColor="#3D6A9E"
           loading={isLoading}
         />
         <SummaryCard
@@ -377,9 +377,9 @@ export default function PaymentsPage() {
         <div
           style={{
             background: '#E8F5EF',
-            color: '#2E7D5B',
+            color: '#3D6A9E',
             border: '1px solid #A8D4BC',
-            borderRadius: '2px',
+            borderRadius: '10px',
             padding: '12px 16px',
             fontWeight: 700,
             textAlign: 'center',
@@ -396,8 +396,8 @@ export default function PaymentsPage() {
         <div
           style={{
             background: '#ffffff',
-            border: '1px solid #dddddd',
-            borderRadius: '2px',
+            border: '1px solid #E5E7EB',
+            borderRadius: '10px',
             padding: '40px 16px',
             textAlign: 'center',
             color: '#aaaaaa',
@@ -417,8 +417,8 @@ export default function PaymentsPage() {
               style={{
                 height: 120,
                 background: '#e8e8e8',
-                borderRadius: '2px',
-                border: '1px solid #dddddd',
+                borderRadius: '10px',
+                border: '1px solid #E5E7EB',
                 animation: 'pulse 1.5s ease-in-out infinite',
               }}
             />

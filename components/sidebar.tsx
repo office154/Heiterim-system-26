@@ -45,12 +45,11 @@ function ProjectsSubNav({ pathname }: { pathname: string }) {
 
   return (
     <div>
-      {/* "פרויקטים" row with toggle arrow */}
       <div
-        className="flex items-center justify-between rounded-[2px] cursor-pointer"
+        className="flex items-center justify-between rounded-lg cursor-pointer"
         style={isProjectsActive ? {
-          background: '#d8d8d8',
-          borderRight: '3px solid #E8C420',
+          background: '#EBF1F9',
+          borderRight: '3px solid #3D6A9E',
         } : {}}
         onClick={() => setOpen((v) => !v)}
       >
@@ -59,14 +58,14 @@ function ProjectsSubNav({ pathname }: { pathname: string }) {
           onClick={(e) => e.stopPropagation()}
           className={cn(
             'flex-1 px-3 py-2 text-[13px]',
-            isProjectsActive ? 'font-bold text-[#1a1a1a]' : 'font-medium text-[#888888]'
+            isProjectsActive ? 'font-bold text-[#3D6A9E]' : 'font-medium text-[#6B7280]'
           )}
           style={isProjectsActive ? { paddingRight: 9 } : {}}
         >
           פרויקטים
         </Link>
         <button
-          className="px-2 py-2 text-[10px] text-[#aaa] hover:text-[#666] select-none transition-transform"
+          className="px-2 py-2 text-[10px] text-[#9CA3AF] hover:text-[#5C7A92] select-none"
           tabIndex={-1}
           style={{ transform: open ? 'rotate(90deg)' : 'rotate(180deg)', transition: 'transform 0.2s' }}
         >
@@ -74,24 +73,20 @@ function ProjectsSubNav({ pathname }: { pathname: string }) {
         </button>
       </div>
 
-      {/* Expanded list */}
       {open && (
-        <div style={{ background: '#dcdcdc', borderTop: '1px solid #d0d0d0' }}>
-          {/* Search */}
+        <div style={{ background: '#f4f6f9', borderTop: '1px solid #E5E7EB', borderRadius: '0 0 8px 8px' }}>
           <div className="px-3 py-1.5">
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="חיפוש פרויקט..."
-              className="w-full rounded-[2px] border border-[#ccc] bg-[#e8e8e8] px-2 py-1 text-[10px] text-[#555] placeholder:text-[#aaa] focus:outline-none focus:border-[#bbb]"
+              className="w-full rounded-lg border border-[#E5E7EB] bg-white px-2 py-1 text-[11px] text-[#1a1a1a] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#3D6A9E]"
             />
           </div>
-
-          {/* Project list */}
           <div style={{ maxHeight: 220, overflowY: 'auto' }}>
             {filtered.length === 0 && (
-              <p className="px-3 py-2 text-[10px] text-[#aaa] italic">לא נמצאו פרויקטים</p>
+              <p className="px-3 py-2 text-[11px] text-[#9CA3AF] italic">לא נמצאו פרויקטים</p>
             )}
             {filtered.map((project) => {
               const isCur = pathname === `/projects/${project.id}` || pathname.startsWith(`/projects/${project.id}/`)
@@ -99,14 +94,14 @@ function ProjectsSubNav({ pathname }: { pathname: string }) {
                 <Link
                   key={project.id}
                   href={`/projects/${project.id}`}
-                  className="flex items-center gap-2 px-3 py-1.5 text-[11px] truncate"
+                  className="flex items-center gap-2 px-3 py-1.5 text-[12px] truncate rounded-lg mx-1 my-0.5"
                   style={{
-                    color: isCur ? '#1a1a1a' : '#666',
+                    color: isCur ? '#3D6A9E' : '#6B7280',
                     fontWeight: isCur ? 600 : 400,
-                    background: isCur ? '#cacaca' : 'transparent',
+                    background: isCur ? '#EBF1F9' : 'transparent',
                   }}
                   onMouseEnter={(e) => {
-                    if (!isCur) (e.currentTarget as HTMLElement).style.background = '#d4d4d4'
+                    if (!isCur) (e.currentTarget as HTMLElement).style.background = '#ECF0F4'
                   }}
                   onMouseLeave={(e) => {
                     if (!isCur) (e.currentTarget as HTMLElement).style.background = 'transparent'
@@ -115,7 +110,7 @@ function ProjectsSubNav({ pathname }: { pathname: string }) {
                   <span
                     style={{
                       width: 5, height: 5, borderRadius: '50%', flexShrink: 0,
-                      background: isCur ? '#E8C420' : '#c0c0c0',
+                      background: isCur ? '#3D6A9E' : '#D1D5DB',
                     }}
                   />
                   <span className="truncate">{project.title}</span>
@@ -148,14 +143,16 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
   return (
     <aside
       className="w-56 min-h-screen flex flex-col shrink-0 print:hidden"
-      style={{ background: '#e4e4e4', borderLeft: '1px solid #d4d4d4' }}
+      style={{ background: '#ffffff', borderLeft: '1px solid #E5E7EB' }}
     >
       {/* Logo */}
-      <div className="px-[18px] py-4" style={{ borderBottom: '1px solid #d4d4d4' }}>
+      <div className="px-4 py-4" style={{ borderBottom: '1px solid #E5E7EB' }}>
         {logoError ? (
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-[2px] flex-shrink-0" style={{ background: '#E8C420' }} />
-            <span className="text-[13px] font-bold tracking-tight" style={{ color: '#1a1a1a' }}>
+            <div className="w-6 h-6 rounded-lg flex-shrink-0 flex items-center justify-center" style={{ background: '#3D6A9E' }}>
+              <span style={{ color: 'white', fontSize: 11, fontWeight: 700 }}>H</span>
+            </div>
+            <span className="text-[14px] font-bold tracking-tight" style={{ color: '#3D6A9E' }}>
               Heiterim
             </span>
           </div>
@@ -187,26 +184,26 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center px-3 py-2 rounded-[2px] text-[13px] transition-colors relative',
+                'flex items-center px-3 py-2 rounded-lg text-[13px] transition-colors relative',
                 isActive ? 'font-bold' : 'font-medium'
               )}
               style={isActive ? {
-                color: '#1a1a1a',
-                background: '#d8d8d8',
-                borderRight: '3px solid #E8C420',
+                color: '#3D6A9E',
+                background: '#EBF1F9',
+                borderRight: '3px solid #3D6A9E',
               } : {
-                color: '#888888',
+                color: '#6B7280',
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  (e.currentTarget as HTMLElement).style.background = '#dcdcdc'
-                  ;(e.currentTarget as HTMLElement).style.color = '#1a1a1a'
+                  (e.currentTarget as HTMLElement).style.background = '#ECF0F4'
+                  ;(e.currentTarget as HTMLElement).style.color = '#5C7A92'
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
                   (e.currentTarget as HTMLElement).style.background = ''
-                  ;(e.currentTarget as HTMLElement).style.color = '#888888'
+                  ;(e.currentTarget as HTMLElement).style.color = '#6B7280'
                 }
               }}
             >
@@ -217,24 +214,24 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-4 space-y-2" style={{ borderTop: '1px solid #d4d4d4' }}>
-        <div className="px-3">
+      <div className="px-4 py-4 space-y-2" style={{ borderTop: '1px solid #E5E7EB' }}>
+        <div className="px-1">
           <p className="text-[13px] font-semibold truncate" style={{ color: '#1a1a1a' }}>{fullName}</p>
-          <p className="text-[11px]" style={{ color: '#888888' }}>
+          <p className="text-[11px]" style={{ color: '#6B7280' }}>
             {role === 'admin' ? 'מנהל' : 'עובד'}
           </p>
         </div>
         <button
           onClick={handleLogout}
-          className="w-full text-right px-3 py-1.5 rounded-[2px] text-[12px] transition-colors"
-          style={{ color: '#888888' }}
+          className="w-full text-right px-3 py-1.5 rounded-lg text-[12px] transition-colors"
+          style={{ color: '#6B7280' }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.background = '#dcdcdc'
-            ;(e.currentTarget as HTMLElement).style.color = '#1a1a1a'
+            (e.currentTarget as HTMLElement).style.background = '#ECF0F4'
+            ;(e.currentTarget as HTMLElement).style.color = '#5C7A92'
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLElement).style.background = ''
-            ;(e.currentTarget as HTMLElement).style.color = '#888888'
+            ;(e.currentTarget as HTMLElement).style.color = '#6B7280'
           }}
         >
           התנתקות

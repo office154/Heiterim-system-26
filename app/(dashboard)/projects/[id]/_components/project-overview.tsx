@@ -25,19 +25,19 @@ const REQUIREMENT_STATUSES: RequirementStatus[] = [
 const STATUS_STYLES: Record<RequirementStatus, string> = {
   'ממתין':       'bg-[#f4f4f4] text-[#666666]',
   'בטיפול':     'bg-[#fef3e0] text-[#D4820A]',
-  'הוגש':       'bg-[#E8F5F3] text-[#1A7A6E]',
-  'התקבל':      'bg-[#E8F5F3] text-[#1A7A6E]',
+  'הוגש':       'bg-[#EBF1F9] text-[#3D6A9E]',
+  'התקבל':      'bg-[#EBF1F9] text-[#3D6A9E]',
   'חזרו הערות': 'bg-[#fdf0ef] text-[#C0392B]',
 }
 
 function StageBadge({ stage }: { stage: { paid: boolean; invoice_sent: boolean; completed: boolean } }) {
   if (stage.paid)
-    return <span style={{ background: '#dcfce7', color: '#166534' }} className="rounded-[2px] px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap">שולם</span>
+    return <span style={{ background: '#dcfce7', color: '#166534' }} className="rounded-lg px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap">שולם</span>
   if (stage.invoice_sent)
-    return <span style={{ background: '#fef9c3', color: '#854d0e' }} className="rounded-[2px] px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap">חשבונית</span>
+    return <span style={{ background: '#fef9c3', color: '#854d0e' }} className="rounded-lg px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap">חשבונית</span>
   if (stage.completed)
-    return <span style={{ background: '#dbeafe', color: '#1e40af' }} className="rounded-[2px] px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap">בוצע</span>
-  return <span style={{ background: '#f3f4f6', color: '#6b7280' }} className="rounded-[2px] px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap">ממתין</span>
+    return <span style={{ background: '#dbeafe', color: '#1e40af' }} className="rounded-lg px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap">בוצע</span>
+  return <span style={{ background: '#f3f4f6', color: '#6b7280' }} className="rounded-lg px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap">ממתין</span>
 }
 
 function InlineStatusSelect({ req, projectId }: { req: StatusRequirement; projectId: string }) {
@@ -57,7 +57,7 @@ function InlineStatusSelect({ req, projectId }: { req: StatusRequirement; projec
       value={req.status}
       onChange={handleChange}
       onClick={(e) => e.stopPropagation()}
-      className={`rounded-[2px] px-1.5 py-0.5 text-[10px] font-semibold focus:outline-none cursor-pointer ${STATUS_STYLES[req.status]}`}
+      className={`rounded-lg px-1.5 py-0.5 text-[10px] font-semibold focus:outline-none cursor-pointer ${STATUS_STYLES[req.status]}`}
     >
       {REQUIREMENT_STATUSES.map((s) => (
         <option key={s} value={s}>{s}</option>
@@ -104,13 +104,13 @@ function ReqRow({ req, projectId }: { req: StatusRequirement; projectId: string 
             <button
               onClick={handleDelete}
               disabled={deleteReq.isPending}
-              className="rounded-[2px] bg-[#C0392B] px-1.5 py-0.5 text-[9px] font-bold text-white hover:bg-[#a93226] disabled:opacity-50"
+              className="rounded-lg bg-[#C0392B] px-1.5 py-0.5 text-[9px] font-bold text-white hover:bg-[#a93226] disabled:opacity-50"
             >
               {deleteReq.isPending ? '...' : 'מחק'}
             </button>
             <button
               onClick={() => setConfirm(false)}
-              className="rounded-[2px] px-1.5 py-0.5 text-[9px] text-[#888] hover:text-[#333]"
+              className="rounded-lg px-1.5 py-0.5 text-[9px] text-[#888] hover:text-[#333]"
             >
               ביטול
             </button>
@@ -118,7 +118,7 @@ function ReqRow({ req, projectId }: { req: StatusRequirement; projectId: string 
         ) : (
           <button
             onClick={() => setConfirm(true)}
-            className="text-[#ccc] hover:text-[#C0392B] hover:bg-[#fdf0ef] rounded-[2px] p-0.5 transition-colors"
+            className="text-[#ccc] hover:text-[#C0392B] hover:bg-[#fdf0ef] rounded-lg p-0.5 transition-colors"
             title="מחק שורה"
           >
             <TrashIcon />
@@ -147,13 +147,13 @@ function AddRequirementRow({ projectId, requirements }: { projectId: string; req
   }
 
   return (
-    <div className="mt-3 rounded-[2px] border border-[#e8e8e8] bg-[#fafafa] p-2.5">
+    <div className="mt-3 rounded-lg border border-[#e8e8e8] bg-[#fafafa] p-2.5">
       <p className="text-[9px] font-semibold text-[#bbb] uppercase tracking-[0.07em] mb-2">הוסף לדוח סטטוס</p>
       <div className="flex gap-1.5 items-center">
         <select
           value={section}
           onChange={(e) => setSection(e.target.value)}
-          className="rounded-[2px] border border-[#e0e0e0] bg-white px-1.5 py-1 text-[10px] text-[#555] focus:outline-none focus:border-[#ccc] shrink-0"
+          className="rounded-lg border border-[#e0e0e0] bg-white px-1.5 py-1 text-[10px] text-[#555] focus:outline-none focus:border-[#ccc] shrink-0"
           style={{ maxWidth: 90 }}
         >
           {PREDEFINED_SECTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -165,12 +165,12 @@ function AddRequirementRow({ projectId, requirements }: { projectId: string; req
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') handleAdd() }}
           placeholder="פירוט הדרישה..."
-          className="flex-1 min-w-0 rounded-[2px] border border-[#e0e0e0] bg-white px-2 py-1 text-[11px] text-[#1a1a1a] placeholder:text-[#bbb] focus:outline-none focus:border-[#ccc]"
+          className="flex-1 min-w-0 rounded-lg border border-[#e0e0e0] bg-white px-2 py-1 text-[11px] text-[#1a1a1a] placeholder:text-[#bbb] focus:outline-none focus:border-[#ccc]"
         />
         <button
           onClick={handleAdd}
           disabled={createReq.isPending || !text.trim()}
-          className="shrink-0 rounded-[2px] bg-[#1a1a1a] px-2.5 py-1 text-[10px] font-semibold text-white hover:bg-[#333] disabled:opacity-30 transition-colors"
+          className="shrink-0 rounded-lg bg-[#3D6A9E] px-2.5 py-1 text-[10px] font-semibold text-white hover:bg-[#2F5A8A] disabled:opacity-30 transition-colors"
         >
           {createReq.isPending ? '...' : '+ הוסף'}
         </button>
@@ -198,7 +198,7 @@ function FileRow({ file }: { file: { id: string; file_name: string; file_size: n
         </span>
         <button
           onClick={handleOpen}
-          className="text-[10px] text-[#E8C420] font-semibold opacity-0 group-hover/file:opacity-100 hover:underline transition-opacity"
+          className="text-[10px] text-[#3D6A9E] font-semibold opacity-0 group-hover/file:opacity-100 hover:underline transition-opacity"
         >
           פתח
         </button>
@@ -234,18 +234,18 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
           <>
             <button
               onClick={() => onNavigate('stages')}
-              className="rounded-[2px] border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
-              style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 12px rgba(0,0,0,0.05)' }}
+              className="rounded-lg border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
+              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
             >
-              <div className="text-xl font-black text-[#2E7D5B]">{formatPrice(totalPaid)}</div>
+              <div className="text-xl font-black text-[#3D6A9E]">{formatPrice(totalPaid)}</div>
               <div className="text-[10px] text-[#888] mt-1">שולם</div>
             </button>
             <button
               onClick={() => onNavigate('stages')}
-              className="rounded-[2px] border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
-              style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 12px rgba(0,0,0,0.05)' }}
+              className="rounded-lg border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
+              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
             >
-              <div className={`text-xl font-black ${balance > 0 ? 'text-[#C62828]' : 'text-[#2E7D5B]'}`}>
+              <div className={`text-xl font-black ${balance > 0 ? 'text-[#C62828]' : 'text-[#3D6A9E]'}`}>
                 {formatPrice(balance)}
               </div>
               <div className="text-[10px] text-[#888] mt-1">יתרה לגביה</div>
@@ -254,8 +254,8 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
         )}
         <button
           onClick={() => onNavigate('status')}
-          className="rounded-[2px] border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
-          style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 12px rgba(0,0,0,0.05)' }}
+          className="rounded-lg border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
         >
           <div className="text-xl font-black text-[#1a1a1a]">
             {completedReqs} / {requirements.length}
@@ -264,8 +264,8 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
         </button>
         <button
           onClick={() => onNavigate('files')}
-          className="rounded-[2px] border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
-          style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 12px rgba(0,0,0,0.05)' }}
+          className="rounded-lg border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
         >
           <div className="text-xl font-black text-[#1a1a1a]">{files.length}</div>
           <div className="text-[10px] text-[#888] mt-1">קבצים</div>
@@ -277,23 +277,23 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
 
         {/* Status — interactive, no panel-click */}
         <div
-          className="rounded-[2px] border border-[#dddddd] bg-white overflow-hidden"
-          style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 12px rgba(0,0,0,0.05)' }}
+          className="rounded-lg border border-[#dddddd] bg-white overflow-hidden"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#f0f0f0]">
             <span className="text-[12px] font-bold text-[#1a1a1a]">דוח סטטוס</span>
             <button
               onClick={() => onNavigate('status')}
-              className="text-[11px] text-[#E8C420] font-semibold hover:underline cursor-pointer"
+              className="text-[11px] text-[#3D6A9E] font-semibold hover:underline cursor-pointer"
             >
               לדוח המלא ←
             </button>
           </div>
           {requirements.length > 0 && (
             <div className="px-4 pt-3 pb-1">
-              <div className="h-1.5 rounded-full bg-[#f0f0f0] overflow-hidden">
+              <div className="h-1.5 rounded-full bg-[#F0F2F5] overflow-hidden">
                 <div
-                  className="h-full bg-[#E8C420] rounded-full transition-all"
+                  className="h-full bg-[#3D6A9E] rounded-full transition-all"
                   style={{ width: `${reqPct}%` }}
                 />
               </div>
@@ -317,23 +317,23 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
 
         {/* Payments — no cursor-pointer on panel, only on link */}
         <div
-          className="rounded-[2px] border border-[#dddddd] bg-white overflow-hidden"
-          style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 12px rgba(0,0,0,0.05)' }}
+          className="rounded-lg border border-[#dddddd] bg-white overflow-hidden"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#f0f0f0]">
             <span className="text-[12px] font-bold text-[#1a1a1a]">תשלומים</span>
             <button
               onClick={() => onNavigate('stages')}
-              className="text-[11px] text-[#E8C420] font-semibold hover:underline cursor-pointer"
+              className="text-[11px] text-[#3D6A9E] font-semibold hover:underline cursor-pointer"
             >
               לכל התשלומים ←
             </button>
           </div>
           {isAdmin && totalContract > 0 && (
             <div className="px-4 pt-3 pb-1">
-              <div className="h-1.5 rounded-full bg-[#f0f0f0] overflow-hidden">
+              <div className="h-1.5 rounded-full bg-[#F0F2F5] overflow-hidden">
                 <div
-                  className="h-full bg-[#E8C420] rounded-full transition-all"
+                  className="h-full bg-[#3D6A9E] rounded-full transition-all"
                   style={{ width: `${paidPct}%` }}
                 />
               </div>
@@ -362,14 +362,14 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
 
         {/* Files — open directly */}
         <div
-          className="rounded-[2px] border border-[#dddddd] bg-white overflow-hidden"
-          style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 12px rgba(0,0,0,0.05)' }}
+          className="rounded-lg border border-[#dddddd] bg-white overflow-hidden"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#f0f0f0]">
             <span className="text-[12px] font-bold text-[#1a1a1a]">קבצים</span>
             <button
               onClick={() => onNavigate('files')}
-              className="text-[11px] text-[#E8C420] font-semibold hover:underline cursor-pointer"
+              className="text-[11px] text-[#3D6A9E] font-semibold hover:underline cursor-pointer"
             >
               לכל הקבצים ←
             </button>

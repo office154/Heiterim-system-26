@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Rubik', sans-serif; background: #f0f0f0; padding: 32px; color: #1a1a1a; }
+
+.section-block { background: white; border: 1px solid #ddd; border-radius: 2px; overflow: hidden; box-shadow: 0 2px 0 #ccc, 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
+.section-head { background: #1a1a1a; padding: 8px 16px; }
+.section-name { font-size: 11px; font-weight: 700; color: #E8C420; text-transform: uppercase; letter-spacing: 0.1em; }
+
+table { width: 100%; border-collapse: collapse; }
+thead th { padding: 6px 12px; text-align: right; font-size: 9px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.08em; background: #f8f8f8; border-bottom: 1px solid #eee; }
+
+/* ── Main row ── */
+tr.req-row { border-bottom: 1px solid #f0f0f0; }
+tr.req-row:hover > td { background: #fafafa; }
+tr.req-row > td { padding: 8px 12px; font-size: 12px; vertical-align: middle; }
+
+/* ── Step rows (sub) — indented, same table ── */
+tr.step-row { border-bottom: 1px solid #f0f9f4; }
+tr.step-row > td { padding: 5px 12px 5px 0; font-size: 11px; background: #f5fdf8; vertical-align: middle; }
+tr.step-row > td:first-child { padding-right: 32px; }
+tr.step-row.done > td { color: #888; }
+
+/* indent — first 3 cols empty */
+tr.step-row > td:first-child { padding-right: 12px; }
+
+/* detail cell contains circle + text */
+.step-cell { display: flex; align-items: center; gap: 8px; }
+
+/* add step row */
+tr.add-step-row > td { padding: 5px 12px 6px 0; background: #edf7f1; border-bottom: 2px solid #c8e6d0; }
+
+/* toggle btn */
+.toggle { background: none; border: none; cursor: pointer; font-size: 9px; color: #ccc; padding: 3px 4px; border-radius: 2px; transition: all 0.15s; line-height: 1; display: inline-block; }
+.toggle:hover { color: #888; }
+.toggle.open { color: #2E7D5B; transform: rotate(90deg); }
+
+/* circle check */
+.cc { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #ccc; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.15s; background: white; font-size: 10px; font-weight: 700; color: transparent; }
+.cc:hover { border-color: #2E7D5B; }
+.cc.done { background: #2E7D5B; border-color: #2E7D5B; color: white; }
+
+/* badges */
+.badge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 2px; }
+.s-wait { background: #f4f4f4; color: #666; }
+.s-doing { background: #fef3e0; color: #D4820A; }
+.s-ok { background: #E8F5F3; color: #1A7A6E; }
+.s-err { background: #fdf0ef; color: #C0392B; }
+
+.trash { background: none; border: none; cursor: pointer; color: #ddd; padding: 2px; border-radius: 2px; transition: all 0.15s; }
+.trash:hover { color: #C0392B; background: #fdf0ef; }
+
+/* add step form */
+.add-form { display: none; align-items: center; gap: 6px; }
+.add-form input[type=text] { flex: 1; font-size: 11px; font-family: 'Rubik',sans-serif; border: 1px solid #b8ddc4; border-radius: 2px; padding: 3px 8px; background: white; }
+.add-form input[type=date] { font-size: 11px; font-family: 'Rubik',sans-serif; border: 1px solid #b8ddc4; border-radius: 2px; padding: 3px 8px; background: white; width: 110px; }
+.add-form .btn-ok { font-size: 11px; font-weight: 600; font-family:'Rubik',sans-serif; background: #2E7D5B; color: white; border: none; border-radius: 2px; padding: 3px 12px; cursor: pointer; }
+.add-form .btn-cancel { font-size: 11px; color: #888; background: none; border: none; cursor: pointer; font-family:'Rubik',sans-serif; }
+
+.add-step-btn { font-size: 10px; font-weight: 600; color: #2E7D5B; background: none; border: 1px dashed #b8ddc4; border-radius: 2px; padding: 3px 10px; cursor: pointer; font-family:'Rubik',sans-serif; }
+.add-step-btn:hover { background: #dff0e5; }
+
+.tbl-footer { padding: 7px 16px; border-top: 1px solid #f0f0f0; }
+.tbl-footer button { font-size: 11px; color: #888; background: none; border: none; cursor: pointer; font-family:'Rubik',sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- ══ תיק מידע ══ -->
+<div class="section-block">
+  <div class="section-head"><span class="section-name">תיק מידע</span></div>
+  <table>
+    <thead><tr>
+      <th style="width:28px"></th>
+      <th style="width:28px">#</th>
+      <th style="width:32px">עלה</th>
+      <th>פירוט</th>
+      <th style="width:100px">סטטוס</th>
+      <th style="width:90px">תאריך</th>
+      <th>הערות</th>
+      <th style="width:28px"></th>
+    </tr></thead>
+    <tbody>
+
+      <!-- req 1.1 — with steps, open -->
+      <tr class="req-row">
+        <td><button class="toggle open" onclick="toggle(this,'g-1-1')">▶</button></td>
+        <td style="color:#aaa;font-size:11px;text-align:center;">1.1</td>
+        <td><input type="checkbox"></td>
+        <td style="font-weight:600;">19.3.26 נשלחו תוכניות לרשות</td>
+        <td><span class="badge s-doing">בטיפול</span></td>
+        <td style="font-size:11px;color:#888;">19.3.26</td>
+        <td style="font-size:11px;color:#888;">—</td>
+        <td><button class="trash"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></td>
+      </tr>
+      <!-- step rows for 1.1 -->
+      <tr class="step-row done" data-group="g-1-1">
+        <td></td><td></td><td></td>
+        <td colspan="4"><div class="step-cell"><span class="cc done" onclick="toggleDone(this)">✓</span><span class="step-detail">19.3.26 — שלחנו סט תוכניות ראשוני</span></div></td>
+        <td><button class="trash" onclick="removeStep(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></td>
+      </tr>
+      <tr class="step-row" data-group="g-1-1">
+        <td></td><td></td><td></td>
+        <td colspan="4"><div class="step-cell"><span class="cc" onclick="toggleDone(this)">✓</span><span class="step-detail">25.3.26 — התקבלה בקשה להשלמות</span></div></td>
+        <td><button class="trash" onclick="removeStep(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></td>
+      </tr>
+      <tr class="add-step-row" data-group="g-1-1">
+        <td colspan="8">
+          <div class="add-form" id="form-g-1-1">
+            <input type="date" id="date-g-1-1">
+            <input type="text" id="text-g-1-1" placeholder="פירוט שלב מעקב...">
+            <button class="btn-ok" onclick="addStep('g-1-1')">הוסף</button>
+            <button class="btn-cancel" onclick="cancelAdd('g-1-1')">ביטול</button>
+          </div>
+          <button class="add-step-btn" id="addbtn-g-1-1" onclick="showAddForm('g-1-1')">+ הוסף שלב מעקב</button>
+        </td>
+      </tr>
+
+      <!-- req 1.2 — no steps -->
+      <tr class="req-row">
+        <td><button class="toggle" onclick="toggle(this,'g-1-2')">▶</button></td>
+        <td style="color:#aaa;font-size:11px;text-align:center;">1.2</td>
+        <td><input type="checkbox"></td>
+        <td>24.3.26 בקשה לאוטוקד</td>
+        <td><span class="badge s-wait">ממתין</span></td>
+        <td style="font-size:11px;color:#888;">24.3.26</td>
+        <td style="font-size:11px;color:#888;">—</td>
+        <td><button class="trash"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></td>
+      </tr>
+      <tr class="add-step-row" data-group="g-1-2" style="display:none;">
+        <td colspan="8">
+          <div class="add-form" id="form-g-1-2">
+            <input type="date" id="date-g-1-2">
+            <input type="text" id="text-g-1-2" placeholder="פירוט שלב מעקב...">
+            <button class="btn-ok" onclick="addStep('g-1-2')">הוסף</button>
+            <button class="btn-cancel" onclick="cancelAdd('g-1-2')">ביטול</button>
+          </div>
+          <button class="add-step-btn" id="addbtn-g-1-2" onclick="showAddForm('g-1-2')">+ הוסף שלב מעקב</button>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+  <div class="tbl-footer"><button>+ הוסף פירוט</button></div>
+</div>
+
+<!-- ══ בקשה להיתר ══ -->
+<div class="section-block">
+  <div class="section-head"><span class="section-name">בקשה להיתר</span></div>
+  <table>
+    <thead><tr>
+      <th style="width:28px"></th>
+      <th style="width:28px">#</th>
+      <th style="width:32px">עלה</th>
+      <th>פירוט</th>
+      <th style="width:100px">סטטוס</th>
+      <th style="width:90px">תאריך</th>
+      <th>הערות</th>
+      <th style="width:28px"></th>
+    </tr></thead>
+    <tbody>
+
+      <!-- req 2.1 -->
+      <tr class="req-row">
+        <td><button class="toggle" onclick="toggle(this,'g-2-1')">▶</button></td>
+        <td style="color:#aaa;font-size:11px;text-align:center;">2.1</td>
+        <td><input type="checkbox"></td>
+        <td>שדגדש</td>
+        <td><span class="badge s-wait">ממתין</span></td>
+        <td style="font-size:11px;color:#888;">—</td>
+        <td style="font-size:11px;color:#888;">—</td>
+        <td><button class="trash"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></td>
+      </tr>
+      <tr class="add-step-row" data-group="g-2-1" style="display:none;">
+        <td colspan="8">
+          <div class="add-form" id="form-g-2-1">
+            <input type="date" id="date-g-2-1">
+            <input type="text" id="text-g-2-1" placeholder="פירוט שלב מעקב...">
+            <button class="btn-ok" onclick="addStep('g-2-1')">הוסף</button>
+            <button class="btn-cancel" onclick="cancelAdd('g-2-1')">ביטול</button>
+          </div>
+          <button class="add-step-btn" id="addbtn-g-2-1" onclick="showAddForm('g-2-1')">+ הוסף שלב מעקב</button>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+  <div class="tbl-footer"><button>+ הוסף פירוט</button></div>
+</div>
+
+<script>
+function toggle(btn, group) {
+  const isOpen = btn.classList.contains('open')
+  btn.classList.toggle('open', !isOpen)
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(r => {
+    r.style.display = isOpen ? 'none' : ''
+  })
+}
+
+function toggleDone(cc) {
+  const isDone = cc.classList.toggle('done')
+  const row = cc.closest('tr')
+  row.classList.toggle('done', isDone)
+}
+
+function removeStep(btn) {
+  const row = btn.closest('tr')
+  row.remove()
+}
+
+function showAddForm(group) {
+  document.getElementById('form-' + group).style.display = 'flex'
+  document.getElementById('addbtn-' + group).style.display = 'none'
+  document.getElementById('text-' + group).focus()
+}
+
+function cancelAdd(group) {
+  document.getElementById('form-' + group).style.display = 'none'
+  document.getElementById('addbtn-' + group).style.display = 'inline-block'
+}
+
+function addStep(group) {
+  const text = document.getElementById('text-' + group).value.trim()
+  if (!text) return
+  const date = document.getElementById('date-' + group).value
+  const dateStr = date ? new Date(date).toLocaleDateString('he-IL') : ''
+  const detail = dateStr ? `${dateStr} — ${text}` : text
+
+  const addRow = document.querySelector(`.add-step-row[data-group="${group}"]`)
+  const tr = document.createElement('tr')
+  tr.className = 'step-row'
+  tr.setAttribute('data-group', group)
+  tr.innerHTML = `
+    <td></td><td></td><td></td>
+    <td colspan="4"><div class="step-cell"><span class="cc" onclick="toggleDone(this)">✓</span><span class="step-detail">${detail}</span></div></td>
+    <td><button class="trash" onclick="removeStep(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></td>
+  `
+  addRow.parentNode.insertBefore(tr, addRow)
+  document.getElementById('text-' + group).value = ''
+  document.getElementById('date-' + group).value = ''
+  cancelAdd(group)
+}
+
+// init: show step rows for open groups
+document.querySelectorAll('.toggle.open').forEach(btn => {
+  const group = btn.getAttribute('onclick').match(/'([^']+)'/)[1]
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(r => r.style.display = '')
+})
+</script>
+</body>
+</html>

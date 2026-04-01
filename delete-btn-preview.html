@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Rubik', sans-serif; background: #f0f0f0; padding: 32px; }
+h1 { font-size: 13px; font-weight: 700; color: #555; margin-bottom: 24px; letter-spacing: 0.05em; text-transform: uppercase; }
+
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.card { background: white; border: 1px solid #ddd; border-radius: 2px; overflow: hidden; box-shadow: 0 2px 0 #ccc, 0 4px 12px rgba(0,0,0,0.05); }
+.card-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid #f0f0f0; }
+.card-title { font-size: 12px; font-weight: 700; color: #1a1a1a; }
+.opt-label { font-size: 10px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 14px 4px; }
+.rows { padding: 4px 14px 12px; }
+
+/* shared row */
+.row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f5f5f5; }
+.row:last-child { border-bottom: none; }
+.req { font-size: 11px; color: #333; flex: 1; min-width: 0; }
+.req .sec { font-size: 9px; color: #bbb; font-weight: 500; }
+.right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.badge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 2px; }
+.b-wait { background: #f4f4f4; color: #666; }
+.b-doing { background: #fef3e0; color: #D4820A; }
+.b-ok { background: #E8F5F3; color: #1A7A6E; }
+.b-err { background: #fdf0ef; color: #C0392B; }
+
+/* ── Option A: trash icon always visible ── */
+.del-a {
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 2px; cursor: pointer;
+  color: #ccc; font-size: 13px;
+  transition: color 0.15s, background 0.15s;
+  border: none; background: transparent;
+}
+.del-a:hover { color: #C0392B; background: #fdf0ef; }
+
+/* ── Option B: pill "מחק" on hover (simulated always-visible here) ── */
+.del-b {
+  font-size: 10px; font-weight: 600;
+  padding: 2px 8px; border-radius: 99px;
+  border: 1px solid #eee; background: #f8f8f8;
+  color: #bbb; cursor: pointer;
+  transition: all 0.15s;
+}
+.del-b:hover { background: #fdf0ef; border-color: #f5c6c2; color: #C0392B; }
+
+/* ── Option C: x inside colored circle ── */
+.del-c {
+  width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; cursor: pointer;
+  font-size: 10px; font-weight: 700;
+  border: 1.5px solid #e0e0e0;
+  color: #ccc; background: transparent;
+  transition: all 0.15s;
+  line-height: 1;
+}
+.del-c:hover { background: #C0392B; border-color: #C0392B; color: white; }
+
+.desc { font-size: 10px; color: #999; padding: 0 14px 10px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<h1>3 אפשרויות כפתור מחיקה</h1>
+<div class="grid">
+
+  <!-- A: trash icon -->
+  <div class="card">
+    <div class="card-head"><span class="card-title">דוח סטטוס</span></div>
+    <div class="opt-label">א׳ — אייקון פח</div>
+    <p class="desc">פח אפור תמיד נראה, אדום ב-hover. ברור ומוכר.</p>
+    <div class="rows">
+      <div class="row">
+        <span class="req"><span class="sec">תיק מידע / </span>19.3.26 נשלחו תוכניות</span>
+        <div class="right">
+          <span class="badge b-ok">התקבל</span>
+          <button class="del-a" title="מחק">🗑</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="req"><span class="sec">בקשה להיתר / </span>24.3.26 בקשה לאוטוקד</span>
+        <div class="right">
+          <span class="badge b-wait">ממתין</span>
+          <button class="del-a" title="מחק">🗑</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="req"><span class="sec">הערות ועדה / </span>אישור כיבוי אש</span>
+        <div class="right">
+          <span class="badge b-doing">בטיפול</span>
+          <button class="del-a" title="מחק">🗑</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="req"><span class="sec">בדיקת תכן / </span>בדיקת קרקע</span>
+        <div class="right">
+          <span class="badge b-err">חזרו הערות</span>
+          <button class="del-a" title="מחק">🗑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B: pill מחק -->
+  <div class="card">
+    <div class="card-head"><span class="card-title">דוח סטטוס</span></div>
+    <div class="opt-label">ב׳ — כפתור "מחק"</div>
+    <p class="desc">כפתור מילה "מחק" עם גבול עדין, אדום ב-hover. הכי ברור.</p>
+    <div class="rows">
+      <div class="row">
+        <span class="req"><span class="sec">תיק מידע / </span>19.3.26 נשלחו תוכניות</span>
+        <div class="right">
+          <span class="badge b-ok">התקבל</span>
+          <button class="del-b">מחק</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="req"><span class="sec">בקשה להיתר / </span>24.3.26 בקשה לאוטוקד</span>
+        <div class="right">
+          <span class="badge b-wait">ממתין</span>
+          <button class="del-b">מחק</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="req"><span class="sec">הערות ועדה / </span>אישור כיבוי אש</span>
+        <div class="right">
+          <span class="badge b-doing">בטיפול</span>
+          <button class="del-b">מחק</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="req"><span class="sec">בדיקת תכן / </span>בדיקת קרקע</span>
+        <div class="right">
+          <span class="badge b-err">חזרו הערות</span>
+          <button class="del-b">מחק</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C: circle x -->
+  <div class="card">
+    <div class="card-head"><span class="card-title">דוח סטטוס</span></div>
+    <div class="opt-label">ג׳ — עיגול X</div>
+    <p class="desc">עיגול עם × בפנים, נשאר אפור עד hover — ואז מתמלא אדום.</p>
+    <div class="rows">
+      <div class="row">
+        <span class="req"><span class="sec">תיק מידע / </span>19.3.26 נשלחו תוכניות</span>
+        <div class="right">
+          <span class="badge b-ok">התקבל</span>
+          <button class="del-c">×</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="req"><span class="sec">בקשה להיתר / </span>24.3.26 בקשה לאוטוקד</span>
+        <div class="right">
+          <span class="badge b-wait">ממתין</span>
+          <button class="del-c">×</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="req"><span class="sec">הערות ועדה / </span>אישור כיבוי אש</span>
+        <div class="right">
+          <span class="badge b-doing">בטיפול</span>
+          <button class="del-c">×</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="req"><span class="sec">בדיקת תכן / </span>בדיקת קרקע</span>
+        <div class="right">
+          <span class="badge b-err">חזרו הערות</span>
+          <button class="del-c">×</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<p style="margin-top:20px;font-size:10px;color:#bbb;">hover על הכפתורים לראות את מצב הפעיל</p>
+</body>
+</html>

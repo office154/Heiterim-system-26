@@ -47,14 +47,14 @@ function AlertModal({
     >
       <div
         className="w-full max-w-2xl bg-white mx-4 overflow-hidden"
-        style={{ borderRadius: '4px', border: '1px solid #dddddd', boxShadow: '0 8px 40px rgba(0,0,0,0.15)' }}
+        style={{ borderRadius: '10px', border: '1px solid #E5E7EB', boxShadow: '0 8px 40px rgba(0,0,0,0.15)' }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#dddddd]">
           <h2 className="text-[15px] font-bold text-[#1a1a1a] tracking-tight">{title}</h2>
           <button
             onClick={onClose}
-            className="h-8 w-8 flex items-center justify-center rounded-[2px] text-[#aaaaaa] hover:text-[#1a1a1a] hover:bg-[#f0f0f0] transition-colors text-lg"
+            className="h-8 w-8 flex items-center justify-center rounded-lg text-[#aaaaaa] hover:text-[#1a1a1a] hover:bg-[#F0F2F5] transition-colors text-lg"
           >
             ✕
           </button>
@@ -76,7 +76,7 @@ function AlertModal({
                     <Link
                       href={`/projects/${item.projectId}`}
                       onClick={onClose}
-                      className="font-semibold text-[#E8C420] hover:underline"
+                      className="font-semibold text-[#3D6A9E] hover:underline"
                     >
                       {item.projectTitle}
                     </Link>
@@ -129,15 +129,15 @@ function KpiCard({
       }`}
       style={{
         border: `1px solid ${borderColor}`,
-        borderRadius: '2px',
-        borderTop: featuredTop ? `3px solid #E8C420` : undefined,
-        boxShadow: '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)',
+        borderRadius: '10px',
+        borderTop: featuredTop ? `3px solid #3D6A9E` : undefined,
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
       }}
       onMouseEnter={(e) => {
         if (!isInteractive) return
         const el = e.currentTarget as HTMLElement
-        el.style.borderColor = '#E8C420'
-        el.style.boxShadow = '0 2px 0 #cccccc, 0 4px 14px rgba(232,196,32,0.1)'
+        el.style.borderColor = '#3D6A9E'
+        el.style.boxShadow = '0 1px 4px rgba(0,0,0,0.08)'
         el.style.transform = 'scale(1.01)'
       }}
       onMouseLeave={(e) => {
@@ -151,8 +151,8 @@ function KpiCard({
       <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa] mb-2">{label}</p>
       {loading ? (
         <div className="space-y-2 animate-pulse">
-          <div className="h-8 w-24 rounded-[2px] bg-[#e8e8e8]" />
-          {subtitle !== undefined && <div className="h-3 w-32 rounded-[2px] bg-[#e8e8e8]" />}
+          <div className="h-8 w-24 rounded-lg bg-[#e8e8e8]" />
+          {subtitle !== undefined && <div className="h-3 w-32 rounded-lg bg-[#e8e8e8]" />}
         </div>
       ) : (
         <>
@@ -187,10 +187,10 @@ function AlertRow({
       href={href}
       className="flex items-center gap-4 px-4 py-3 bg-white hover:bg-[#f8f8f8] transition-colors group"
       style={{
-        border: '1px solid #dddddd',
+        border: '1px solid #E5E7EB',
         borderRight: `3px solid ${borderColor}`,
-        borderRadius: '2px',
-        boxShadow: '0 2px 0 #cccccc, 0 3px 10px rgba(0,0,0,0.05)',
+        borderRadius: '10px',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
       }}
     >
       {children}
@@ -201,7 +201,7 @@ function AlertRow({
 // ─── Project Card ─────────────────────────────────────────────────────────────
 function ProjectCard({ proj }: { proj: ProjectProgress }) {
   const statusStyle: Record<string, string> = {
-    active:    'bg-[#E8F5F3] text-[#1A7A6E] border border-[#a8d4d0]',
+    active:    'bg-[#EBF1F9] text-[#3D6A9E] border border-[#5C7A92]',
     on_hold:   'bg-[#fef3e0] text-[#D4820A] border border-[#f5d080]',
     completed: 'bg-[#f4f4f4] text-[#888888] border border-[#cccccc]',
   }
@@ -214,14 +214,14 @@ function ProjectCard({ proj }: { proj: ProjectProgress }) {
       href={`/projects/${proj.id}`}
       className="block bg-white p-5 transition-all duration-150 group"
       style={{
-        border: '1px solid #dddddd',
-        borderRadius: '2px',
-        boxShadow: '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)',
+        border: '1px solid #E5E7EB',
+        borderRadius: '10px',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
       }}
       onMouseEnter={(e) => {
         const el = e.currentTarget as HTMLAnchorElement
-        el.style.borderColor = '#E8C420'
-        el.style.boxShadow = '0 2px 0 #cccccc, 0 4px 14px rgba(232,196,32,0.1)'
+        el.style.borderColor = '#3D6A9E'
+        el.style.boxShadow = '0 1px 4px rgba(0,0,0,0.08)'
         el.style.transform = 'scale(1.01)'
       }}
       onMouseLeave={(e) => {
@@ -238,7 +238,7 @@ function ProjectCard({ proj }: { proj: ProjectProgress }) {
           </h3>
           <p className="text-[12px] text-[#aaaaaa] mt-0.5 truncate">{proj.clientName}</p>
         </div>
-        <span className={`text-[11px] font-semibold px-2.5 py-1 shrink-0 mr-2 rounded-[2px] ${statusStyle[proj.status] ?? statusStyle.completed}`}>
+        <span className={`text-[11px] font-semibold px-2.5 py-1 shrink-0 mr-2 rounded-lg ${statusStyle[proj.status] ?? statusStyle.completed}`}>
           {statusLabel[proj.status] ?? proj.status}
         </span>
       </div>
@@ -256,7 +256,7 @@ function ProjectCard({ proj }: { proj: ProjectProgress }) {
             <span className="text-[11px] text-[#666666]">
               {proj.completedStages}/{proj.totalStages} שלבים
             </span>
-            <span className="text-[11px] font-bold text-[#E8C420]">
+            <span className="text-[11px] font-bold text-[#3D6A9E]">
               {proj.progressPercent}%
             </span>
           </div>
@@ -265,7 +265,7 @@ function ProjectCard({ proj }: { proj: ProjectProgress }) {
               style={{
                 height: '3px',
                 width: `${proj.progressPercent}%`,
-                backgroundColor: '#E8C420',
+                backgroundColor: '#3D6A9E',
                 borderRadius: '1px',
                 transition: 'width 0.4s ease',
                 minWidth: proj.progressPercent > 0 ? '3px' : '0px',
@@ -293,7 +293,7 @@ function SidebarWidget({
   const router = useRouter()
 
   return (
-    <aside className="w-[220px] shrink-0 bg-[#e4e4e4] flex flex-col">
+    <aside className="w-[220px] shrink-0 bg-[#F0F2F5] flex flex-col">
       {/* Quick actions */}
       <div className="p-5 border-b border-[#d4d4d4]">
         <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa] mb-3">
@@ -302,13 +302,13 @@ function SidebarWidget({
         <div className="space-y-2">
           <button
             onClick={() => router.push('/projects/new')}
-            className="w-full rounded-[2px] bg-[#E8C420] hover:bg-[#D4B010] text-[#1a1a1a] text-[13px] font-extrabold px-3 py-2.5 transition-colors text-right"
+            className="w-full rounded-lg bg-[#3D6A9E] hover:bg-[#2F5A8A] text-white text-[13px] font-extrabold px-3 py-2.5 transition-colors text-right"
           >
             + פרויקט חדש
           </button>
           <button
             onClick={onNewClient}
-            className="w-full rounded-[2px] border border-[#cccccc] hover:border-[#aaaaaa] hover:bg-[#dcdcdc] text-[#666666] hover:text-[#1a1a1a] text-[13px] font-medium px-3 py-2.5 transition-colors text-right"
+            className="w-full rounded-lg border border-[#E5E7EB] hover:border-[#5C7A92] hover:bg-[#ECF0F4] text-[#6B7280] hover:text-[#1a1a1a] text-[13px] font-medium px-3 py-2.5 transition-colors text-right"
           >
             + לקוח חדש
           </button>
@@ -322,7 +322,7 @@ function SidebarWidget({
             פרויקטים פעילים
           </p>
           {!loading && (
-            <span className="text-[11px] font-bold text-[#E8C420]">{activeProjects.length}</span>
+            <span className="text-[11px] font-bold text-[#3D6A9E]">{activeProjects.length}</span>
           )}
         </div>
 
@@ -330,7 +330,7 @@ function SidebarWidget({
           {loading ? (
             <div className="space-y-2 px-2 animate-pulse">
               {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="h-8 rounded-[2px] bg-[#f0f0f0]" />
+                <div key={n} className="h-8 rounded-lg bg-[#F0F2F5]" />
               ))}
             </div>
           ) : activeProjects.length === 0 ? (
@@ -340,9 +340,9 @@ function SidebarWidget({
               <Link
                 key={proj.id}
                 href={`/projects/${proj.id}`}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-[2px] hover:bg-[#dcdcdc] transition-colors group"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-[#EBF1F9] transition-colors group"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#E8C420] shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#3D6A9E] shrink-0" />
                 <span className="text-[12px] text-[#666666] group-hover:text-[#1a1a1a] truncate transition-colors">
                   {proj.title}
                 </span>
@@ -374,7 +374,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
     <div className="flex -m-8 min-h-screen">
 
       {/* ── MAIN CONTENT (right in RTL) ── */}
-      <div className="flex-1 bg-[#f0f0f0] p-8 overflow-y-auto min-w-0">
+      <div className="flex-1 bg-[#F0F2F5] p-8 overflow-y-auto min-w-0">
         <Breadcrumb items={[{ label: 'דשבורד' }]} />
         <div className="space-y-7">
 
@@ -393,7 +393,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
             <KpiCard
               label="פרויקטים פעילים"
               value={loading ? '—' : data.activeProjectsCount}
-              valueColor="text-[#E8C420]"
+              valueColor="text-[#3D6A9E]"
               loading={loading}
               href="/projects?status=active"
               featuredTop
@@ -403,7 +403,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
                 label='סה"כ גבייה'
                 value={loading ? '—' : fmt(data.totalPaid)}
                 subtitle={loading ? undefined : `מתוך ${fmt(data.totalContract)} חוזים`}
-                valueColor="text-[#2E7D5B]"
+                valueColor="text-[#3D6A9E]"
                 loading={loading}
                 href="/reports"
               />
@@ -472,16 +472,16 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
             {loading ? (
               <div className="space-y-2 animate-pulse">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="h-12 rounded-[2px] bg-[#e8e8e8] border border-[#dddddd]" />
+                  <div key={n} className="h-12 rounded-lg bg-[#e8e8e8] border border-[#dddddd]" />
                 ))}
               </div>
             ) : allAlertsEmpty ? (
               <div
                 className="flex items-center gap-3 px-4 py-3"
-                style={{ background: '#E8F5F3', borderRadius: '2px', border: '0.5px solid #a8d4d0' }}
+                style={{ background: '#EBF1F9', borderRadius: '10px', border: '0.5px solid #5C7A92' }}
               >
-                <span className="text-[#1A7A6E] text-base">✓</span>
-                <span className="text-[13px] font-semibold text-[#1A7A6E]">אין פריטים דחופים</span>
+                <span className="text-[#3D6A9E] text-base">✓</span>
+                <span className="text-[13px] font-semibold text-[#3D6A9E]">אין פריטים דחופים</span>
               </div>
             ) : (
               <div className="space-y-2">
@@ -531,13 +531,13 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
           {loading ? (
             <div className="grid grid-cols-2 gap-3">
               {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="h-36 rounded-[2px] bg-[#e8e8e8] animate-pulse border border-[#dddddd]" />
+                <div key={n} className="h-36 rounded-lg bg-[#e8e8e8] animate-pulse border border-[#dddddd]" />
               ))}
             </div>
           ) : data.projectsWithProgress.length === 0 ? (
             <div
               className="px-5 py-8 text-center bg-white"
-              style={{ borderRadius: '2px', border: '0.5px solid #dddddd' }}
+              style={{ borderRadius: '10px', border: '0.5px solid #E5E7EB' }}
             >
               <p className="text-[13px] text-[#aaaaaa]">אין פרויקטים פעילים כרגע</p>
             </div>

@@ -65,7 +65,12 @@
       "Bash(cmd /c \"for /f \"\"tokens=5\"\" %a in \\(''''netstat -ano ^| findstr \"\":300\"\" ^| findstr LISTENING''''\\) do taskkill /PID %a /F\")",
       "Bash(cmd /c \"taskkill /IM node.exe /F 2>&1\")",
       "Bash(cmd /c \"netstat -ano | findstr LISTENING | findstr \"\":300\"\"\")",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(start \"c:\\\\Projects_ruti\\\\Heiterim system 26\\\\color-options.html\")",
+      "Bash(start \"c:\\\\Projects_ruti\\\\Heiterim system 26\\\\design-preview.html\")",
+      "Bash(powershell -Command \":*)"
     ]
   }
 }

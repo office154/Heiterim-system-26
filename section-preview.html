@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Rubik', sans-serif; background: #f0f0f0; padding: 32px 24px; color: #1a1a1a; }
+h1 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+p { font-size: 12px; color: #888; margin-bottom: 32px; }
+
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.card { background: white; border-radius: 2px; border: 1px solid #ddd; box-shadow: 0 2px 0 #ccc, 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; }
+.card-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid #f0f0f0; }
+.card-title { font-size: 12px; font-weight: 700; }
+.card-link { font-size: 11px; color: #E8C420; font-weight: 600; }
+.card-body { padding: 10px 14px; }
+
+.opt-label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+
+/* ── Shared row base ── */
+.row { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f5f5f5; font-size: 11px; }
+.row:last-child { border-bottom: none; }
+.badge { font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 2px; white-space: nowrap; }
+.b-gray { background: #f3f4f6; color: #6b7280; }
+.b-blue { background: #dbeafe; color: #1e40af; }
+.b-green { background: #dcfce7; color: #166534; }
+.b-red { background: #fee2e2; color: #991b1b; }
+
+/* ── Option 1: section as tiny prefix ── */
+.opt1-row { display: flex; align-items: flex-start; gap: 6px; padding: 5px 0; border-bottom: 1px solid #f5f5f5; }
+.opt1-row:last-child { border-bottom: none; }
+.opt1-section { font-size: 9px; color: #bbb; font-weight: 500; white-space: nowrap; margin-top: 1px; flex-shrink: 0; }
+.opt1-text { font-size: 11px; color: #333; flex: 1; }
+.opt1-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+/* ── Option 2: small pill tag ── */
+.opt2-row { display: flex; align-items: center; gap: 6px; padding: 5px 0; border-bottom: 1px solid #f5f5f5; }
+.opt2-row:last-child { border-bottom: none; }
+.opt2-tag { font-size: 9px; color: #999; background: #f3f4f6; border-radius: 2px; padding: 1px 5px; white-space: nowrap; flex-shrink: 0; }
+.opt2-text { font-size: 11px; color: #333; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── Option 3: right border color per section ── */
+.section-group { margin-bottom: 6px; }
+.section-group:last-child { margin-bottom: 0; }
+.opt3-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 6px; border-right: 2px solid transparent; font-size: 11px; }
+.opt3-row.s1 { border-right-color: #94a3b8; }
+.opt3-row.s2 { border-right-color: #86efac; }
+.opt3-row.s3 { border-right-color: #fcd34d; }
+.opt3-row.s4 { border-right-color: #f9a8d4; }
+.opt3-section-name { font-size: 9px; color: #bbb; margin-bottom: 2px; padding-right: 6px; }
+</style>
+</head>
+<body>
+
+<h1>3 אופציות — הצגת שלב בדוח סטטוס</h1>
+<p>כולן עדינות. בחרי מה מוצא חן.</p>
+
+<div class="grid">
+
+  <!-- ── Option 1 ── -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">דוח סטטוס</span>
+      <span class="card-link">לדוח המלא ←</span>
+    </div>
+    <div class="card-body">
+      <div class="opt-label">1 — שם השלב לפני הטקסט</div>
+
+      <div class="opt1-row">
+        <div style="flex:1; min-width:0;">
+          <span class="opt1-section">תיק מידע /</span>
+          <span class="opt1-text"> 19.3.26 נשלחו תוכניות</span>
+        </div>
+        <div class="opt1-right"><span class="badge b-green">התקבל</span></div>
+      </div>
+
+      <div class="opt1-row">
+        <div style="flex:1; min-width:0;">
+          <span class="opt1-section">בקשה להיתר /</span>
+          <span class="opt1-text"> 24.3.26 בקשה לאוטוקד</span>
+        </div>
+        <div class="opt1-right"><span class="badge b-gray">ממתין</span></div>
+      </div>
+
+      <div class="opt1-row">
+        <div style="flex:1; min-width:0;">
+          <span class="opt1-section">הערות ועדה /</span>
+          <span class="opt1-text"> אישור כיבוי אש</span>
+        </div>
+        <div class="opt1-right"><span class="badge b-blue">בטיפול</span></div>
+      </div>
+
+      <div class="opt1-row">
+        <div style="flex:1; min-width:0;">
+          <span class="opt1-section">בדיקת תכן /</span>
+          <span class="opt1-text"> בדיקת קרקע</span>
+        </div>
+        <div class="opt1-right"><span class="badge b-red">חזרו הערות</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Option 2 ── -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">דוח סטטוס</span>
+      <span class="card-link">לדוח המלא ←</span>
+    </div>
+    <div class="card-body">
+      <div class="opt-label">2 — תגית אפורה בצד</div>
+
+      <div class="opt2-row">
+        <span class="opt2-text">19.3.26 נשלחו תוכניות</span>
+        <span class="opt2-tag">תיק מידע</span>
+        <span class="badge b-green">התקבל</span>
+      </div>
+
+      <div class="opt2-row">
+        <span class="opt2-text">24.3.26 בקשה לאוטוקד</span>
+        <span class="opt2-tag">בקשה להיתר</span>
+        <span class="badge b-gray">ממתין</span>
+      </div>
+
+      <div class="opt2-row">
+        <span class="opt2-text">אישור כיבוי אש</span>
+        <span class="opt2-tag">הערות ועדה</span>
+        <span class="badge b-blue">בטיפול</span>
+      </div>
+
+      <div class="opt2-row">
+        <span class="opt2-text">בדיקת קרקע</span>
+        <span class="opt2-tag">בדיקת תכן</span>
+        <span class="badge b-red">חזרו הערות</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Option 3 ── -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">דוח סטטוס</span>
+      <span class="card-link">לדוח המלא ←</span>
+    </div>
+    <div class="card-body">
+      <div class="opt-label">3 — קבוצות עם גבול צבעוני</div>
+
+      <div class="section-group">
+        <div class="opt3-section-name">תיק מידע</div>
+        <div class="opt3-row s1">
+          <span>19.3.26 נשלחו תוכניות</span>
+          <span class="badge b-green">התקבל</span>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="opt3-section-name">בקשה להיתר</div>
+        <div class="opt3-row s2">
+          <span>24.3.26 בקשה לאוטוקד</span>
+          <span class="badge b-gray">ממתין</span>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="opt3-section-name">הערות ועדה</div>
+        <div class="opt3-row s3">
+          <span>אישור כיבוי אש</span>
+          <span class="badge b-blue">בטיפול</span>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="opt3-section-name">בדיקת תכן</div>
+        <div class="opt3-row s4">
+          <span>בדיקת קרקע</span>
+          <span class="badge b-red">חזרו הערות</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

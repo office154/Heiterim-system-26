@@ -33,10 +33,10 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
       aria-label="breadcrumb"
       style={{
         background: 'white',
-        border: '1px solid #dddddd',
-        borderRadius: '2px',
+        border: '1px solid #E5E7EB',
+        borderRadius: '10px',
         padding: '10px 14px',
-        boxShadow: '0 2px 0 #cccccc, 0 3px 8px rgba(0,0,0,0.04)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
         marginBottom: '16px',
         fontFamily: "'Rubik', sans-serif",
       }}
@@ -71,7 +71,7 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
                 // Clickable link
                 <Link
                   href={item.href}
-                  className="flex items-center gap-1 text-[#aaaaaa] hover:text-[#1A7A6E] hover:underline transition-colors"
+                  className="flex items-center gap-1 text-[#aaaaaa] hover:text-[#3D6A9E] hover:underline transition-colors"
                   style={{ fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}
                 >
                   {isFirst && <HomeIcon />}

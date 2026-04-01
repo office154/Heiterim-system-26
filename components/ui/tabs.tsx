@@ -83,7 +83,7 @@ function TabsTrigger({
       className={cn(
         'px-5 py-2.5 text-[13px] font-medium transition-all border-b-2 -mb-px',
         isActive
-          ? 'text-[#2B2B2B] font-bold border-[#E8C420]'
+          ? 'text-[#2B2B2B] font-bold border-[#3D6A9E]'
           : 'text-[#9A9690] border-transparent hover:text-[#4A4844] hover:border-[#E0DDD4]',
         className
       )}

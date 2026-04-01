@@ -22,7 +22,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased bg-[#f0f0f0]" style={{ fontFamily: "'Rubik', sans-serif" }}>
+      <body className="antialiased bg-[#F0F2F5]" style={{ fontFamily: "'Rubik', sans-serif" }}>
         <Providers>{children}</Providers>
       </body>
     </html>

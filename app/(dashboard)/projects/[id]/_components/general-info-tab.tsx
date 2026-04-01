@@ -46,8 +46,8 @@ export function GeneralInfoTab({ project, onNavigate }: GeneralInfoTabProps) {
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       {/* Project Info */}
       <div
-        className="rounded-[2px] border border-[#dddddd] bg-white p-5"
-        style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)' }}
+        className="rounded-lg border border-[#dddddd] bg-white p-5"
+        style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
       >
         <h2 className="mb-4 text-base font-semibold text-[#1a1a1a]">פרטי פרויקט</h2>
         <dl>
@@ -68,7 +68,7 @@ export function GeneralInfoTab({ project, onNavigate }: GeneralInfoTabProps) {
 
           <FieldRow label="סטטוס">
             <span
-              className={`inline-flex items-center rounded-[2px] px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[project.status]}`}
+              className={`inline-flex items-center rounded-lg px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[project.status]}`}
             >
               {STATUS_LABELS[project.status]}
             </span>
@@ -134,8 +134,8 @@ export function GeneralInfoTab({ project, onNavigate }: GeneralInfoTabProps) {
 
       {/* Client Info */}
       <div
-        className="rounded-[2px] border border-[#dddddd] bg-white p-5"
-        style={{ boxShadow: '0 2px 0 #cccccc, 0 4px 14px rgba(0,0,0,0.06)' }}
+        className="rounded-lg border border-[#dddddd] bg-white p-5"
+        style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
       >
         <h2 className="mb-4 text-base font-semibold text-[#1a1a1a]">פרטי לקוח</h2>
         {!project.client ? (

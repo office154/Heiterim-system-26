@@ -35,13 +35,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: '#f0f0f0' }}>
+    <div className="min-h-screen flex items-center justify-center" style={{ background: '#F0F2F5' }}>
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-8">
           {logoError ? (
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-[2px]" style={{ background: '#E8C420' }} />
+              <div className="w-8 h-8 rounded-lg" style={{ background: '#3D6A9E' }} />
               <span className="text-[22px] font-black tracking-tight" style={{ color: '#1a1a1a' }}>
                 Heiterim Architects
               </span>
@@ -63,8 +63,8 @@ export default function LoginPage() {
           className="p-8"
           style={{
             background: '#ffffff',
-            borderRadius: '4px',
-            border: '1px solid #dddddd',
+            borderRadius: '10px',
+            border: '1px solid #E5E7EB',
             boxShadow: '0 8px 40px rgba(0,0,0,0.15)',
           }}
         >
@@ -93,12 +93,12 @@ export default function LoginPage() {
                 className="w-full px-3 py-2 text-[13px] transition-all outline-none"
                 style={{
                   background: '#ffffff',
-                  border: '1px solid #dddddd',
-                  borderRadius: '2px',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '10px',
                   color: '#1a1a1a',
                 }}
                 onFocus={(e) => {
-                  e.currentTarget.style.borderColor = '#1A7A6E'
+                  e.currentTarget.style.borderColor = '#3D6A9E'
                   e.currentTarget.style.boxShadow = '0 0 0 3px rgba(26,122,110,0.12)'
                 }}
                 onBlur={(e) => {
@@ -125,12 +125,12 @@ export default function LoginPage() {
                 className="w-full px-3 py-2 text-[13px] transition-all outline-none"
                 style={{
                   background: '#ffffff',
-                  border: '1px solid #dddddd',
-                  borderRadius: '2px',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '10px',
                   color: '#1a1a1a',
                 }}
                 onFocus={(e) => {
-                  e.currentTarget.style.borderColor = '#1A7A6E'
+                  e.currentTarget.style.borderColor = '#3D6A9E'
                   e.currentTarget.style.boxShadow = '0 0 0 3px rgba(26,122,110,0.12)'
                 }}
                 onBlur={(e) => {
@@ -147,13 +147,13 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full px-4 py-2.5 text-[14px] font-extrabold transition-colors mt-2"
               style={{
-                background: '#E8C420',
+                background: '#3D6A9E',
                 color: '#1a1a1a',
-                borderRadius: '2px',
+                borderRadius: '10px',
                 border: 'none',
               }}
-              onMouseEnter={(e) => { if (!loading) (e.currentTarget as HTMLElement).style.background = '#D4B010' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = '#E8C420' }}
+              onMouseEnter={(e) => { if (!loading) (e.currentTarget as HTMLElement).style.background = '#2F5A8A' }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = '#3D6A9E' }}
             >
               {loading ? 'מתחבר...' : 'התחברות'}
             </button>
