@@ -64,11 +64,14 @@ export function useDeleteClient() {
   return useMutation({
     mutationFn: async (id: string) => {
       const supabase = createClient()
+      // Detach projects from client before deleting (avoid FK constraint)
+      await supabase.from('projects').update({ client_id: null }).eq('client_id', id)
       const { error } = await supabase.from('clients').delete().eq('id', id)
       if (error) throw error
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] })
+      queryClient.invalidateQueries({ queryKey: ['projects'] })
     },
   })
 }
