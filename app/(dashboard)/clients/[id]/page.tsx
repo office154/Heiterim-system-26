@@ -1,11 +1,12 @@
 'use client'
 
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useClient, useUpdateClient } from '@/lib/hooks/use-clients'
+import { useClient, useUpdateClient, useDeleteClient } from '@/lib/hooks/use-clients'
 import { InlineEdit } from '@/components/inline-edit'
 import { Badge } from '@/components/ui/badge'
 import { TRACK_LABELS, STATUS_LABELS, STATUS_COLORS } from '@/lib/constants/tracks'
+import { useState } from 'react'
 import type { TrackValue } from '@/types/database'
 import { Breadcrumb } from '@/components/shared/Breadcrumb'
 
@@ -25,12 +26,24 @@ function FieldRow({ label, children }: FieldRowProps) {
 
 export default function ClientDetailPage() {
   const params = useParams()
+  const router = useRouter()
   const id = params.id as string
   const { data: client, isLoading, error } = useClient(id)
   const updateClient = useUpdateClient()
+  const deleteClient = useDeleteClient()
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   async function save(field: string, value: string) {
     await updateClient.mutateAsync({ id, [field]: value || null })
+  }
+
+  async function handleDelete() {
+    try {
+      await deleteClient.mutateAsync(id)
+      router.push('/clients')
+    } catch {
+      alert('שגיאה במחיקת הלקוח')
+    }
   }
 
   if (isLoading) {
@@ -44,11 +57,40 @@ export default function ClientDetailPage() {
   return (
     <div className="space-y-6">
       <Breadcrumb items={[{ label: 'דשבורד', href: '/' }, { label: 'לקוחות', href: '/clients' }, { label: client.name }]} />
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">{client.name}</h1>
-        {client.company && (
-          <p className="mt-1 text-sm text-gray-500">{client.company}</p>
-        )}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">{client.name}</h1>
+          {client.company && (
+            <p className="mt-1 text-sm text-gray-500">{client.company}</p>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {confirmDelete ? (
+            <>
+              <span className="text-[13px] text-[#666666]">למחוק את הלקוח?</span>
+              <button
+                onClick={handleDelete}
+                disabled={deleteClient.isPending}
+                className="rounded-lg bg-[#C0392B] px-3 py-1.5 text-[12px] font-bold text-white hover:bg-[#a93226] disabled:opacity-50 transition-colors"
+              >
+                {deleteClient.isPending ? '...' : 'מחק'}
+              </button>
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-[12px] text-[#666666] hover:bg-[#F0F2F5] transition-colors"
+              >
+                ביטול
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setConfirmDelete(true)}
+              className="rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-[12px] text-[#aaaaaa] hover:border-[#C0392B] hover:text-[#C0392B] hover:bg-[#fdf0ef] transition-colors"
+            >
+              מחק לקוח
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -59,12 +101,30 @@ export default function ClientDetailPage() {
             <FieldRow label="שם">
               <InlineEdit value={client.name} onSave={(v) => save('name', v)} />
             </FieldRow>
-            <FieldRow label="חברה">
+            <FieldRow label="מספר ח.פ">
               <InlineEdit
                 value={client.company}
                 onSave={(v) => save('company', v)}
-                emptyText="לחץ להוספת שם חברה"
+                emptyText="לחץ להוספה"
               />
+            </FieldRow>
+            <FieldRow label="איש קשר">
+              <div className="flex items-center gap-2 group/contact">
+                <InlineEdit
+                  value={client.contact_name}
+                  onSave={(v) => save('contact_name', v)}
+                  emptyText="לחץ להוספה"
+                />
+                {client.contact_name && (
+                  <button
+                    onClick={() => save('contact_name', '')}
+                    className="opacity-0 group-hover/contact:opacity-100 text-[#cccccc] hover:text-[#C0392B] transition-opacity text-xs"
+                    title="מחק איש קשר"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </FieldRow>
             <FieldRow label="טלפון">
               <InlineEdit

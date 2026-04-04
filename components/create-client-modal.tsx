@@ -33,6 +33,7 @@ export function CreateClientModal({ open, onOpenChange, onCreated }: CreateClien
   const [form, setForm] = useState({
     name: '',
     company: '',
+    contact_name: '',
     phone: '',
     email: '',
     address: '',
@@ -56,6 +57,7 @@ export function CreateClientModal({ open, onOpenChange, onCreated }: CreateClien
       const created = await createClient.mutateAsync({
         name: form.name.trim(),
         company: form.company || null,
+        contact_name: form.contact_name || null,
         phone: form.phone || null,
         email: form.email || null,
         address: form.address || null,
@@ -64,7 +66,7 @@ export function CreateClientModal({ open, onOpenChange, onCreated }: CreateClien
       })
       if (created) onCreated?.(created as Client)
       onOpenChange(false)
-      setForm({ name: '', company: '', phone: '', email: '', address: '', lead_source: '', notes: '' })
+      setForm({ name: '', company: '', contact_name: '', phone: '', email: '', address: '', lead_source: '', notes: '' })
     } catch {
       setError('שגיאה ביצירת הלקוח, נסה שוב')
     }
@@ -87,14 +89,38 @@ export function CreateClientModal({ open, onOpenChange, onCreated }: CreateClien
               required
             />
           </div>
-          <div className="space-y-1">
-            <Label htmlFor="client-company">חברה</Label>
-            <Input
-              id="client-company"
-              value={form.company}
-              onChange={(e) => handleChange('company', e.target.value)}
-              placeholder="שם החברה"
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label htmlFor="client-company">מספר ח.פ</Label>
+              <Input
+                id="client-company"
+                value={form.company}
+                onChange={(e) => handleChange('company', e.target.value)}
+                placeholder="515XXXXXXX"
+                dir="ltr"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="client-contact">איש קשר</Label>
+              <div className="relative">
+                <Input
+                  id="client-contact"
+                  value={form.contact_name}
+                  onChange={(e) => handleChange('contact_name', e.target.value)}
+                  placeholder="שם איש קשר"
+                />
+                {form.contact_name && (
+                  <button
+                    type="button"
+                    onClick={() => handleChange('contact_name', '')}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 text-[#aaaaaa] hover:text-[#C0392B] text-xs"
+                    title="נקה"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
