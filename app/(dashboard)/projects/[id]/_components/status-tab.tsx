@@ -5,6 +5,7 @@ import { useProject, useUpdateProject } from '@/lib/hooks/use-projects'
 import { useProjectContacts, useCreateContact, useUpdateContact, useDeleteContact } from '@/lib/hooks/use-contacts'
 import { useStatusRequirements, useCreateRequirement, useUpdateRequirement, useDeleteRequirement } from '@/lib/hooks/use-requirements'
 import { useRequirementSteps, useCreateStep, useUpdateStep, useDeleteStep } from '@/lib/hooks/use-requirement-steps'
+import { useCreateTodo } from '@/lib/hooks/use-todos'
 import { InlineEdit } from '@/components/inline-edit'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
@@ -391,12 +392,13 @@ function StepRow({
 }
 
 function ReqTableRow({
-  req, idx, sectionIndex, projectId, onSave, onStatusChange, onDelete, isDeleting,
+  req, idx, sectionIndex, projectId, projectTitle, onSave, onStatusChange, onDelete, isDeleting,
 }: {
   req: StatusRequirement
   idx: number
   sectionIndex: number
   projectId: string
+  projectTitle: string
   onSave: (req: StatusRequirement, field: string, value: string | boolean | null) => Promise<void>
   onStatusChange: (req: StatusRequirement, status: RequirementStatus, date: string) => Promise<void>
   onDelete: () => Promise<void>
@@ -404,10 +406,27 @@ function ReqTableRow({
 }) {
   const [confirm, setConfirm] = useState(false)
   const [expanded, setExpanded] = useState(false)
+  const [todoAdded, setTodoAdded] = useState(false)
+  const createTodo = useCreateTodo()
+
+  async function handleAddTodo() {
+    if (todoAdded || createTodo.isPending) return
+    try {
+      await createTodo.mutateAsync({
+        task: req.requirement || `דרישה ${idx + 1}`,
+        project_id: projectId,
+        project_title: projectTitle,
+        source_requirement_id: req.id,
+      })
+      setTodoAdded(true)
+    } catch (err) {
+      console.error('Failed to add todo:', err)
+    }
+  }
 
   return (
     <>
-      <tr className="hover:bg-[#f8f8f8]">
+      <tr className="group hover:bg-[#f8f8f8]">
         <td className="px-2 py-1.5 text-center print:hidden">
           <button
             onClick={() => setExpanded((v) => !v)}
@@ -454,6 +473,19 @@ function ReqTableRow({
             emptyText="—"
           />
         </td>
+        <td className="print:hidden px-2 py-1.5 text-left whitespace-nowrap">
+          <button
+            onClick={handleAddTodo}
+            disabled={todoAdded || createTodo.isPending}
+            className={`text-[11px] font-semibold transition-colors ${
+              todoAdded
+                ? 'text-[#27AE60]'
+                : 'hidden group-hover:inline text-[#3D6A9E] hover:underline'
+            }`}
+          >
+            {todoAdded ? '✓ נוסף' : '+ הוסף למשימות'}
+          </button>
+        </td>
         <td className="print:hidden px-3 py-1.5">
           {confirm ? (
             <div className="flex items-center gap-1">
@@ -492,11 +524,13 @@ function RequirementsSection({
   section,
   requirements,
   projectId,
+  projectTitle,
   sectionIndex,
 }: {
   section: string
   requirements: StatusRequirement[]
   projectId: string
+  projectTitle: string
   sectionIndex: number
 }) {
   const createReq = useCreateRequirement()
@@ -540,6 +574,7 @@ function RequirementsSection({
             <th className="w-32 px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">סטטוס</th>
             <th className="w-24 px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">תאריך</th>
             <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">הערות</th>
+            <th className="print:hidden px-2 py-2" />
             <th className="print:hidden w-8 px-3 py-2" />
           </tr>
         </thead>
@@ -551,6 +586,7 @@ function RequirementsSection({
               idx={idx}
               sectionIndex={sectionIndex}
               projectId={projectId}
+              projectTitle={projectTitle}
               onSave={saveReq}
               onStatusChange={handleStatusChange}
               onDelete={async () => {
@@ -715,6 +751,7 @@ export function StatusTab({ projectId }: StatusTabProps) {
               section={section}
               requirements={(requirements ?? []).filter((r) => r.section === section)}
               projectId={projectId}
+              projectTitle={project.title}
               sectionIndex={allSections.length > 1 ? idx + 1 : 0}
             />
           ))}

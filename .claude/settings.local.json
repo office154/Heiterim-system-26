@@ -70,7 +70,8 @@
       "Bash(git push:*)",
       "Bash(start \"c:\\\\Projects_ruti\\\\Heiterim system 26\\\\color-options.html\")",
       "Bash(start \"c:\\\\Projects_ruti\\\\Heiterim system 26\\\\design-preview.html\")",
-      "Bash(powershell -Command \":*)"
+      "Bash(powershell -Command \":*)",
+      "Bash(start \"c:\\\\Projects_ruti\\\\Heiterim system 26\\\\project-dashboard-preview.html\")"
     ]
   }
 }

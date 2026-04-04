@@ -294,6 +294,39 @@ export interface Database {
         }
         Relationships: []
       }
+      todos: {
+        Row: {
+          id: string
+          task: string
+          project_id: string | null
+          project_title: string
+          source_requirement_id: string | null
+          done: boolean
+          created_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          task: string
+          project_id?: string | null
+          project_title: string
+          source_requirement_id?: string | null
+          done?: boolean
+          created_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          task?: string
+          project_id?: string | null
+          project_title?: string
+          source_requirement_id?: string | null
+          done?: boolean
+          created_by?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
@@ -310,6 +343,7 @@ export type ProjectStage = Database['public']['Tables']['project_stages']['Row']
 export type StatusRequirement = Database['public']['Tables']['status_requirements']['Row']
 export type ProjectContact = Database['public']['Tables']['project_contacts']['Row']
 export type ProjectFile = Database['public']['Tables']['project_files']['Row']
+export type Todo = Database['public']['Tables']['todos']['Row']
 
 export interface RequirementStep {
   id: string

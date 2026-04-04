@@ -11,6 +11,8 @@ import {
 } from '@/lib/hooks/use-dashboard'
 import { CreateClientModal } from '@/components/create-client-modal'
 import { Breadcrumb } from '@/components/shared/Breadcrumb'
+import { useTodos, useUpdateTodo } from '@/lib/hooks/use-todos'
+import type { Todo } from '@/types/database'
 
 interface DashboardContentProps {
   role: 'admin' | 'employee'
@@ -280,6 +282,123 @@ function ProjectCard({ proj }: { proj: ProjectProgress }) {
   )
 }
 
+// ─── Todo Widget ─────────────────────────────────────────────────────────────
+function TodoWidget() {
+  const { data: todos, isLoading } = useTodos()
+  const updateTodo = useUpdateTodo()
+
+  // Show only first 6 pending todos, grouped by project
+  const pending = (todos ?? []).filter((t) => !t.done).slice(0, 6)
+
+  const groups = pending.reduce<Record<string, Todo[]>>((acc, t) => {
+    const key = t.project_title || 'כללי'
+    if (!acc[key]) acc[key] = []
+    acc[key].push(t)
+    return acc
+  }, {})
+
+  const totalCount = (todos ?? []).filter((t) => !t.done).length
+
+  function formatDate(dateStr: string) {
+    const d = new Date(dateStr)
+    return d.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit' })
+  }
+
+  if (isLoading) {
+    return (
+      <div
+        className="animate-pulse"
+        style={{
+          background: 'white',
+          border: '1px solid #E5E7EB',
+          borderRadius: '10px',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+          padding: '16px 20px',
+          height: 120,
+        }}
+      />
+    )
+  }
+
+  return (
+    <div
+      style={{
+        background: 'white',
+        border: '1px solid #E5E7EB',
+        borderRadius: '10px',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Header */}
+      <div
+        className="flex items-center justify-between px-5 py-3"
+        style={{ borderBottom: '1px solid #E5E7EB' }}
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-[13px] font-bold text-[#1a1a1a]">משימות</span>
+          {totalCount > 0 && (
+            <span
+              className="text-[11px] font-bold px-2 py-0.5 rounded-full"
+              style={{ background: '#EBF1F9', color: '#3D6A9E' }}
+            >
+              {totalCount}
+            </span>
+          )}
+        </div>
+        <Link
+          href="/todos"
+          className="text-[12px] font-semibold"
+          style={{ color: '#3D6A9E', textDecoration: 'none' }}
+        >
+          לכל הרשימה →
+        </Link>
+      </div>
+
+      {/* Body */}
+      {pending.length === 0 ? (
+        <div className="px-5 py-6 text-center text-[13px]" style={{ color: '#aaaaaa' }}>
+          אין משימות פתוחות
+        </div>
+      ) : (
+        <div className="py-2 px-3 space-y-1" style={{ maxHeight: 220, overflowY: 'auto' }}>
+          {Object.entries(groups).map(([project, items]) => (
+            <div key={project}>
+              <p
+                className="text-[10px] font-bold uppercase tracking-[0.07em] px-2 pt-2 pb-1"
+                style={{ color: '#aaaaaa' }}
+              >
+                {project}
+              </p>
+              {items.map((todo) => (
+                <div
+                  key={todo.id}
+                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#f8f8f8] transition-colors group"
+                  style={{ borderRight: '3px solid #3D6A9E' }}
+                >
+                  <button
+                    onClick={() => updateTodo.mutate({ id: todo.id, done: true })}
+                    className="w-4 h-4 rounded-full border-2 flex-shrink-0 transition-colors hover:border-[#3D6A9E]"
+                    style={{ borderColor: '#cccccc' }}
+                    title="סמן כבוצע"
+                  />
+                  <span className="flex-1 text-[12px] text-[#1a1a1a] truncate">{todo.task}</span>
+                  <span
+                    className="text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0"
+                    style={{ background: '#c8d8e8', color: 'white', fontWeight: 600 }}
+                  >
+                    {formatDate(todo.created_at)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Light Sidebar Widget ───────────────────────────────────────────────────────
 function SidebarWidget({
   activeProjects,
@@ -521,6 +640,14 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
             )}
           </div>
         )}
+
+        {/* ── TODO WIDGET ── */}
+        <div>
+          <h2 className="text-[10px] font-bold text-[#aaaaaa] uppercase tracking-[0.08em] mb-3">
+            משימות
+          </h2>
+          <TodoWidget />
+        </div>
 
         {/* ── ACTIVE PROJECTS GRID ── */}
         <div>

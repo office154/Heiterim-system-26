@@ -22,6 +22,7 @@ const navItems: NavItem[] = [
   { label: 'לקוחות', href: '/clients' },
   { label: 'תשלומים', href: '/payments', adminOnly: true },
   { label: 'דוחות', href: '/reports', adminOnly: true },
+  { label: 'משימות', href: '/todos' },
   { label: 'הגדרות', href: '/settings/users', activePrefix: '/settings', adminOnly: true },
 ]
 
