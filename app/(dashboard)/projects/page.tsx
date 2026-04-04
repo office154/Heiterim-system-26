@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useProjects } from '@/lib/hooks/use-projects'
+import { useProjects, useDeleteProject } from '@/lib/hooks/use-projects'
 import { useAlerts, type ProjectAlert } from '@/lib/hooks/use-reports'
 import { useCurrentRole } from '@/lib/hooks/use-profile'
 import { useProjectStages, useUpdateStage } from '@/lib/hooks/use-stages'
@@ -273,24 +273,39 @@ function ProjectRow({
   onMouseEnter,
   onMouseLeave,
   hasAlert,
+  dragHandleProps,
+  isDragging,
 }: {
   project: ProjectWithClient
   isHovered: boolean
   onMouseEnter: () => void
   onMouseLeave: () => void
   hasAlert: boolean
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>
+  isDragging?: boolean
 }) {
   const router = useRouter()
+  const deleteProject = useDeleteProject()
+  const [confirm, setConfirm] = useState(false)
   const cfg = STATUS_CONFIG[project.status]
   const trackLabels = project.tracks.map((t) => TRACK_LABELS[t as TrackValue]).join(' · ')
 
+  async function handleDelete(e: React.MouseEvent) {
+    e.stopPropagation()
+    try {
+      await deleteProject.mutateAsync(project.id)
+    } catch {
+      alert('שגיאה במחיקה. ודא שאין נתונים תלויים בפרויקט.')
+    }
+  }
+
   return (
     <div
-      onClick={() => router.push(`/projects/${project.id}`)}
+      onClick={() => !confirm && router.push(`/projects/${project.id}`)}
       onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className={`flex items-center px-5 py-4 border-b border-[#f4f4f4] last:border-0 cursor-pointer transition-colors relative ${
-        isHovered ? 'bg-[#f8f8f8]' : 'hover:bg-[#f8f8f8]'
+      onMouseLeave={() => { onMouseLeave(); setConfirm(false) }}
+      className={`flex items-center px-3 py-4 border-b border-[#f4f4f4] last:border-0 cursor-pointer transition-colors relative group ${
+        isDragging ? 'opacity-40 bg-[#EBF1F9]' : isHovered ? 'bg-[#f8f8f8]' : 'hover:bg-[#f8f8f8]'
       }`}
     >
       {/* Alert stripe */}
@@ -302,7 +317,17 @@ function ProjectRow({
         <span className="absolute left-0 top-2.5 bottom-2.5 w-[3px] bg-[#3D6A9E] rounded-r-full" />
       )}
 
-      <div className="flex-1 min-w-0">
+      {/* Drag handle */}
+      <div
+        {...dragHandleProps}
+        onClick={(e) => e.stopPropagation()}
+        className="flex-shrink-0 w-5 text-center text-[#cccccc] cursor-grab opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#3D6A9E] ml-1 select-none text-[14px]"
+        title="גרור להזזה"
+      >
+        ⠿
+      </div>
+
+      <div className="flex-1 min-w-0 mr-1">
         <div className="text-[13px] font-semibold text-[#1a1a1a] truncate">{project.title}</div>
         <div className="text-[11px] text-[#666666] mt-0.5 truncate">
           {trackLabels}{project.location ? ` · ${project.location}` : ''}
@@ -318,7 +343,184 @@ function ProjectRow({
         <span className={`text-[12px] font-medium ${cfg.text}`}>{cfg.label}</span>
       </div>
 
-      <span className="mr-4 text-[#666666] text-[13px] flex-shrink-0">←</span>
+      {/* Delete */}
+      <div className="mr-4 flex-shrink-0 flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+        {confirm ? (
+          <>
+            <button
+              onClick={handleDelete}
+              disabled={deleteProject.isPending}
+              className="rounded px-1.5 py-0.5 text-[10px] font-bold bg-[#C0392B] text-white hover:bg-[#a93226] disabled:opacity-50"
+            >
+              {deleteProject.isPending ? '...' : 'מחק'}
+            </button>
+            <button
+              onClick={() => setConfirm(false)}
+              className="rounded px-1.5 py-0.5 text-[10px] text-[#888] border border-[#E5E7EB] hover:bg-[#f4f4f4]"
+            >
+              ביטול
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => setConfirm(true)}
+            className="text-[11px] text-[#cccccc] hover:text-[#C0392B] opacity-0 group-hover:opacity-100 transition-opacity px-1 rounded hover:bg-[#fdf0ef]"
+            title="מחק פרויקט"
+          >
+            מחק
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Sortable project list ────────────────────────────────────────────────────
+type SortField = 'title' | 'status' | 'client' | null
+type SortDir = 'asc' | 'desc'
+
+function SortableProjectList({
+  projects,
+  hovered,
+  setHovered,
+  alertSet,
+}: {
+  projects: ProjectWithClient[]
+  hovered: ProjectWithClient | null
+  setHovered: (p: ProjectWithClient | null) => void
+  alertSet: Set<string>
+}) {
+  const [order, setOrder] = useState<string[]>(() => projects.map((p) => p.id))
+  const [sortField, setSortField] = useState<SortField>(null)
+  const [sortDir, setSortDir] = useState<SortDir>('asc')
+  const [dragId, setDragId] = useState<string | null>(null)
+  const [dropTargetId, setDropTargetId] = useState<string | null>(null)
+  const [dropPosition, setDropPosition] = useState<'above' | 'below'>('below')
+
+  // Sync order when projects list changes (new project added etc.)
+  useEffect(() => {
+    setOrder((prev) => {
+      const newIds = projects.map((p) => p.id)
+      const kept = prev.filter((id) => newIds.includes(id))
+      const added = newIds.filter((id) => !kept.includes(id))
+      return [...kept, ...added]
+    })
+  }, [projects])
+
+  function handleSort(field: SortField) {
+    if (sortField === field) {
+      setSortDir((d) => d === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDir('asc')
+    }
+  }
+
+  function sortIcon(field: SortField) {
+    if (sortField !== field) return <span className="text-[#cccccc] text-[9px]">⇅</span>
+    return <span className="text-[#3D6A9E] text-[9px]">{sortDir === 'asc' ? '▲' : '▼'}</span>
+  }
+
+  // Build displayed list: apply sort or manual order
+  let displayed = [...projects]
+  if (sortField) {
+    displayed.sort((a, b) => {
+      let av = '', bv = ''
+      if (sortField === 'title')  { av = a.title; bv = b.title }
+      if (sortField === 'status') { av = a.status; bv = b.status }
+      if (sortField === 'client') { av = a.client?.name ?? ''; bv = b.client?.name ?? '' }
+      const cmp = av.localeCompare(bv, 'he')
+      return sortDir === 'asc' ? cmp : -cmp
+    })
+  } else {
+    displayed.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id))
+  }
+
+  // Drag handlers
+  function onDragStart(id: string) { setDragId(id) }
+  function onDragEnd() { setDragId(null); setDropTargetId(null) }
+
+  function onDragOver(e: React.DragEvent, targetId: string) {
+    e.preventDefault()
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+    setDropPosition(e.clientY < rect.top + rect.height / 2 ? 'above' : 'below')
+    setDropTargetId(targetId)
+  }
+
+  function onDrop(targetId: string) {
+    if (!dragId || dragId === targetId) { setDragId(null); setDropTargetId(null); return }
+    setSortField(null) // clear sort when manually dragging
+    setOrder((prev) => {
+      const list = [...prev]
+      const fromIdx = list.indexOf(dragId)
+      const toIdx = list.indexOf(targetId)
+      list.splice(fromIdx, 1)
+      const newTo = list.indexOf(targetId)
+      list.splice(dropPosition === 'above' ? newTo : newTo + 1, 0, dragId)
+      return list
+    })
+    setDragId(null)
+    setDropTargetId(null)
+  }
+
+  return (
+    <div>
+      {/* Sort bar */}
+      <div className="flex items-center gap-3 mb-2 px-1">
+        <span className="text-[10px] font-bold uppercase tracking-[0.06em] text-[#aaaaaa]">מיון:</span>
+        {([['title', 'שם'], ['status', 'סטטוס'], ['client', 'לקוח']] as [SortField, string][]).map(([f, label]) => (
+          <button
+            key={f!}
+            onClick={() => handleSort(f)}
+            className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded transition-colors ${
+              sortField === f ? 'text-[#3D6A9E] bg-[#EBF1F9]' : 'text-[#666666] hover:text-[#3D6A9E] hover:bg-[#f4f4f4]'
+            }`}
+          >
+            {label} {sortIcon(f)}
+          </button>
+        ))}
+        {sortField && (
+          <button
+            onClick={() => setSortField(null)}
+            className="text-[10px] text-[#aaaaaa] hover:text-[#C0392B] mr-1"
+          >
+            ✕ נקה מיון
+          </button>
+        )}
+      </div>
+
+      {/* List */}
+      <div
+        className="bg-white border border-[#dddddd] rounded-lg overflow-hidden"
+        style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
+      >
+        {displayed.map((p) => {
+          const isDropTarget = dropTargetId === p.id
+          return (
+            <div
+              key={p.id}
+              draggable
+              onDragStart={() => onDragStart(p.id)}
+              onDragEnd={onDragEnd}
+              onDragOver={(e) => onDragOver(e, p.id)}
+              onDrop={() => onDrop(p.id)}
+              style={{
+                borderTop: isDropTarget && dropPosition === 'above' ? '2px solid #3D6A9E' : undefined,
+                borderBottom: isDropTarget && dropPosition === 'below' ? '2px solid #3D6A9E' : undefined,
+              }}
+            >
+              <ProjectRow
+                project={p}
+                isHovered={hovered?.id === p.id}
+                onMouseEnter={() => setHovered(p)}
+                onMouseLeave={() => setHovered(null)}
+                hasAlert={alertSet.has(p.id)}
+                isDragging={dragId === p.id}
+              />
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -334,7 +536,6 @@ export default function ProjectsPage() {
   const [defaultProject, setDefaultProject] = useState<ProjectWithClient | null>(null)
   const [panelCollapsed, setPanelCollapsed] = useState(false)
 
-  // Auto-select first project for timeline on load
   useEffect(() => {
     if (projects && projects.length > 0 && !defaultProject) {
       setDefaultProject(projects[0])
@@ -349,21 +550,16 @@ export default function ProjectsPage() {
     return matchSearch && matchStatus
   })
 
-  const active = filtered.filter((p) => p.status === 'active')
-  const others = filtered.filter((p) => p.status !== 'active')
-
-  // Timeline shows hovered project, or falls back to default (first)
   const timelineProject = hovered ?? defaultProject
 
   return (
     <div className="flex flex-col h-full space-y-5">
       <Breadcrumb items={[{ label: 'דשבורד', href: '/' }, { label: 'פרויקטים' }]} />
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-[20px] font-black text-[#1a1a1a] tracking-tight">פרויקטים</h1>
         <Link
           href="/projects/new"
-          className="inline-flex items-center px-4 py-2 bg-[#3D6A9E] text-[#1a1a1a] text-[13px] font-extrabold rounded-lg hover:bg-[#D4B010] transition-colors"
+          className="inline-flex items-center px-4 py-2 bg-[#3D6A9E] text-white text-[13px] font-extrabold rounded-lg hover:bg-[#2F5A8A] transition-colors"
         >
           + פרויקט חדש
         </Link>
@@ -404,9 +600,7 @@ export default function ProjectsPage() {
 
       {/* Two-panel layout */}
       <div className="flex gap-4 flex-1 min-h-0">
-
-        {/* Left — project list */}
-        <div className="flex-1 min-w-0 space-y-4 overflow-y-auto">
+        <div className="flex-1 min-w-0 overflow-y-auto">
           {isLoading ? (
             <div className="py-16 text-center text-[13px] text-[#666666]">טוען...</div>
           ) : filtered.length === 0 ? (
@@ -414,54 +608,15 @@ export default function ProjectsPage() {
               {projects?.length === 0 ? 'אין פרויקטים עדיין' : 'לא נמצאו תוצאות'}
             </div>
           ) : (
-            <>
-              {active.length > 0 && (
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#666666] mb-2">פעילים</p>
-                  <div
-                    className="bg-white border border-[#dddddd] rounded-lg overflow-hidden"
-                    style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
-                  >
-                    {active.map((p) => (
-                      <ProjectRow
-                        key={p.id}
-                        project={p}
-                        isHovered={hovered?.id === p.id}
-                        onMouseEnter={() => setHovered(p)}
-                        onMouseLeave={() => setHovered(null)}
-                        hasAlert={alertSet.has(p.id)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-              {others.length > 0 && (
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#666666] mb-2">
-                    {active.length > 0 ? 'אחרים' : 'פרויקטים'}
-                  </p>
-                  <div
-                    className="bg-white border border-[#dddddd] rounded-lg overflow-hidden"
-                    style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
-                  >
-                    {others.map((p) => (
-                      <ProjectRow
-                        key={p.id}
-                        project={p}
-                        isHovered={hovered?.id === p.id}
-                        onMouseEnter={() => setHovered(p)}
-                        onMouseLeave={() => setHovered(null)}
-                        hasAlert={alertSet.has(p.id)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
+            <SortableProjectList
+              projects={filtered}
+              hovered={hovered}
+              setHovered={setHovered}
+              alertSet={alertSet}
+            />
           )}
         </div>
 
-        {/* Right — timeline panel */}
         <TimelinePanel
           project={timelineProject}
           collapsed={panelCollapsed}
