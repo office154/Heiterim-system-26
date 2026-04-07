@@ -480,6 +480,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
   const { data, isLoading } = useDashboardData()
   const [clientModalOpen, setClientModalOpen] = useState(false)
   const [openModal, setOpenModal] = useState<'payment' | 'invoice' | null>(null)
+  const [showAllAlerts, setShowAllAlerts] = useState(false)
 
   const loading = isLoading || !data
 
@@ -602,42 +603,91 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
                 <span className="text-[#3D6A9E] text-base">✓</span>
                 <span className="text-[13px] font-semibold text-[#3D6A9E]">אין פריטים דחופים</span>
               </div>
-            ) : (
-              <div className="space-y-2">
-                {/* לא חויב */}
-                {data.notInvoicedStages.map((s, i) => (
-                  <AlertRow key={`inv-${i}`} href={`/projects/${s.projectId}`} borderColor="#C62828">
-                    <span className="text-[10px] font-bold text-[#C62828] uppercase tracking-[0.08em] shrink-0">לא חויב</span>
-                    <span className="font-semibold text-[#1a1a1a] text-[13px] truncate">{s.projectTitle}</span>
-                    <span className="text-[#666666] text-[13px] truncate">{s.stageName}</span>
-                    <span className="font-black text-[#C62828] text-[13px] mr-auto shrink-0" dir="ltr">{fmt(s.amount)}</span>
-                  </AlertRow>
-                ))}
+            ) : (() => {
+              type AlertEntry =
+                | { kind: 'inv';   days: number; data: AlertStageItem }
+                | { kind: 'pay';   days: number; data: AlertStageItem }
+                | { kind: 'inact'; days: number; data: InactiveProjectItem }
 
-                {/* לא שולם */}
-                {data.notPaidStages.map((s, i) => (
-                  <AlertRow key={`pay-${i}`} href={`/projects/${s.projectId}`} borderColor="#F59E0B">
-                    <span className="text-[10px] font-bold text-[#F59E0B] uppercase tracking-[0.08em] shrink-0">לא שולם</span>
-                    <span className="font-semibold text-[#1a1a1a] text-[13px] truncate">{s.projectTitle}</span>
-                    <span className="text-[#666666] text-[13px] truncate">{s.stageName}</span>
-                    {s.daysSince !== undefined && (
-                      <span className="text-[12px] text-[#F59E0B] shrink-0">{s.daysSince} ימים</span>
-                    )}
-                    <span className="font-black text-[#F59E0B] text-[13px] mr-auto shrink-0" dir="ltr">{fmt(s.amount)}</span>
-                  </AlertRow>
-                ))}
+              const allAlerts: AlertEntry[] = [
+                ...data.notInvoicedStages.map((s) => ({ kind: 'inv'   as const, days: s.daysSince ?? 0, data: s })),
+                ...data.notPaidStages.map(    (s) => ({ kind: 'pay'   as const, days: s.daysSince ?? 0, data: s })),
+                ...data.inactiveProjects.map( (p) => ({ kind: 'inact' as const, days: p.daysSinceActivity,   data: p })),
+              ].sort((a, b) => b.days - a.days)
 
-                {/* ללא פעילות */}
-                {data.inactiveProjects.map((p, i) => (
-                  <AlertRow key={`inact-${i}`} href={`/projects/${p.projectId}`} borderColor="#aaaaaa">
-                    <span className="text-[10px] font-bold text-[#aaaaaa] uppercase tracking-[0.08em] shrink-0">לא פעיל</span>
-                    <span className="font-semibold text-[#1a1a1a] text-[13px] truncate">{p.projectTitle}</span>
-                    <span className="text-[#666666] text-[13px] truncate">{p.clientName}</span>
-                    <span className="text-[12px] text-[#aaaaaa] mr-auto shrink-0">{p.daysSinceActivity} ימים ללא פעילות</span>
-                  </AlertRow>
-                ))}
-              </div>
-            )}
+              const LIMIT = 4
+              const visible = showAllAlerts ? allAlerts : allAlerts.slice(0, LIMIT)
+              const hiddenCount = allAlerts.length - LIMIT
+
+              return (
+                <div className="space-y-2">
+                  {visible.map((entry, i) => {
+                    if (entry.kind === 'inv') {
+                      const s = entry.data as AlertStageItem
+                      return (
+                        <AlertRow key={`inv-${i}`} href={`/projects/${s.projectId}`} borderColor="#C62828">
+                          <span className="text-[10px] font-bold text-[#C62828] uppercase tracking-[0.08em] shrink-0">לא חויב</span>
+                          <span className="font-semibold text-[#1a1a1a] text-[13px] truncate">{s.projectTitle}</span>
+                          <span className="text-[#666666] text-[13px] truncate">{s.stageName}</span>
+                          <span className="font-black text-[#C62828] text-[13px] mr-auto shrink-0" dir="ltr">{fmt(s.amount)}</span>
+                        </AlertRow>
+                      )
+                    }
+                    if (entry.kind === 'pay') {
+                      const s = entry.data as AlertStageItem
+                      return (
+                        <AlertRow key={`pay-${i}`} href={`/projects/${s.projectId}`} borderColor="#F59E0B">
+                          <span className="text-[10px] font-bold text-[#F59E0B] uppercase tracking-[0.08em] shrink-0">לא שולם</span>
+                          <span className="font-semibold text-[#1a1a1a] text-[13px] truncate">{s.projectTitle}</span>
+                          <span className="text-[#666666] text-[13px] truncate">{s.stageName}</span>
+                          {s.daysSince !== undefined && (
+                            <span className="text-[12px] text-[#F59E0B] shrink-0">{s.daysSince} ימים</span>
+                          )}
+                          <span className="font-black text-[#F59E0B] text-[13px] mr-auto shrink-0" dir="ltr">{fmt(s.amount)}</span>
+                        </AlertRow>
+                      )
+                    }
+                    const p = entry.data as InactiveProjectItem
+                    return (
+                      <AlertRow key={`inact-${i}`} href={`/projects/${p.projectId}`} borderColor="#aaaaaa">
+                        <span className="text-[10px] font-bold text-[#aaaaaa] uppercase tracking-[0.08em] shrink-0">לא פעיל</span>
+                        <span className="font-semibold text-[#1a1a1a] text-[13px] truncate">{p.projectTitle}</span>
+                        <span className="text-[#666666] text-[13px] truncate">{p.clientName}</span>
+                        <span className="text-[12px] text-[#aaaaaa] mr-auto shrink-0">{p.daysSinceActivity} ימים ללא פעילות</span>
+                      </AlertRow>
+                    )
+                  })}
+
+                  {hiddenCount > 0 && (
+                    <button
+                      onClick={() => setShowAllAlerts((v) => !v)}
+                      className="w-full flex items-center justify-center gap-1.5 py-2.5 text-[12px] font-semibold transition-colors"
+                      style={{
+                        border: '1px dashed #cccccc',
+                        borderRadius: '10px',
+                        background: 'white',
+                        color: showAllAlerts ? '#3D6A9E' : '#aaaaaa',
+                      }}
+                      onMouseEnter={(e) => {
+                        const el = e.currentTarget as HTMLButtonElement
+                        el.style.borderColor = '#3D6A9E'
+                        el.style.color = '#3D6A9E'
+                        el.style.background = '#EBF1F9'
+                      }}
+                      onMouseLeave={(e) => {
+                        const el = e.currentTarget as HTMLButtonElement
+                        el.style.borderColor = '#cccccc'
+                        el.style.color = showAllAlerts ? '#3D6A9E' : '#aaaaaa'
+                        el.style.background = 'white'
+                      }}
+                    >
+                      <span style={{ fontSize: '10px', transition: 'transform 0.2s', transform: showAllAlerts ? 'rotate(180deg)' : 'rotate(0deg)', display: 'inline-block' }}>▼</span>
+                      {showAllAlerts ? 'הסתר' : `הצג עוד (${hiddenCount} נוספים)`}
+                    </button>
+                  )}
+                </div>
+              )
+            })()}
           </div>
         )}
 
