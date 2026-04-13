@@ -738,9 +738,6 @@ export function StatusTab({ projectId }: StatusTabProps) {
           </dl>
         </div>
 
-        {/* Contacts table */}
-        <ContactsTable projectId={projectId} />
-
         {/* Requirements sections */}
         <div className="space-y-4">
           <h2 className="text-base font-semibold text-[#1a1a1a] print:hidden">דרישות</h2>
