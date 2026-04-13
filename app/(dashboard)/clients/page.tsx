@@ -6,6 +6,8 @@ import { useClients, useDeleteClient } from '@/lib/hooks/use-clients'
 import { CreateClientModal } from '@/components/create-client-modal'
 import { Input } from '@/components/ui/input'
 import { Breadcrumb } from '@/components/shared/Breadcrumb'
+import { useResizableColumns } from '@/lib/hooks/use-resizable-columns'
+import { ResizableTh } from '@/components/ui/resizable-th'
 
 function DeleteButton({ clientId }: { clientId: string }) {
   const [confirm, setConfirm] = useState(false)
@@ -46,6 +48,7 @@ export default function ClientsPage() {
   const { data: clients, isLoading } = useClients()
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const { widths, startResize } = useResizableColumns([200, 150, 150, 200, 120, 120, 40])
 
   const filtered = (clients ?? []).filter((c) => {
     const q = search.toLowerCase()
@@ -86,16 +89,16 @@ export default function ClientsPage() {
           className="bg-white border border-[#dddddd] rounded-lg overflow-hidden"
           style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
         >
-          <table className="w-full text-[13px]">
+          <table className="w-full text-[13px]" style={{ tableLayout: 'fixed' }}>
             <thead>
               <tr className="border-b border-[#dddddd] bg-[#f8f8f8]">
-                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">שם</th>
-                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">מספר חברה</th>
-                <th className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">טלפון</th>
-                <th className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">אימייל</th>
-                <th className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">מקור</th>
-                <th className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">תאריך</th>
-                <th className="w-8 px-3 py-3" />
+                <ResizableTh width={widths[0]} onResizeStart={startResize(0)} className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">שם</ResizableTh>
+                <ResizableTh width={widths[1]} onResizeStart={startResize(1)} className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">מספר חברה</ResizableTh>
+                <ResizableTh width={widths[2]} onResizeStart={startResize(2)} className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">טלפון</ResizableTh>
+                <ResizableTh width={widths[3]} onResizeStart={startResize(3)} className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">אימייל</ResizableTh>
+                <ResizableTh width={widths[4]} onResizeStart={startResize(4)} className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">מקור</ResizableTh>
+                <ResizableTh width={widths[5]} onResizeStart={startResize(5)} className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">תאריך</ResizableTh>
+                <th style={{ width: widths[6] }} className="px-3 py-3" />
               </tr>
             </thead>
             <tbody>

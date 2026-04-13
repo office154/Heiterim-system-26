@@ -11,6 +11,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import type { RequirementStatus, ProjectContact, StatusRequirement, RequirementStep } from '@/types/database'
 import { ProjectTimeline } from '@/components/features/projects/ProjectTimeline'
+import { useResizableColumns } from '@/lib/hooks/use-resizable-columns'
+import { ResizableTh } from '@/components/ui/resizable-th'
 
 interface StatusTabProps {
   projectId: string
@@ -535,6 +537,7 @@ function RequirementsSection({
 }) {
   const createReq = useCreateRequirement()
   const updateReq = useUpdateRequirement()
+  const { widths, startResize } = useResizableColumns([32, 32, 80, 260, 128, 96, 180, 32, 32])
   const deleteReq = useDeleteRequirement()
 
   async function handleAddRow(allReqs: StatusRequirement[]) {
@@ -564,18 +567,18 @@ function RequirementsSection({
         <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#3D6A9E]">{section}</span>
       </div>
 
-      <table className="w-full text-sm">
+      <table className="w-full text-sm" style={{ tableLayout: 'fixed' }}>
         <thead className="bg-[#f8f8f8] text-[10px] text-[#aaaaaa]">
           <tr>
-            <th className="w-8 px-2 py-2 print:hidden" />
-            <th className="w-8 px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">#</th>
-            <th className="w-20 px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">עלה למערכת</th>
-            <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">פירוט</th>
-            <th className="w-32 px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">סטטוס</th>
-            <th className="w-24 px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">תאריך</th>
-            <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">הערות</th>
-            <th className="print:hidden px-2 py-2" />
-            <th className="print:hidden w-8 px-3 py-2" />
+            <th style={{ width: widths[0] }} className="px-2 py-2 print:hidden" />
+            <th style={{ width: widths[1] }} className="px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">#</th>
+            <ResizableTh width={widths[2]} onResizeStart={startResize(2)} className="px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">עלה למערכת</ResizableTh>
+            <ResizableTh width={widths[3]} onResizeStart={startResize(3)} className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">פירוט</ResizableTh>
+            <ResizableTh width={widths[4]} onResizeStart={startResize(4)} className="px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">סטטוס</ResizableTh>
+            <ResizableTh width={widths[5]} onResizeStart={startResize(5)} className="px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">תאריך</ResizableTh>
+            <ResizableTh width={widths[6]} onResizeStart={startResize(6)} className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">הערות</ResizableTh>
+            <th style={{ width: widths[7] }} className="print:hidden px-2 py-2" />
+            <th style={{ width: widths[8] }} className="print:hidden px-3 py-2" />
           </tr>
         </thead>
         <tbody className="divide-y divide-[#f4f4f4]">

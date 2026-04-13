@@ -16,6 +16,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { TRACK_LABELS, TRACK_OPTIONS } from '@/lib/constants/tracks'
 import type { ProjectStage, TrackValue } from '@/types/database'
+import { useResizableColumns } from '@/lib/hooks/use-resizable-columns'
+import { ResizableTh } from '@/components/ui/resizable-th'
 
 interface StagesTabProps {
   projectId: string
@@ -131,6 +133,11 @@ function TrackSection({
   const deleteStage = useDeleteStage()
   const removeTrack = useRemoveTrack()
 
+  // 1 fixed label column + 1 per stage + 1 add-stage column
+  const colCount = 1 + stages.length + 1
+  const initialWidths = [144, ...Array(stages.length).fill(128), 140]
+  const { widths, startResize } = useResizableColumns(initialWidths)
+
   const [addingStage, setAddingStage] = useState(false)
 
   const totalContract = stages.reduce((sum, s) => sum + s.price + (s.extra_payment || 0), 0)
@@ -198,19 +205,27 @@ function TrackSection({
       )}
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="text-sm" style={{ tableLayout: 'fixed', width: 'max-content', minWidth: '100%' }}>
           <thead>
             <tr className="border-b border-[#dddddd] bg-[#f8f8f8]">
               {/* Row-label column */}
-              <th className="sticky right-0 z-10 min-w-36 bg-[#f8f8f8] px-4 py-2 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">
+              <ResizableTh
+                width={widths[0]}
+                onResizeStart={startResize(0)}
+                className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]"
+              >
                 שלב
-              </th>
+              </ResizableTh>
 
               {/* One column per existing stage */}
-              {stages.map((stage) => (
-                <th key={stage.id} className="min-w-32 px-3 py-2 text-center font-medium text-[#1a1a1a]">
+              {stages.map((stage, i) => (
+                <ResizableTh
+                  key={stage.id}
+                  width={widths[1 + i]}
+                  onResizeStart={startResize(1 + i)}
+                  className="px-3 py-2 text-center font-medium text-[#1a1a1a]"
+                >
                   <div className="flex flex-col items-center gap-1">
-                    {/* ✕ delete button */}
                     <button
                       onClick={() => handleDeleteStage(stage)}
                       disabled={deleteStage.isPending}
@@ -225,11 +240,11 @@ function TrackSection({
                       className="text-center text-xs"
                     />
                   </div>
-                </th>
+                </ResizableTh>
               ))}
 
               {/* Add-stage column */}
-              <th className="px-3 py-2 text-center">
+              <th style={{ width: widths[1 + stages.length] }} className="px-3 py-2 text-center">
                 {addingStage ? (
                   <NewStageInput
                     onConfirm={handleAddStage}

@@ -2,6 +2,8 @@
 
 import { useRef, useState } from 'react'
 import { useProjectFiles, useUploadFile, useDeleteFile, getSignedUrl } from '@/lib/hooks/use-files'
+import { useResizableColumns } from '@/lib/hooks/use-resizable-columns'
+import { ResizableTh } from '@/components/ui/resizable-th'
 
 interface FilesTabProps {
   projectId: string
@@ -35,6 +37,7 @@ export function FilesTab({ projectId }: FilesTabProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [previewName, setPreviewName] = useState<string>('')
   const [previewType, setPreviewType] = useState<string | null>(null)
+  const { widths, startResize } = useResizableColumns([300, 100, 160, 144])
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   async function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
@@ -108,13 +111,13 @@ export function FilesTab({ projectId }: FilesTabProps) {
             <p className="mt-1 text-[12px] text-[#aaaaaa]">לחץ על &quot;העלה קובץ&quot; כדי להתחיל</p>
           </div>
         ) : (
-          <table className="w-full text-[13px]">
+          <table className="w-full text-[13px]" style={{ tableLayout: 'fixed' }}>
             <thead>
               <tr className="border-b border-[#dddddd] bg-[#f8f8f8]">
-                <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">שם קובץ</th>
-                <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">גודל</th>
-                <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">תאריך העלאה</th>
-                <th className="w-36 px-4 py-3" />
+                <ResizableTh width={widths[0]} onResizeStart={startResize(0)} className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">שם קובץ</ResizableTh>
+                <ResizableTh width={widths[1]} onResizeStart={startResize(1)} className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">גודל</ResizableTh>
+                <ResizableTh width={widths[2]} onResizeStart={startResize(2)} className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">תאריך העלאה</ResizableTh>
+                <th style={{ width: widths[3] }} className="px-4 py-3" />
               </tr>
             </thead>
             <tbody>

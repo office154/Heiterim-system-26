@@ -8,6 +8,7 @@ import { usePayments } from '@/lib/hooks/use-payments'
 import { useProjects } from '@/lib/hooks/use-projects'
 import { useClients } from '@/lib/hooks/use-clients'
 import { useDashboardData } from '@/lib/hooks/use-dashboard'
+import { useResizableColumns } from '@/lib/hooks/use-resizable-columns'
 import { TRACK_LABELS, TRACK_OPTIONS } from '@/lib/constants/tracks'
 import { Breadcrumb } from '@/components/shared/Breadcrumb'
 import type { TrackValue } from '@/types/database'
@@ -62,6 +63,8 @@ function Table({ headers, rows, emptyLabel = 'אין נתונים' }: {
   rows: (string | number | React.ReactNode)[][]
   emptyLabel?: string
 }) {
+  const { widths, startResize } = useResizableColumns(headers.map(() => 150))
+
   if (rows.length === 0) {
     return (
       <div style={{ padding: '20px 0', textAlign: 'center', color: '#aaa', fontSize: 13 }}>{emptyLabel}</div>
@@ -69,12 +72,25 @@ function Table({ headers, rows, emptyLabel = 'אין נתונים' }: {
   }
   return (
     <div style={{ overflowX: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, tableLayout: 'fixed' }}>
         <thead>
           <tr>
             {headers.map((h, i) => (
-              <th key={i} style={{ textAlign: 'right', padding: '7px 10px', fontSize: 11, fontWeight: 600, color: '#999', textTransform: 'uppercase', letterSpacing: 0.4, borderBottom: '1px solid #ebebeb', whiteSpace: 'nowrap' }}>
+              <th
+                key={i}
+                style={{
+                  textAlign: 'right', padding: '7px 10px', fontSize: 11, fontWeight: 600,
+                  color: '#999', textTransform: 'uppercase', letterSpacing: 0.4,
+                  borderBottom: '1px solid #ebebeb', whiteSpace: 'nowrap',
+                  width: widths[i], minWidth: widths[i], position: 'relative', userSelect: 'none', overflow: 'hidden',
+                }}
+              >
                 {h}
+                <div
+                  onMouseDown={(e) => { e.preventDefault(); startResize(i)(e) }}
+                  style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: 4, cursor: 'col-resize', zIndex: 2 }}
+                  className="hover:bg-[#3D6A9E]/40 transition-colors"
+                />
               </th>
             ))}
           </tr>

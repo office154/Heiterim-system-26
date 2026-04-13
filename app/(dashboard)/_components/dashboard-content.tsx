@@ -13,6 +13,8 @@ import { CreateClientModal } from '@/components/create-client-modal'
 import { Breadcrumb } from '@/components/shared/Breadcrumb'
 import { useTodos, useUpdateTodo } from '@/lib/hooks/use-todos'
 import type { Todo } from '@/types/database'
+import { useResizableColumns } from '@/lib/hooks/use-resizable-columns'
+import { ResizableTh } from '@/components/ui/resizable-th'
 
 interface DashboardContentProps {
   role: 'admin' | 'employee'
@@ -42,6 +44,7 @@ function AlertModal({
   items: AlertStageItem[]
   onClose: () => void
 }) {
+  const { widths, startResize } = useResizableColumns([200, 160, 160, 120])
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
@@ -62,13 +65,13 @@ function AlertModal({
           </button>
         </div>
         <div className="max-h-[60vh] overflow-y-auto">
-          <table className="w-full text-[13px]">
+          <table className="w-full text-[13px]" style={{ tableLayout: 'fixed' }}>
             <thead className="sticky top-0 bg-[#f8f8f8] border-b border-[#dddddd]">
               <tr>
-                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">פרויקט</th>
-                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">לקוח</th>
-                <th className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">שלב</th>
-                <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">סכום</th>
+                <ResizableTh width={widths[0]} onResizeStart={startResize(0)} className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">פרויקט</ResizableTh>
+                <ResizableTh width={widths[1]} onResizeStart={startResize(1)} className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">לקוח</ResizableTh>
+                <ResizableTh width={widths[2]} onResizeStart={startResize(2)} className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">שלב</ResizableTh>
+                <ResizableTh width={widths[3]} onResizeStart={startResize(3)} className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">סכום</ResizableTh>
               </tr>
             </thead>
             <tbody>

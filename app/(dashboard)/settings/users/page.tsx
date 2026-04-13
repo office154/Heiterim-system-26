@@ -6,6 +6,8 @@ import { useCurrentRole } from '@/lib/hooks/use-profile'
 import { useProfiles, useUpdateProfile } from '@/lib/hooks/use-users'
 import type { Profile, UserRole } from '@/types/database'
 import { Breadcrumb } from '@/components/shared/Breadcrumb'
+import { useResizableColumns } from '@/lib/hooks/use-resizable-columns'
+import { ResizableTh } from '@/components/ui/resizable-th'
 
 function RoleSelect({ profile }: { profile: Profile }) {
   const { mutate: update } = useUpdateProfile()
@@ -25,6 +27,7 @@ export default function SettingsUsersPage() {
   const router = useRouter()
   const { data: role, isLoading: roleLoading } = useCurrentRole()
   const { data: profiles, isLoading: profilesLoading } = useProfiles()
+  const { widths, startResize } = useResizableColumns([220, 260, 150])
 
   const [showInvite, setShowInvite] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
@@ -149,12 +152,12 @@ export default function SettingsUsersPage() {
         {profilesLoading ? (
           <div className="py-12 text-center text-[13px] text-[#64748B]">טוען...</div>
         ) : (
-          <table className="w-full text-[13px]">
+          <table className="w-full text-[13px]" style={{ tableLayout: 'fixed' }}>
             <thead>
               <tr className="border-b border-[#E5E7EB]">
-                <th className="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">שם</th>
-                <th className="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">אימייל</th>
-                <th className="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">תפקיד</th>
+                <ResizableTh width={widths[0]} onResizeStart={startResize(0)} className="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">שם</ResizableTh>
+                <ResizableTh width={widths[1]} onResizeStart={startResize(1)} className="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">אימייל</ResizableTh>
+                <ResizableTh width={widths[2]} onResizeStart={startResize(2)} className="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">תפקיד</ResizableTh>
               </tr>
             </thead>
             <tbody>
