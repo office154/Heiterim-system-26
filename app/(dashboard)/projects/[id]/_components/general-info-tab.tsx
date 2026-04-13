@@ -149,44 +149,19 @@ export function GeneralInfoTab({ project, onNavigate }: GeneralInfoTabProps) {
               />
             </FieldRow>
 
-            <FieldRow label="חברה">
+            <FieldRow label="מספר ח.פ">
               <InlineEdit
                 value={project.client.company}
                 onSave={(v) => saveClient('company', v)}
-                emptyText="לחץ להוספת שם חברה"
+                emptyText="לחץ להוספה"
               />
             </FieldRow>
 
-            <FieldRow label="טלפון">
+            <FieldRow label="איש קשר">
               <InlineEdit
-                value={project.client.phone}
-                onSave={(v) => saveClient('phone', v)}
-                emptyText="לחץ להוספת טלפון"
-              />
-            </FieldRow>
-
-            <FieldRow label="אימייל">
-              <InlineEdit
-                value={project.client.email}
-                onSave={(v) => saveClient('email', v)}
-                emptyText="לחץ להוספת אימייל"
-              />
-            </FieldRow>
-
-            <FieldRow label="כתובת">
-              <InlineEdit
-                value={project.client.address}
-                onSave={(v) => saveClient('address', v)}
-                emptyText="לחץ להוספת כתובת"
-              />
-            </FieldRow>
-
-            <FieldRow label="הערות">
-              <InlineEdit
-                value={project.client.notes}
-                onSave={(v) => saveClient('notes', v)}
-                type="textarea"
-                emptyText="לחץ להוספת הערות"
+                value={project.client.contact_name}
+                onSave={(v) => saveClient('contact_name', v)}
+                emptyText="לחץ להוספה"
               />
             </FieldRow>
           </dl>

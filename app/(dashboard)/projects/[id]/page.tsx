@@ -59,8 +59,8 @@ export default function ProjectDetailPage() {
       <Tabs defaultValue="general" value={activeTab} onValueChange={setActiveTab} dir="rtl">
         <TabsList className="w-full justify-start print:hidden">
           <TabsTrigger value="general">מידע כללי</TabsTrigger>
-          <TabsTrigger value="stages">תשלומים</TabsTrigger>
           <TabsTrigger value="status">דוח סטטוס</TabsTrigger>
+          <TabsTrigger value="stages">תשלומים</TabsTrigger>
           <TabsTrigger value="files">קבצים</TabsTrigger>
         </TabsList>
 
