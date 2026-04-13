@@ -222,55 +222,44 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
   const completedReqs = requirements.filter((r) => r.status === 'התקבל').length
   const reqPct = requirements.length > 0 ? Math.round((completedReqs / requirements.length) * 100) : 0
 
-  const previewStages = stages.slice(0, 4)
+  const activeStages = stages.filter((s) => s.completed || s.invoice_sent || s.paid)
+  const previewStages = activeStages.slice(0, 4)
   const previewReqs = requirements.slice(0, 4)
   const previewFiles = files.slice(0, 4)
 
   return (
     <div className="space-y-4 mb-6">
       {/* ── KPI Strip ── */}
-      <div className={`grid gap-3 ${isAdmin ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2'}`}>
-        {isAdmin && (
-          <>
-            <button
-              onClick={() => onNavigate('stages')}
-              className="rounded-lg border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
-              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
-            >
-              <div className="text-xl font-black text-[#3D6A9E]">{formatPrice(totalPaid)}</div>
-              <div className="text-[10px] text-[#888] mt-1">שולם</div>
-            </button>
-            <button
-              onClick={() => onNavigate('stages')}
-              className="rounded-lg border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
-              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
-            >
-              <div className={`text-xl font-black ${balance > 0 ? 'text-[#C62828]' : 'text-[#3D6A9E]'}`}>
-                {formatPrice(balance)}
-              </div>
-              <div className="text-[10px] text-[#888] mt-1">יתרה לגביה</div>
-            </button>
-          </>
-        )}
-        <button
-          onClick={() => onNavigate('status')}
-          className="rounded-lg border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
-          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
-        >
-          <div className="text-xl font-black text-[#1a1a1a]">
-            {completedReqs} / {requirements.length}
-          </div>
-          <div className="text-[10px] text-[#888] mt-1">דרישות הושלמו</div>
-        </button>
-        <button
-          onClick={() => onNavigate('files')}
-          className="rounded-lg border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
-          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
-        >
-          <div className="text-xl font-black text-[#1a1a1a]">{files.length}</div>
-          <div className="text-[10px] text-[#888] mt-1">קבצים</div>
-        </button>
-      </div>
+      {isAdmin && (
+        <div className="grid gap-3 grid-cols-3">
+          <button
+            onClick={() => onNavigate('stages')}
+            className="rounded-lg border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
+            style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
+          >
+            <div className="text-xl font-black text-[#3D6A9E]">{formatPrice(totalPaid)}</div>
+            <div className="text-[10px] text-[#888] mt-1">שולם</div>
+          </button>
+          <button
+            onClick={() => onNavigate('stages')}
+            className="rounded-lg border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
+            style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
+          >
+            <div className={`text-xl font-black ${balance > 0 ? 'text-[#C62828]' : 'text-[#3D6A9E]'}`}>
+              {formatPrice(balance)}
+            </div>
+            <div className="text-[10px] text-[#888] mt-1">יתרה לגביה</div>
+          </button>
+          <button
+            onClick={() => onNavigate('files')}
+            className="rounded-lg border border-[#dddddd] bg-white p-3 text-center transition-shadow hover:shadow-md"
+            style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
+          >
+            <div className="text-xl font-black text-[#1a1a1a]">{files.length}</div>
+            <div className="text-[10px] text-[#888] mt-1">קבצים</div>
+          </button>
+        </div>
+      )}
 
       {/* ── Panels ── */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -342,7 +331,7 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
           )}
           <div className="px-4 py-2">
             {previewStages.length === 0 ? (
-              <p className="text-[11px] text-[#aaa] italic py-2">אין שלבים</p>
+              <p className="text-[11px] text-[#aaa] italic py-2">אין שלבים שהושלמו</p>
             ) : (
               previewStages.map((stage) => (
                 <div
@@ -354,8 +343,8 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
                 </div>
               ))
             )}
-            {stages.length > 4 && (
-              <p className="text-[10px] text-[#aaa] pt-1">+ {stages.length - 4} שלבים נוספים</p>
+            {activeStages.length > 4 && (
+              <p className="text-[10px] text-[#aaa] pt-1">+ {activeStages.length - 4} שלבים נוספים</p>
             )}
           </div>
         </div>
