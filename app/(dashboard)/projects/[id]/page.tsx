@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useParams, useSearchParams } from 'next/navigation'
 import { useProject } from '@/lib/hooks/use-projects'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { GeneralInfoTab } from './_components/general-info-tab'
@@ -19,9 +19,13 @@ const TAB_LABELS: Record<string, string> = {
 
 export default function ProjectDetailPage() {
   const params = useParams()
+  const searchParams = useSearchParams()
   const id = params.id as string
   const { data: project, isLoading, error } = useProject(id)
-  const [activeTab, setActiveTab] = useState('general')
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = searchParams.get('tab')
+    return tab && ['general', 'status', 'stages', 'files'].includes(tab) ? tab : 'general'
+  })
 
   if (isLoading) {
     return <div className="py-12 text-center text-[#aaaaaa]">טוען פרויקט...</div>
