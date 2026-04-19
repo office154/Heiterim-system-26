@@ -309,6 +309,66 @@ function ProjectCard({ proj }: { proj: PaymentProject }) {
   )
 }
 
+// ─── Legend ───────────────────────────────────────────────────────────────────
+
+function Legend() {
+  const items: { status: PaymentStatus; label: string }[] = [
+    { status: 'paid',     label: 'שולם' },
+    { status: 'invoiced', label: 'יצאה חשבונית' },
+    { status: 'required', label: 'נדרש לתשלום' },
+    { status: 'pending',  label: 'טרם טופל' },
+  ]
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 20,
+        background: '#ffffff',
+        border: '1px solid #E5E7EB',
+        borderRadius: '8px',
+        padding: '8px 16px',
+        marginBottom: 16,
+        flexWrap: 'wrap',
+      }}
+    >
+      <span style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.05em' }}>
+        מקרא:
+      </span>
+      {items.map(({ status, label }) => {
+        const dotBg  = DOT_BG[status]
+        const cfg    = STATUS_CONFIG[status]
+        return (
+          <div key={status} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div
+              style={{
+                width: 14,
+                height: 14,
+                borderRadius: '50%',
+                background: dotBg,
+                border: status === 'pending' ? '2px solid #dddddd' : 'none',
+                boxSizing: 'border-box',
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {status === 'paid' && (
+                <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
+                  <path d="M2 5l2.5 2.5L8 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </div>
+            <span style={{ fontSize: 11, fontWeight: 600, color: cfg.color }}>{label}</span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function PaymentsPage() {
@@ -371,6 +431,9 @@ export default function PaymentsPage() {
           loading={isLoading}
         />
       </div>
+
+      {/* ── Legend ── */}
+      <Legend />
 
       {/* ── All paid banner ── */}
       {allPaid && (
