@@ -289,18 +289,37 @@ function ProjectCard({ proj }: { proj: ProjectProgress }) {
 function TodoWidget() {
   const { data: todos, isLoading } = useTodos()
   const updateTodo = useUpdateTodo()
+  const [pendingDoneIds, setPendingDoneIds] = useState<Map<string, ReturnType<typeof setTimeout>>>(new Map())
+  const [undoQueue, setUndoQueue] = useState<Todo[]>([])
 
-  // Show only first 6 pending todos, grouped by project
-  const pending = (todos ?? []).filter((t) => !t.done).slice(0, 6)
+  function markDone(todo: Todo) {
+    setUndoQueue((prev) => [...prev, todo])
+    const timer = setTimeout(() => {
+      updateTodo.mutate({ id: todo.id, done: true })
+      setPendingDoneIds((prev) => { const m = new Map(prev); m.delete(todo.id); return m })
+      setUndoQueue((prev) => prev.filter((t) => t.id !== todo.id))
+    }, 4000)
+    setPendingDoneIds((prev) => new Map(prev).set(todo.id, timer))
+  }
 
-  const groups = pending.reduce<Record<string, Todo[]>>((acc, t) => {
+  function undoDone(todo: Todo) {
+    const timer = pendingDoneIds.get(todo.id)
+    if (timer) clearTimeout(timer)
+    setPendingDoneIds((prev) => { const m = new Map(prev); m.delete(todo.id); return m })
+    setUndoQueue((prev) => prev.filter((t) => t.id !== todo.id))
+  }
+
+  const allPending = (todos ?? []).filter((t) => !t.done && !pendingDoneIds.has(t.id))
+  const pending = allPending.slice(0, 6)
+
+  const groups = pending.reduce<Record<string, { projectId: string | null; items: Todo[] }>>((acc, t) => {
     const key = t.project_title || 'כללי'
-    if (!acc[key]) acc[key] = []
-    acc[key].push(t)
+    if (!acc[key]) acc[key] = { projectId: t.project_id ?? null, items: [] }
+    acc[key].items.push(t)
     return acc
   }, {})
 
-  const totalCount = (todos ?? []).filter((t) => !t.done).length
+  const totalCount = allPending.length
 
   function formatDate(dateStr: string) {
     const d = new Date(dateStr)
@@ -359,44 +378,92 @@ function TodoWidget() {
       </div>
 
       {/* Body */}
-      {pending.length === 0 ? (
+      {pending.length === 0 && undoQueue.length === 0 ? (
         <div className="px-5 py-6 text-center text-[13px]" style={{ color: '#aaaaaa' }}>
           אין משימות פתוחות
         </div>
       ) : (
-        <div className="py-2 px-3 space-y-1" style={{ maxHeight: 220, overflowY: 'auto' }}>
-          {Object.entries(groups).map(([project, items]) => (
-            <div key={project}>
-              <p
-                className="text-[10px] font-bold uppercase tracking-[0.07em] px-2 pt-2 pb-1"
-                style={{ color: '#aaaaaa' }}
-              >
-                {project}
-              </p>
-              {items.map((todo) => (
-                <div
-                  key={todo.id}
-                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#f8f8f8] transition-colors group"
-                  style={{ borderRight: '3px solid #3D6A9E' }}
-                >
-                  <button
-                    onClick={() => updateTodo.mutate({ id: todo.id, done: true })}
-                    className="w-4 h-4 rounded-full border-2 flex-shrink-0 transition-colors hover:border-[#3D6A9E]"
-                    style={{ borderColor: '#cccccc' }}
-                    title="סמן כבוצע"
-                  />
-                  <span className="flex-1 text-[12px] text-[#1a1a1a] truncate">{todo.task}</span>
-                  <span
-                    className="text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0"
-                    style={{ background: '#c8d8e8', color: 'white', fontWeight: 600 }}
+        <>
+          <div className="py-2 px-3 space-y-1" style={{ maxHeight: 220, overflowY: 'auto' }}>
+            {Object.entries(groups).map(([project, { projectId, items }]) => (
+              <div key={project}>
+                <div className="flex items-center gap-1.5 px-2 pt-2 pb-1">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.07em]" style={{ color: '#aaaaaa' }}>
+                    {project}
+                  </p>
+                  {projectId && (
+                    <Link
+                      href={`/projects/${projectId}`}
+                      className="text-[10px] transition-colors"
+                      style={{ color: '#c8d8e8' }}
+                      title="עבור לפרויקט"
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#3D6A9E' }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#c8d8e8' }}
+                    >
+                      ↗
+                    </Link>
+                  )}
+                </div>
+                {items.map((todo) => (
+                  <div
+                    key={todo.id}
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[#f8f8f8] transition-colors group"
+                    style={{ borderRight: '3px solid #3D6A9E' }}
                   >
-                    {formatDate(todo.created_at)}
+                    <button
+                      onClick={() => markDone(todo)}
+                      className="w-4 h-4 rounded-full border-2 flex-shrink-0 transition-colors hover:border-[#3D6A9E]"
+                      style={{ borderColor: '#cccccc' }}
+                      title="סמן כבוצע"
+                    />
+                    <span className="flex-1 text-[12px] text-[#1a1a1a] truncate">{todo.task}</span>
+                    {todo.project_id && (
+                      <Link
+                        href={`/projects/${todo.project_id}`}
+                        className="opacity-0 group-hover:opacity-100 flex-shrink-0 text-[11px] transition-all"
+                        style={{ color: '#3D6A9E' }}
+                        title="עבור לפרויקט"
+                      >
+                        ↗
+                      </Link>
+                    )}
+                    <span
+                      className="text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0"
+                      style={{ background: '#c8d8e8', color: 'white', fontWeight: 600 }}
+                    >
+                      {formatDate(todo.created_at)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          {/* Undo bar */}
+          {undoQueue.length > 0 && (
+            <div
+              className="px-4 py-2.5 flex flex-col gap-1"
+              style={{ borderTop: '1px solid #E5E7EB', background: '#f8fbff' }}
+            >
+              {undoQueue.map((todo) => (
+                <div key={todo.id} className="flex items-center justify-between gap-3">
+                  <span className="text-[11px] text-[#6B7280] truncate">
+                    ✓ &nbsp;{todo.task}
                   </span>
+                  <button
+                    onClick={() => undoDone(todo)}
+                    className="text-[11px] font-semibold flex-shrink-0 transition-colors"
+                    style={{ color: '#3D6A9E' }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#C0392B' }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#3D6A9E' }}
+                  >
+                    ביטול
+                  </button>
                 </div>
               ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   )
