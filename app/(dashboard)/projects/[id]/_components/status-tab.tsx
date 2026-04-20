@@ -5,7 +5,7 @@ import { useProject, useUpdateProject } from '@/lib/hooks/use-projects'
 import { useProjectContacts, useCreateContact, useUpdateContact, useDeleteContact } from '@/lib/hooks/use-contacts'
 import { useStatusRequirements, useCreateRequirement, useUpdateRequirement, useDeleteRequirement } from '@/lib/hooks/use-requirements'
 import { useRequirementSteps, useCreateStep, useUpdateStep, useDeleteStep } from '@/lib/hooks/use-requirement-steps'
-import { useCreateTodo } from '@/lib/hooks/use-todos'
+import { useCreateTodo, useTodos, useUpdateTodo } from '@/lib/hooks/use-todos'
 import { InlineEdit } from '@/components/inline-edit'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
@@ -621,6 +621,73 @@ function RequirementsSection({
   )
 }
 
+function ProjectTodosTable({ projectId }: { projectId: string }) {
+  const { data: todos } = useTodos()
+  const updateTodo = useUpdateTodo()
+  const [showDone, setShowDone] = useState(false)
+
+  const projectTodos = useMemo(() => {
+    return (todos ?? []).filter((t) => t.project_id === projectId)
+  }, [todos, projectId])
+
+  const openTodos = projectTodos.filter((t) => !t.done)
+  const doneTodos = projectTodos.filter((t) => t.done)
+
+  if (projectTodos.length === 0) return null
+
+  const visibleTodos = showDone ? projectTodos : openTodos
+
+  return (
+    <div className="print:hidden">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-base font-semibold text-[#1a1a1a]">משימות פתוחות</h2>
+        {doneTodos.length > 0 && (
+          <button
+            onClick={() => setShowDone((v) => !v)}
+            className="text-xs text-[#3D6A9E] hover:underline"
+          >
+            {showDone ? 'הסתר משימות סגורות' : `+ הצג ${doneTodos.length} משימות סגורות`}
+          </button>
+        )}
+      </div>
+      <div className="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-card">
+        <table className="w-full text-sm">
+          <thead className="bg-[#f8f8f8] text-[10px] text-[#aaaaaa]">
+            <tr>
+              <th className="w-8 px-3 py-2" />
+              <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">משימה</th>
+              <th className="px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">תאריך</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#f4f4f4]">
+            {visibleTodos.map((todo) => (
+              <tr
+                key={todo.id}
+                className={`group transition-colors hover:bg-[#f8f8f8] ${todo.done ? 'opacity-50' : ''}`}
+              >
+                <td className="px-3 py-2 text-center">
+                  <div className="flex justify-center">
+                    <Checkbox
+                      checked={todo.done}
+                      onCheckedChange={(v) => updateTodo.mutate({ id: todo.id, done: !!v })}
+                    />
+                  </div>
+                </td>
+                <td className="px-3 py-2 text-[#1a1a1a]" style={{ textDecoration: todo.done ? 'line-through' : 'none' }}>
+                  {todo.task}
+                </td>
+                <td className="px-3 py-2 text-center text-xs text-[#aaaaaa]" dir="ltr">
+                  {new Date(todo.created_at).toLocaleDateString('he-IL')}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
 export function StatusTab({ projectId }: StatusTabProps) {
   const { data: project } = useProject(projectId)
   const { data: requirements, isLoading } = useStatusRequirements(projectId)
@@ -740,6 +807,9 @@ export function StatusTab({ projectId }: StatusTabProps) {
             </div>
           </dl>
         </div>
+
+        {/* Open todos for this project */}
+        <ProjectTodosTable projectId={projectId} />
 
         {/* Requirements sections */}
         <div className="space-y-4">
