@@ -444,32 +444,33 @@ function StepRow({
           onSave={onSaveDate}
         />
       </td>
-      {/* notes */}
+      {/* notes + add to todos */}
       <td className="px-3 py-1.5">
-        <input
-          type="text"
-          value={localNotes}
-          onChange={(e) => setLocalNotes(e.target.value)}
-          onBlur={() => { if (localNotes !== (step.notes ?? '')) onSaveNotes(localNotes) }}
-          onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
-          placeholder="הערות..."
-          className="w-full rounded-lg border border-transparent bg-transparent px-1 py-0.5 text-[12px] text-[#444] placeholder:text-[#aaaaaa] focus:border-[#3D6A9E] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#3D6A9E]/20"
-        />
+        <div className="flex items-center gap-1">
+          <input
+            type="text"
+            value={localNotes}
+            onChange={(e) => setLocalNotes(e.target.value)}
+            onBlur={() => { if (localNotes !== (step.notes ?? '')) onSaveNotes(localNotes) }}
+            onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
+            placeholder="הערות..."
+            className="flex-1 rounded-lg border border-transparent bg-transparent px-1 py-0.5 text-[12px] text-[#444] placeholder:text-[#aaaaaa] focus:border-[#3D6A9E] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#3D6A9E]/20"
+          />
+          <button
+            onClick={handleAddTodo}
+            disabled={todoAdded || createTodo.isPending}
+            className={`flex-shrink-0 text-[11px] font-semibold transition-colors print:hidden ${
+              todoAdded
+                ? 'text-[#27AE60]'
+                : 'hidden group-hover:inline text-[#3D6A9E] hover:underline'
+            }`}
+          >
+            {todoAdded ? '✓ נוסף' : '+ הוסף למשימות'}
+          </button>
+        </div>
       </td>
-      {/* add to todos */}
-      <td className="print:hidden px-2 py-1.5 text-left whitespace-nowrap">
-        <button
-          onClick={handleAddTodo}
-          disabled={todoAdded || createTodo.isPending}
-          className={`text-[11px] font-semibold transition-colors ${
-            todoAdded
-              ? 'text-[#27AE60]'
-              : 'hidden group-hover:inline text-[#3D6A9E] hover:underline'
-          }`}
-        >
-          {todoAdded ? '✓ נוסף' : '+ הוסף למשימות'}
-        </button>
-      </td>
+      {/* col 8 placeholder */}
+      <td className="print:hidden" />
       {/* delete */}
       <td className="print:hidden px-2 py-1.5">
         <button
