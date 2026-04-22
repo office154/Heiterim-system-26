@@ -227,7 +227,15 @@ function TrashIcon() {
 }
 
 // Step rows for a single requirement
-function StepRows({ requirementId, projectId }: { requirementId: string; projectId: string }) {
+function StepRows({
+  requirementId,
+  projectId,
+  projectTitle,
+}: {
+  requirementId: string
+  projectId: string
+  projectTitle: string
+}) {
   const { data: steps } = useRequirementSteps(requirementId)
   const createStep = useCreateStep()
   const updateStep = useUpdateStep()
@@ -253,6 +261,8 @@ function StepRows({ requirementId, projectId }: { requirementId: string; project
       detail,
       order_index: maxIndex + 1,
       step_date: null,
+      notes: '',
+      status: 'ממתין',
     })
     setNewStepDetail('')
     setAddingStep(false)
@@ -264,6 +274,8 @@ function StepRows({ requirementId, projectId }: { requirementId: string; project
         <StepRow
           key={step.id}
           step={step}
+          projectId={projectId}
+          projectTitle={projectTitle}
           onToggleDone={() =>
             updateStep.mutate({ id: step.id, requirementId, done: !step.done })
           }
@@ -271,6 +283,15 @@ function StepRows({ requirementId, projectId }: { requirementId: string; project
             if (detail !== step.detail) {
               await updateStep.mutateAsync({ id: step.id, requirementId, detail })
             }
+          }}
+          onSaveNotes={async (notes) => {
+            await updateStep.mutateAsync({ id: step.id, requirementId, notes })
+          }}
+          onSaveDate={async (step_date) => {
+            await updateStep.mutateAsync({ id: step.id, requirementId, step_date })
+          }}
+          onSaveStatus={async (status) => {
+            await updateStep.mutateAsync({ id: step.id, requirementId, status })
           }}
           onDelete={() => deleteStep.mutate({ id: step.id, requirementId })}
         />
@@ -281,7 +302,7 @@ function StepRows({ requirementId, projectId }: { requirementId: string; project
         <td className="print:hidden" />
         <td />
         <td />
-        <td colSpan={4} className="px-3 py-1.5">
+        <td colSpan={6} className="px-3 py-1.5">
           {addingStep ? (
             <div className="flex items-center gap-2">
               <input
@@ -299,7 +320,7 @@ function StepRows({ requirementId, projectId }: { requirementId: string; project
               <button
                 onClick={handleConfirmAdd}
                 disabled={createStep.isPending}
-                className="rounded-lg bg-[#3D6A9E] px-2 py-1 text-[11px] font-bold text-white hover:bg-[#1e5a3f] disabled:opacity-50"
+                className="rounded-lg bg-[#3D6A9E] px-2 py-1 text-[11px] font-bold text-white hover:bg-[#2F5A8A] disabled:opacity-50"
               >
                 הוסף
               </button>
@@ -319,7 +340,6 @@ function StepRows({ requirementId, projectId }: { requirementId: string; project
             </button>
           )}
         </td>
-        <td className="print:hidden" />
       </tr>
     </>
   )
@@ -327,17 +347,46 @@ function StepRows({ requirementId, projectId }: { requirementId: string; project
 
 function StepRow({
   step,
+  projectId,
+  projectTitle,
   onToggleDone,
   onSaveDetail,
+  onSaveNotes,
+  onSaveDate,
+  onSaveStatus,
   onDelete,
 }: {
   step: RequirementStep
+  projectId: string
+  projectTitle: string
   onToggleDone: () => void
   onSaveDetail: (detail: string) => Promise<void>
+  onSaveNotes: (notes: string) => Promise<void>
+  onSaveDate: (date: string) => Promise<void>
+  onSaveStatus: (status: RequirementStatus) => Promise<void>
   onDelete: () => void
 }) {
   const [localDetail, setLocalDetail] = useState(step.detail)
+  const [localNotes, setLocalNotes] = useState(step.notes ?? '')
+  const [todoAdded, setTodoAdded] = useState(false)
+  const createTodo = useCreateTodo()
+
   useEffect(() => { setLocalDetail(step.detail) }, [step.detail])
+  useEffect(() => { setLocalNotes(step.notes ?? '') }, [step.notes])
+
+  async function handleAddTodo() {
+    if (todoAdded || createTodo.isPending) return
+    try {
+      await createTodo.mutateAsync({
+        task: step.detail,
+        project_id: projectId,
+        project_title: projectTitle,
+      })
+      setTodoAdded(true)
+    } catch (err) {
+      console.error('Failed to add todo:', err)
+    }
+  }
 
   return (
     <tr className="bg-[#f5fdf8] border-b border-[#f0f9f4] group">
@@ -348,15 +397,14 @@ function StepRow({
       {/* uploaded column placeholder */}
       <td />
       {/* detail with circle check */}
-      <td colSpan={4} className="px-3 py-1.5">
+      <td className="px-3 py-1.5">
         <div className="flex items-center gap-2 pr-4">
-          {/* circle check */}
           <button
             onClick={onToggleDone}
             className="flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
             style={{
-              backgroundColor: step.done ? '#3D6A9E' : 'white',
-              borderColor: step.done ? '#3D6A9E' : '#ccc',
+              backgroundColor: step.done ? '#27AE60' : 'white',
+              borderColor: step.done ? '#27AE60' : '#ccc',
               color: step.done ? 'white' : 'transparent',
             }}
             title={step.done ? 'סמן כלא בוצע' : 'סמן כבוצע'}
@@ -367,7 +415,6 @@ function StepRow({
               </svg>
             )}
           </button>
-          {/* detail input */}
           <input
             type="text"
             value={localDetail}
@@ -375,9 +422,53 @@ function StepRow({
             onBlur={() => onSaveDetail(localDetail)}
             onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
             className="flex-1 rounded-lg border border-transparent bg-transparent px-1 py-0.5 text-[12px] text-[#444] focus:border-[#3D6A9E] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#3D6A9E]/20"
-            style={{ textDecoration: step.done ? 'line-through' : 'none', color: step.done ? '#aaa' : '#444' }}
           />
         </div>
+      </td>
+      {/* status */}
+      <td className="px-3 py-1.5 text-center">
+        <select
+          value={step.status ?? 'ממתין'}
+          onChange={(e) => onSaveStatus(e.target.value as RequirementStatus)}
+          className={`rounded-lg px-2 py-1 text-xs font-medium focus:outline-none ${STATUS_STYLES[(step.status as RequirementStatus) ?? 'ממתין'] ?? STATUS_STYLES['ממתין']} print:border-none print:bg-transparent`}
+        >
+          {REQUIREMENT_STATUSES.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+      </td>
+      {/* date */}
+      <td className="px-3 py-1.5 text-center">
+        <DateCell
+          value={step.step_date}
+          onSave={onSaveDate}
+        />
+      </td>
+      {/* notes */}
+      <td className="px-3 py-1.5">
+        <input
+          type="text"
+          value={localNotes}
+          onChange={(e) => setLocalNotes(e.target.value)}
+          onBlur={() => { if (localNotes !== (step.notes ?? '')) onSaveNotes(localNotes) }}
+          onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
+          placeholder="הערות..."
+          className="w-full rounded-lg border border-transparent bg-transparent px-1 py-0.5 text-[12px] text-[#444] placeholder:text-[#aaaaaa] focus:border-[#3D6A9E] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#3D6A9E]/20"
+        />
+      </td>
+      {/* add to todos */}
+      <td className="print:hidden px-2 py-1.5 text-left whitespace-nowrap">
+        <button
+          onClick={handleAddTodo}
+          disabled={todoAdded || createTodo.isPending}
+          className={`text-[11px] font-semibold transition-colors ${
+            todoAdded
+              ? 'text-[#27AE60]'
+              : 'hidden group-hover:inline text-[#3D6A9E] hover:underline'
+          }`}
+        >
+          {todoAdded ? '✓ נוסף' : '+ הוסף למשימות'}
+        </button>
       </td>
       {/* delete */}
       <td className="print:hidden px-2 py-1.5">
@@ -516,7 +607,7 @@ function ReqTableRow({
           )}
         </td>
       </tr>
-      {expanded && <StepRows requirementId={req.id} projectId={projectId} />}
+      {expanded && <StepRows requirementId={req.id} projectId={projectId} projectTitle={projectTitle} />}
     </>
   )
 }

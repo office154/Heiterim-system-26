@@ -277,6 +277,8 @@ export interface Database {
           step_date: string | null
           done: boolean
           order_index: number
+          notes: string
+          status: string
           created_at: string
         }
         Insert: {
@@ -287,6 +289,8 @@ export interface Database {
           step_date?: string | null
           done?: boolean
           order_index?: number
+          notes?: string
+          status?: string
         }
         Update: {
           id?: string
@@ -294,6 +298,8 @@ export interface Database {
           step_date?: string | null
           done?: boolean
           order_index?: number
+          notes?: string
+          status?: string
         }
         Relationships: []
       }
@@ -356,6 +362,8 @@ export interface RequirementStep {
   step_date: string | null
   done: boolean
   order_index: number
+  notes: string
+  status: string
   created_at: string
 }
 
