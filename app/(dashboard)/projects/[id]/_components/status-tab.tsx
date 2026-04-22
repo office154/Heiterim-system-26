@@ -115,21 +115,31 @@ function RequirementInput({
   onSave: (v: string) => Promise<void>
 }) {
   const [local, setLocal] = useState(value)
+  const ref = useRef<HTMLTextAreaElement>(null)
+
   useEffect(() => { setLocal(value) }, [value])
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight}px`
+  }, [local])
 
   const handleBlur = useCallback(async () => {
     if (local !== value) await onSave(local)
   }, [local, value, onSave])
 
   return (
-    <input
-      type="text"
+    <textarea
+      ref={ref}
       value={local}
       onChange={(e) => setLocal(e.target.value)}
       onBlur={handleBlur}
-      onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
+      onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) e.currentTarget.blur() }}
       placeholder="הקלד פירוט..."
-      className="w-full rounded-lg border border-[#cccccc] bg-[#f8f8f8] px-2 py-1.5 text-[13px] text-[#1a1a1a] placeholder:text-[#aaaaaa] focus:border-[#3D6A9E] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3D6A9E]/12"
+      rows={1}
+      className="w-full resize-none overflow-hidden rounded-lg border border-[#cccccc] bg-[#f8f8f8] px-2 py-1.5 text-[13px] text-[#1a1a1a] placeholder:text-[#aaaaaa] focus:border-[#3D6A9E] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3D6A9E]/12"
     />
   )
 }
@@ -498,10 +508,19 @@ function ReqTableRow({
   onDelete: () => Promise<void>
   isDeleting: boolean
 }) {
+  const { data: steps } = useRequirementSteps(req.id)
   const [confirm, setConfirm] = useState(false)
-  const [expanded, setExpanded] = useState(true)
+  const [expanded, setExpanded] = useState(false)
+  const [hasInitExpanded, setHasInitExpanded] = useState(false)
   const [todoAdded, setTodoAdded] = useState(false)
   const createTodo = useCreateTodo()
+
+  useEffect(() => {
+    if (!hasInitExpanded && steps !== undefined) {
+      if (steps.length > 0) setExpanded(true)
+      setHasInitExpanded(true)
+    }
+  }, [steps, hasInitExpanded])
 
   async function handleAddTodo() {
     if (todoAdded || createTodo.isPending) return
