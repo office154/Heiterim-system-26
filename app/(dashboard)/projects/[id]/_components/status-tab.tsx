@@ -499,7 +499,7 @@ function ReqTableRow({
   isDeleting: boolean
 }) {
   const [confirm, setConfirm] = useState(false)
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
   const [todoAdded, setTodoAdded] = useState(false)
   const createTodo = useCreateTodo()
 
