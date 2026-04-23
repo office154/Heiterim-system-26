@@ -62,12 +62,20 @@ export function useUpdateRequirement() {
         .select()
         .single()
       if (error) throw error
+      // Sync updated requirement text to linked todos
+      if (typeof update.requirement === 'string' && update.requirement.trim()) {
+        await supabase
+          .from('todos')
+          .update({ task: update.requirement.trim() })
+          .eq('source_requirement_id', id)
+      }
       return data as StatusRequirement
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['status-requirements', variables.projectId],
       })
+      queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   })
 }
