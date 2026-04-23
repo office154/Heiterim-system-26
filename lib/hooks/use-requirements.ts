@@ -77,6 +77,8 @@ export function useDeleteRequirement() {
   return useMutation({
     mutationFn: async ({ id, projectId }: { id: string; projectId: string }) => {
       const supabase = createClient()
+      // Delete linked todos first (open and archived)
+      await supabase.from('todos').delete().eq('source_requirement_id', id)
       const { data, error } = await supabase
         .from('status_requirements')
         .delete()
@@ -89,6 +91,7 @@ export function useDeleteRequirement() {
       queryClient.invalidateQueries({
         queryKey: ['status-requirements', variables.projectId],
       })
+      queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   })
 }
