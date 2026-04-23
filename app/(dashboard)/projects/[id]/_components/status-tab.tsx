@@ -110,9 +110,11 @@ function StatusCell({
 function RequirementInput({
   value,
   onSave,
+  onChange,
 }: {
   value: string
   onSave: (v: string) => Promise<void>
+  onChange?: (v: string) => void
 }) {
   const [local, setLocal] = useState(value)
   const ref = useRef<HTMLTextAreaElement>(null)
@@ -134,7 +136,7 @@ function RequirementInput({
     <textarea
       ref={ref}
       value={local}
-      onChange={(e) => setLocal(e.target.value)}
+      onChange={(e) => { setLocal(e.target.value); onChange?.(e.target.value) }}
       onBlur={handleBlur}
       onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) e.currentTarget.blur() }}
       placeholder="הקלד פירוט..."
@@ -513,7 +515,10 @@ function ReqTableRow({
   const [expanded, setExpanded] = useState(false)
   const [hasInitExpanded, setHasInitExpanded] = useState(false)
   const [todoAdded, setTodoAdded] = useState(false)
+  const [localRequirement, setLocalRequirement] = useState(req.requirement)
   const createTodo = useCreateTodo()
+
+  useEffect(() => { setLocalRequirement(req.requirement) }, [req.requirement])
 
   useEffect(() => {
     if (!hasInitExpanded && steps !== undefined) {
@@ -526,7 +531,7 @@ function ReqTableRow({
     if (todoAdded || createTodo.isPending) return
     try {
       await createTodo.mutateAsync({
-        task: req.requirement || `דרישה ${idx + 1}`,
+        task: localRequirement.trim() || `דרישה ${idx + 1}`,
         project_id: projectId,
         project_title: projectTitle,
         source_requirement_id: req.id,
@@ -564,6 +569,7 @@ function ReqTableRow({
         <td className="px-3 py-1.5">
           <RequirementInput
             value={req.requirement}
+            onChange={setLocalRequirement}
             onSave={(v) => onSave(req, 'requirement', v)}
           />
         </td>
