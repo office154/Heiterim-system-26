@@ -701,12 +701,14 @@ function RequirementsSection({
   const [isDraggingState, setIsDraggingState] = useState(false)
   const draggingIdx = useRef<number | null>(null)
   const isDraggingActive = useRef(false)
+  const originalLocalReqs = useRef<StatusRequirement[]>([])
 
   useEffect(() => {
     if (!isDraggingActive.current) setLocalReqs(requirements)
   }, [requirements])
 
   function handleDragStart(idx: number, e: React.DragEvent, text: string) {
+    originalLocalReqs.current = [...localReqs]
     draggingIdx.current = idx
     isDraggingActive.current = true
     setIsDraggingState(true)
@@ -733,6 +735,15 @@ function RequirementsSection({
   function handleDrop(e: React.DragEvent) {
     e.preventDefault()
     e.stopPropagation()
+  }
+
+  function handleTableDragLeave(e: React.DragEvent) {
+    if (e.currentTarget.contains(e.relatedTarget as Node)) return
+    if (draggingIdx.current === null) return
+    const draggedId = localReqs[draggingIdx.current]?.id
+    const origIdx = originalLocalReqs.current.findIndex((r) => r.id === draggedId)
+    draggingIdx.current = origIdx >= 0 ? origIdx : 0
+    setLocalReqs([...originalLocalReqs.current])
   }
 
   function handleDragEnd() {
@@ -770,7 +781,7 @@ function RequirementsSection({
         <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#3D6A9E]">{section}</span>
       </div>
 
-      <table className="w-full text-sm" style={{ tableLayout: 'fixed' }}>
+      <table className="w-full text-sm" style={{ tableLayout: 'fixed' }} onDragLeave={handleTableDragLeave}>
         <thead className="bg-[#f8f8f8] text-[10px] text-[#aaaaaa]">
           <tr>
             <th style={{ width: widths[0] }} className="px-2 py-2 print:hidden" />
