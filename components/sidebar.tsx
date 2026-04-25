@@ -77,13 +77,26 @@ function ProjectsSubNav({ pathname }: { pathname: string }) {
       {open && (
         <div style={{ background: '#f4f6f9', borderTop: '1px solid #E5E7EB', borderRadius: '0 0 8px 8px' }}>
           <div className="px-3 py-1.5">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="חיפוש פרויקט..."
-              className="w-full rounded-lg border border-[#E5E7EB] bg-white px-2 py-1 text-[11px] text-[#1a1a1a] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#3D6A9E]"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="חיפוש פרויקט..."
+                className="w-full rounded-lg border border-[#E5E7EB] bg-white px-2 py-1 text-[11px] text-[#1a1a1a] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#3D6A9E]"
+                style={{ paddingLeft: search ? 18 : undefined }}
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch('')}
+                  className="absolute top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#6B7280] leading-none"
+                  style={{ left: 5 }}
+                  tabIndex={-1}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           </div>
           <div style={{ maxHeight: 220, overflowY: 'auto' }}>
             {filtered.length === 0 && (
