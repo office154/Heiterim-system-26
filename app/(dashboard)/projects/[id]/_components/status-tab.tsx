@@ -719,9 +719,10 @@ function RequirementsSection({
   }
 
   function handleDragOver(e: React.DragEvent, overIdx: number) {
+    if (draggingIdx.current === null) return
     e.preventDefault()
     e.stopPropagation()
-    if (draggingIdx.current === null || draggingIdx.current === overIdx) return
+    if (draggingIdx.current === overIdx) return
     const newReqs = [...localReqs]
     const [moved] = newReqs.splice(draggingIdx.current, 1)
     newReqs.splice(overIdx, 0, moved)
