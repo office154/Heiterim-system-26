@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useProject } from '@/lib/hooks/use-projects'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -24,7 +24,7 @@ export default function ProjectDetailPage() {
   const { data: project, isLoading, error } = useProject(id)
   const [activeTab, setActiveTab] = useState(() => {
     const tab = searchParams.get('tab')
-    return tab && ['general', 'status', 'stages', 'files'].includes(tab) ? tab : 'general'
+    return tab && ['general', 'status', 'stages', 'files'].includes(tab) ? tab : 'status'
   })
 
   if (isLoading) {
