@@ -499,7 +499,7 @@ function StepRow({
 
 function ReqTableRow({
   req, idx, sectionIndex, projectId, projectTitle, onSave, onStatusChange, onDelete, isDeleting,
-  dragging, onDragStart, onDragOver, onDrop, onDragEnd,
+  dragging, sectionDragging, onDragStart, onDragOver, onDrop, onDragEnd,
 }: {
   req: StatusRequirement
   idx: number
@@ -511,6 +511,7 @@ function ReqTableRow({
   onDelete: () => Promise<void>
   isDeleting: boolean
   dragging?: boolean
+  sectionDragging?: boolean
   onDragStart?: (e: React.DragEvent) => void
   onDragOver?: (e: React.DragEvent) => void
   onDrop?: (e: React.DragEvent) => void
@@ -523,6 +524,7 @@ function ReqTableRow({
   const [todoAdded, setTodoAdded] = useState(false)
   const [localRequirement, setLocalRequirement] = useState(req.requirement)
   const createTodo = useCreateTodo()
+  const dragHandleRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => { setLocalRequirement(req.requirement) }, [req.requirement])
 
@@ -556,9 +558,17 @@ function ReqTableRow({
           opacity: 0.45,
           background: '#EBF1F9',
           boxShadow: 'inset 0 2px 0 0 #3D6A9E, inset 0 -2px 0 0 #3D6A9E',
+        } : sectionDragging ? {
+          borderTop: '1px solid #cccccc',
         } : undefined}
         draggable
-        onDragStart={onDragStart}
+        onDragStart={(e) => {
+          if (!dragHandleRef.current?.contains(e.target as Node)) {
+            e.preventDefault()
+            return
+          }
+          onDragStart?.(e)
+        }}
         onDragOver={onDragOver}
         onDrop={onDrop}
         onDragEnd={onDragEnd}
@@ -566,6 +576,7 @@ function ReqTableRow({
         <td className="px-1 py-1.5 text-center print:hidden">
           <div className="flex items-center justify-center gap-0.5">
             <span
+              ref={dragHandleRef}
               className="cursor-grab text-[#cccccc] opacity-0 group-hover:opacity-100 transition-opacity select-none text-[13px] leading-none print:hidden"
               title="גרור לשינוי סדר"
             >
@@ -770,7 +781,7 @@ function RequirementsSection({
             <th style={{ width: widths[8] }} className="print:hidden px-3 py-2" />
           </tr>
         </thead>
-        <tbody className={`divide-y ${isDraggingState ? 'divide-[#cccccc]' : 'divide-[#f4f4f4]'}`}>
+        <tbody className="divide-y divide-[#f4f4f4]">
           {localReqs.map((req, idx) => (
             <ReqTableRow
               key={req.id}
@@ -791,6 +802,7 @@ function RequirementsSection({
               }}
               isDeleting={deleteReq.isPending}
               dragging={draggingIdx.current === idx}
+              sectionDragging={isDraggingState}
               onDragStart={(e) => handleDragStart(idx, e, req.requirement)}
               onDragOver={(e) => handleDragOver(e, idx)}
               onDrop={handleDrop}
