@@ -17,6 +17,7 @@ export function useProjectContacts(projectId: string) {
         .from('project_contacts')
         .select('*')
         .eq('project_id', projectId)
+        .order('created_at')
       if (error) throw error
       return data as ProjectContact[]
     },

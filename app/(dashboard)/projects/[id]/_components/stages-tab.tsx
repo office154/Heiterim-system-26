@@ -173,7 +173,12 @@ function TrackSection({
 
   async function handleDeleteStage(stage: ProjectStage) {
     if (!confirm(`האם למחוק את השלב "${stage.name}"?`)) return
-    await deleteStage.mutateAsync({ id: stage.id, projectId })
+    try {
+      await deleteStage.mutateAsync({ id: stage.id, projectId })
+    } catch (err) {
+      console.error('שגיאה במחיקת שלב:', err)
+      alert('לא ניתן למחוק את השלב. אנא נסה שוב.')
+    }
   }
 
   async function handleAddStage(name: string) {

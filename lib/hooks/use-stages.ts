@@ -93,15 +93,20 @@ export function useDeleteStage() {
   return useMutation({
     mutationFn: async ({ id, projectId }: { id: string; projectId: string }) => {
       const supabase = createClient()
-      const { error } = await supabase
+      const { data: deleted, error } = await supabase
         .from('project_stages')
         .delete()
         .eq('id', id)
+        .select('id')
       if (error) throw error
+      if (!deleted || deleted.length === 0) throw new Error('המחיקה נחסמה על ידי הרשאות המסד נתונים')
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['project-stages', variables.projectId] })
       queryClient.invalidateQueries({ queryKey: ['dashboard-data'] })
+    },
+    onError: (error) => {
+      console.error('useDeleteStage error:', error)
     },
   })
 }

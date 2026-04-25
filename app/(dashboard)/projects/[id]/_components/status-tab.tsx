@@ -2,14 +2,13 @@
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useProject, useUpdateProject } from '@/lib/hooks/use-projects'
-import { useProjectContacts, useCreateContact, useUpdateContact, useDeleteContact } from '@/lib/hooks/use-contacts'
 import { useStatusRequirements, useCreateRequirement, useUpdateRequirement, useDeleteRequirement, useReorderRequirements } from '@/lib/hooks/use-requirements'
 import { useRequirementSteps, useCreateStep, useUpdateStep, useDeleteStep } from '@/lib/hooks/use-requirement-steps'
 import { useCreateTodo, useTodos, useUpdateTodo } from '@/lib/hooks/use-todos'
 import { InlineEdit } from '@/components/inline-edit'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
-import type { RequirementStatus, ProjectContact, StatusRequirement, RequirementStep } from '@/types/database'
+import type { RequirementStatus, StatusRequirement, RequirementStep } from '@/types/database'
 import { ProjectTimeline } from '@/components/features/projects/ProjectTimeline'
 import { useResizableColumns } from '@/lib/hooks/use-resizable-columns'
 import { ResizableTh } from '@/components/ui/resizable-th'
@@ -146,86 +145,6 @@ function RequirementInput({
   )
 }
 
-// Contacts table
-function ContactsTable({ projectId }: { projectId: string }) {
-  const { data: contacts } = useProjectContacts(projectId)
-  const createContact = useCreateContact()
-  const updateContact = useUpdateContact()
-  const deleteContact = useDeleteContact()
-
-  async function handleAdd() {
-    await createContact.mutateAsync({ project_id: projectId, role: 'תפקיד' })
-  }
-
-  async function saveContact(contact: ProjectContact, field: string, value: string | boolean) {
-    await updateContact.mutateAsync({ id: contact.id, projectId, [field]: value })
-  }
-
-  return (
-    <div className="print:hidden">
-      <h2 className="mb-3 text-base font-semibold text-[#1a1a1a]">אנשי קשר</h2>
-      <div className="overflow-hidden rounded-lg border border-[#dddddd] bg-white">
-        <table className="w-full text-sm">
-          <thead className="bg-[#f8f8f8] text-[10px] text-[#aaaaaa]">
-            <tr>
-              <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">תפקיד</th>
-              <th className="px-3 py-2 text-center font-bold uppercase tracking-[0.08em]">מינוי</th>
-              <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">שם</th>
-              <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">טלפון</th>
-              <th className="px-3 py-2 text-right font-bold uppercase tracking-[0.08em]">מייל</th>
-              <th className="w-8 px-3 py-2" />
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#f4f4f4]">
-            {(contacts ?? []).map((c) => (
-              <tr key={c.id} className="group hover:bg-[#f8f8f8]">
-                <td className="px-3 py-1.5">
-                  <InlineEdit value={c.role} onSave={(v) => saveContact(c, 'role', v)} />
-                </td>
-                <td className="px-3 py-1.5 text-center">
-                  <div className="flex justify-center">
-                    <Checkbox
-                      checked={c.appointed}
-                      onCheckedChange={(v) => saveContact(c, 'appointed', !!v)}
-                    />
-                  </div>
-                </td>
-                <td className="px-3 py-1.5">
-                  <InlineEdit value={c.name} onSave={(v) => saveContact(c, 'name', v)} emptyText="—" />
-                </td>
-                <td className="px-3 py-1.5">
-                  <InlineEdit value={c.phone} onSave={(v) => saveContact(c, 'phone', v)} emptyText="—" />
-                </td>
-                <td className="px-3 py-1.5">
-                  <InlineEdit value={c.email} onSave={(v) => saveContact(c, 'email', v)} emptyText="—" />
-                </td>
-                <td className="px-3 py-1.5">
-                  <button
-                    onClick={() => deleteContact.mutate({ id: c.id, projectId })}
-                    className="hidden text-[#aaaaaa] hover:text-[#C0392B] group-hover:block"
-                  >
-                    ✕
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="border-t border-[#f4f4f4] p-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleAdd}
-            disabled={createContact.isPending}
-            className="text-xs text-[#666666]"
-          >
-            + הוסף איש קשר
-          </Button>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 function TrashIcon() {
   return (

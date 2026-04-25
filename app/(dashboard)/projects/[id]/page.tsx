@@ -8,6 +8,7 @@ import { GeneralInfoTab } from './_components/general-info-tab'
 import { StagesTab } from './_components/stages-tab'
 import { StatusTab } from './_components/status-tab'
 import { FilesTab } from './_components/files-tab'
+import { ProjectManagementTab } from './_components/project-management-tab'
 import { Breadcrumb } from '@/components/shared/Breadcrumb'
 import type { BreadcrumbItem } from '@/components/shared/Breadcrumb'
 
@@ -15,6 +16,7 @@ const TAB_LABELS: Record<string, string> = {
   stages: 'תשלומים',
   status: 'דוח סטטוס',
   files: 'קבצים',
+  management: 'ניהול פרויקט',
 }
 
 export default function ProjectDetailPage() {
@@ -24,7 +26,7 @@ export default function ProjectDetailPage() {
   const { data: project, isLoading, error } = useProject(id)
   const [activeTab, setActiveTab] = useState(() => {
     const tab = searchParams.get('tab')
-    return tab && ['general', 'status', 'stages', 'files'].includes(tab) ? tab : 'status'
+    return tab && ['general', 'status', 'stages', 'files', 'management'].includes(tab) ? tab : 'status'
   })
 
   if (isLoading) {
@@ -66,6 +68,7 @@ export default function ProjectDetailPage() {
           <TabsTrigger value="status">דוח סטטוס</TabsTrigger>
           <TabsTrigger value="stages">תשלומים</TabsTrigger>
           <TabsTrigger value="files">קבצים</TabsTrigger>
+          <TabsTrigger value="management">ניהול פרויקט</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="mt-4">
@@ -82,6 +85,10 @@ export default function ProjectDetailPage() {
 
         <TabsContent value="files" className="mt-4">
           <FilesTab projectId={id} />
+        </TabsContent>
+
+        <TabsContent value="management" className="mt-4">
+          <ProjectManagementTab projectId={id} />
         </TabsContent>
       </Tabs>
     </div>

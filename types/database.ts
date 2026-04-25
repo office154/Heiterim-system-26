@@ -209,29 +209,92 @@ export interface Database {
         Row: {
           id: string
           project_id: string
-          role: string
-          appointed: boolean
-          name: string | null
+          name: string
+          role: string | null
+          company: string | null
           phone: string | null
           email: string | null
+          notes: string | null
+          created_at: string
         }
         Insert: {
           id?: string
           project_id: string
-          role: string
-          appointed?: boolean
-          name?: string | null
+          name: string
+          role?: string | null
+          company?: string | null
           phone?: string | null
           email?: string | null
+          notes?: string | null
+          created_at?: string
         }
         Update: {
           id?: string
           project_id?: string
-          role?: string
-          appointed?: boolean
-          name?: string | null
+          name?: string
+          role?: string | null
+          company?: string | null
           phone?: string | null
           email?: string | null
+          notes?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      project_tasks: {
+        Row: {
+          id: string
+          project_id: string
+          title: string
+          description: string | null
+          priority: 'critical' | 'high' | 'normal' | 'low'
+          status: 'open' | 'in_progress' | 'waiting' | 'done'
+          urgency: 'today' | 'week' | 'later'
+          deadline: string | null
+          contact_id: string | null
+          waiting_on_contact_id: string | null
+          phase: 'planning' | 'approvals' | 'client_decisions' | 'submission'
+          party: 'internal' | 'client' | 'authority' | 'consultants'
+          tags: string[]
+          subtasks: { text: string; done: boolean }[]
+          created_at: string
+          completed_at: string | null
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          title: string
+          description?: string | null
+          priority?: 'critical' | 'high' | 'normal' | 'low'
+          status?: 'open' | 'in_progress' | 'waiting' | 'done'
+          urgency?: 'today' | 'week' | 'later'
+          deadline?: string | null
+          contact_id?: string | null
+          waiting_on_contact_id?: string | null
+          phase?: 'planning' | 'approvals' | 'client_decisions' | 'submission'
+          party?: 'internal' | 'client' | 'authority' | 'consultants'
+          tags?: string[]
+          subtasks?: { text: string; done: boolean }[]
+          created_at?: string
+          completed_at?: string | null
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          title?: string
+          description?: string | null
+          priority?: 'critical' | 'high' | 'normal' | 'low'
+          status?: 'open' | 'in_progress' | 'waiting' | 'done'
+          urgency?: 'today' | 'week' | 'later'
+          deadline?: string | null
+          contact_id?: string | null
+          waiting_on_contact_id?: string | null
+          phase?: 'planning' | 'approvals' | 'client_decisions' | 'submission'
+          party?: 'internal' | 'client' | 'authority' | 'consultants'
+          tags?: string[]
+          subtasks?: { text: string; done: boolean }[]
+          created_at?: string
+          completed_at?: string | null
         }
         Relationships: []
       }
@@ -351,8 +414,17 @@ export type Project = Database['public']['Tables']['projects']['Row']
 export type ProjectStage = Database['public']['Tables']['project_stages']['Row']
 export type StatusRequirement = Database['public']['Tables']['status_requirements']['Row']
 export type ProjectContact = Database['public']['Tables']['project_contacts']['Row']
+export type ProjectTask = Database['public']['Tables']['project_tasks']['Row']
 export type ProjectFile = Database['public']['Tables']['project_files']['Row']
 export type Todo = Database['public']['Tables']['todos']['Row']
+
+// Task domain value types
+export type TaskPriority = 'critical' | 'high' | 'normal' | 'low'
+export type TaskStatus = 'open' | 'in_progress' | 'waiting' | 'done'
+export type TaskUrgency = 'today' | 'week' | 'later'
+export type TaskPhase = 'planning' | 'approvals' | 'client_decisions' | 'submission'
+export type TaskParty = 'internal' | 'client' | 'authority' | 'consultants'
+export type Subtask = { text: string; done: boolean }
 
 export interface RequirementStep {
   id: string
