@@ -80,6 +80,31 @@ export function useUpdateRequirement() {
   })
 }
 
+export function useReorderRequirements() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({
+      projectId,
+      items,
+    }: {
+      projectId: string
+      items: { id: string; order_index: number }[]
+    }) => {
+      const supabase = createClient()
+      await Promise.all(
+        items.map(({ id, order_index }) =>
+          supabase.from('status_requirements').update({ order_index }).eq('id', id)
+        )
+      )
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['status-requirements', variables.projectId],
+      })
+    },
+  })
+}
+
 export function useDeleteRequirement() {
   const queryClient = useQueryClient()
   return useMutation({

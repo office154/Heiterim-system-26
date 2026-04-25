@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useProject, useUpdateProject } from '@/lib/hooks/use-projects'
 import { useProjectContacts, useCreateContact, useUpdateContact, useDeleteContact } from '@/lib/hooks/use-contacts'
-import { useStatusRequirements, useCreateRequirement, useUpdateRequirement, useDeleteRequirement } from '@/lib/hooks/use-requirements'
+import { useStatusRequirements, useCreateRequirement, useUpdateRequirement, useDeleteRequirement, useReorderRequirements } from '@/lib/hooks/use-requirements'
 import { useRequirementSteps, useCreateStep, useUpdateStep, useDeleteStep } from '@/lib/hooks/use-requirement-steps'
 import { useCreateTodo, useTodos, useUpdateTodo } from '@/lib/hooks/use-todos'
 import { InlineEdit } from '@/components/inline-edit'
@@ -499,6 +499,7 @@ function StepRow({
 
 function ReqTableRow({
   req, idx, sectionIndex, projectId, projectTitle, onSave, onStatusChange, onDelete, isDeleting,
+  dragging, onDragStart, onDragOver, onDrop, onDragEnd,
 }: {
   req: StatusRequirement
   idx: number
@@ -509,6 +510,11 @@ function ReqTableRow({
   onStatusChange: (req: StatusRequirement, status: RequirementStatus, date: string) => Promise<void>
   onDelete: () => Promise<void>
   isDeleting: boolean
+  dragging?: boolean
+  onDragStart?: () => void
+  onDragOver?: (e: React.DragEvent) => void
+  onDrop?: (e: React.DragEvent) => void
+  onDragEnd?: () => void
 }) {
   const { data: steps } = useRequirementSteps(req.id)
   const [confirm, setConfirm] = useState(false)
@@ -544,16 +550,31 @@ function ReqTableRow({
 
   return (
     <>
-      <tr className="group hover:bg-[#f8f8f8]">
-        <td className="px-2 py-1.5 text-center print:hidden">
-          <button
-            onClick={() => setExpanded((v) => !v)}
-            className="text-[11px] text-[#999] hover:text-[#3D6A9E] hover:bg-[#edf7f1] rounded-lg px-1 py-0.5 inline-block transition-colors"
-            style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.15s, color 0.15s, background-color 0.15s' }}
-            title="פרט שלבי מעקב"
-          >
-            ▶
-          </button>
+      <tr
+        className={`group hover:bg-[#f8f8f8] ${dragging ? 'opacity-40 bg-[#EBF1F9]' : ''}`}
+        draggable
+        onDragStart={onDragStart}
+        onDragOver={onDragOver}
+        onDrop={onDrop}
+        onDragEnd={onDragEnd}
+      >
+        <td className="px-1 py-1.5 text-center print:hidden">
+          <div className="flex items-center justify-center gap-0.5">
+            <span
+              className="cursor-grab text-[#cccccc] opacity-0 group-hover:opacity-100 transition-opacity select-none text-[13px] leading-none print:hidden"
+              title="גרור לשינוי סדר"
+            >
+              ⠿
+            </span>
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              className="text-[11px] text-[#999] hover:text-[#3D6A9E] hover:bg-[#edf7f1] rounded-lg px-1 py-0.5 inline-block transition-colors"
+              style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.15s, color 0.15s, background-color 0.15s' }}
+              title="פרט שלבי מעקב"
+            >
+              ▶
+            </button>
+          </div>
         </td>
         <td className="px-3 py-1.5 text-center text-xs text-[#aaaaaa]">
           {sectionIndex > 0 ? `${sectionIndex}.${idx + 1}` : idx + 1}
@@ -654,12 +675,47 @@ function RequirementsSection({
 }) {
   const createReq = useCreateRequirement()
   const updateReq = useUpdateRequirement()
-  const { widths, startResize } = useResizableColumns([32, 32, 80, 260, 128, 96, 180, 32, 32])
+  const { widths, startResize } = useResizableColumns([48, 32, 80, 260, 128, 96, 180, 32, 32])
   const deleteReq = useDeleteRequirement()
+  const reorder = useReorderRequirements()
+
+  const [localReqs, setLocalReqs] = useState(requirements)
+  const draggingIdx = useRef<number | null>(null)
+  const isDraggingActive = useRef(false)
+
+  useEffect(() => {
+    if (!isDraggingActive.current) setLocalReqs(requirements)
+  }, [requirements])
+
+  function handleDragStart(idx: number) {
+    draggingIdx.current = idx
+    isDraggingActive.current = true
+  }
+
+  function handleDragOver(e: React.DragEvent, overIdx: number) {
+    e.preventDefault()
+    if (draggingIdx.current === null || draggingIdx.current === overIdx) return
+    const newReqs = [...localReqs]
+    const [moved] = newReqs.splice(draggingIdx.current, 1)
+    newReqs.splice(overIdx, 0, moved)
+    draggingIdx.current = overIdx
+    setLocalReqs(newReqs)
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault()
+  }
+
+  function handleDragEnd() {
+    isDraggingActive.current = false
+    const items = localReqs.map((r, i) => ({ id: r.id, order_index: i + 1 }))
+    reorder.mutate({ projectId, items })
+    draggingIdx.current = null
+  }
 
   async function handleAddRow(allReqs: StatusRequirement[]) {
-    const nextIndex = allReqs.length > 0
-      ? Math.max(...allReqs.map((r) => r.order_index)) + 1
+    const nextIndex = localReqs.length > 0
+      ? Math.max(...localReqs.map((r) => r.order_index)) + 1
       : 1
     await createReq.mutateAsync({
       project_id: projectId,
@@ -699,7 +755,7 @@ function RequirementsSection({
           </tr>
         </thead>
         <tbody className="divide-y divide-[#f4f4f4]">
-          {requirements.map((req, idx) => (
+          {localReqs.map((req, idx) => (
             <ReqTableRow
               key={req.id}
               req={req}
@@ -718,6 +774,11 @@ function RequirementsSection({
                 }
               }}
               isDeleting={deleteReq.isPending}
+              dragging={draggingIdx.current === idx}
+              onDragStart={() => handleDragStart(idx)}
+              onDragOver={(e) => handleDragOver(e, idx)}
+              onDrop={handleDrop}
+              onDragEnd={handleDragEnd}
             />
           ))}
         </tbody>
