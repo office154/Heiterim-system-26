@@ -551,7 +551,12 @@ function ReqTableRow({
   return (
     <>
       <tr
-        className={`group hover:bg-[#f8f8f8] ${dragging ? 'opacity-40 bg-[#EBF1F9]' : ''}`}
+        className="group hover:bg-[#f8f8f8]"
+        style={dragging ? {
+          opacity: 0.45,
+          background: '#EBF1F9',
+          boxShadow: 'inset 0 2px 0 0 #3D6A9E, inset 0 -2px 0 0 #3D6A9E',
+        } : undefined}
         draggable
         onDragStart={onDragStart}
         onDragOver={onDragOver}
@@ -680,6 +685,7 @@ function RequirementsSection({
   const reorder = useReorderRequirements()
 
   const [localReqs, setLocalReqs] = useState(requirements)
+  const [isDraggingState, setIsDraggingState] = useState(false)
   const draggingIdx = useRef<number | null>(null)
   const isDraggingActive = useRef(false)
 
@@ -690,6 +696,7 @@ function RequirementsSection({
   function handleDragStart(idx: number, e: React.DragEvent, text: string) {
     draggingIdx.current = idx
     isDraggingActive.current = true
+    setIsDraggingState(true)
     const ghost = document.createElement('div')
     ghost.textContent = text || `שורה ${idx + 1}`
     ghost.style.cssText = 'position:fixed;top:-9999px;right:0;background:#EBF1F9;color:#3D6A9E;padding:4px 12px;border-radius:6px;font-size:13px;font-family:Rubik,sans-serif;white-space:nowrap;max-width:320px;overflow:hidden;text-overflow:ellipsis;border:1px solid #3D6A9E;'
@@ -716,6 +723,7 @@ function RequirementsSection({
 
   function handleDragEnd() {
     isDraggingActive.current = false
+    setIsDraggingState(false)
     const items = localReqs.map((r, i) => ({ id: r.id, order_index: i + 1 }))
     reorder.mutate({ projectId, items })
     draggingIdx.current = null
@@ -762,7 +770,7 @@ function RequirementsSection({
             <th style={{ width: widths[8] }} className="print:hidden px-3 py-2" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#f4f4f4]">
+        <tbody className={`divide-y ${isDraggingState ? 'divide-[#cccccc]' : 'divide-[#f4f4f4]'}`}>
           {localReqs.map((req, idx) => (
             <ReqTableRow
               key={req.id}
