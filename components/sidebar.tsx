@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -31,10 +31,43 @@ interface SidebarProps {
   fullName: string
 }
 
+const MIN_LIST_HEIGHT = 80
+const MAX_LIST_HEIGHT = 520
+const DEFAULT_LIST_HEIGHT = 220
+
 function ProjectsSubNav({ pathname }: { pathname: string }) {
   const { data: projects = [] } = useProjects()
   const [search, setSearch] = useState('')
   const [open, setOpen] = useState(pathname.startsWith('/projects'))
+  const [listHeight, setListHeight] = useState(DEFAULT_LIST_HEIGHT)
+  const isResizing = useRef(false)
+  const startY = useRef(0)
+  const startHeight = useRef(0)
+
+  const handleResizeMouseDown = useCallback((e: React.MouseEvent) => {
+    isResizing.current = true
+    startY.current = e.clientY
+    startHeight.current = listHeight
+    e.preventDefault()
+  }, [listHeight])
+
+  useEffect(() => {
+    function onMouseMove(e: MouseEvent) {
+      if (!isResizing.current) return
+      const delta = e.clientY - startY.current
+      const newHeight = Math.min(MAX_LIST_HEIGHT, Math.max(MIN_LIST_HEIGHT, startHeight.current + delta))
+      setListHeight(newHeight)
+    }
+    function onMouseUp() {
+      isResizing.current = false
+    }
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+    return () => {
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+    }
+  }, [])
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -98,7 +131,7 @@ function ProjectsSubNav({ pathname }: { pathname: string }) {
               )}
             </div>
           </div>
-          <div style={{ maxHeight: 220, overflowY: 'auto' }}>
+          <div style={{ maxHeight: listHeight, overflowY: 'auto' }}>
             {filtered.length === 0 && (
               <p className="px-3 py-2 text-[11px] text-[#9CA3AF] italic">לא נמצאו פרויקטים</p>
             )}
@@ -131,6 +164,18 @@ function ProjectsSubNav({ pathname }: { pathname: string }) {
                 </Link>
               )
             })}
+          </div>
+          {/* Resize handle */}
+          <div
+            onMouseDown={handleResizeMouseDown}
+            className="group flex items-center justify-center"
+            style={{ height: 8, cursor: 'row-resize', background: '#eef0f3' }}
+            title="גרור להגדלה/הקטנה"
+          >
+            <div
+              className="rounded-full transition-colors group-hover:bg-[#3D6A9E]/40"
+              style={{ width: 28, height: 3, background: '#D1D5DB' }}
+            />
           </div>
         </div>
       )}
