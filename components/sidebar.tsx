@@ -143,7 +143,7 @@ export default function Sidebar({ role, fullName }: SidebarProps) {
 
   return (
     <aside
-      className="w-56 min-h-screen flex flex-col shrink-0 print:hidden"
+      className="w-full min-h-screen flex flex-col print:hidden"
       style={{ background: '#ffffff', borderLeft: '1px solid #E5E7EB' }}
     >
       {/* Logo */}

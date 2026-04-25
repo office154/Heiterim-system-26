@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Sidebar from '@/components/sidebar'
+import { ResizableLayout } from '@/components/resizable-layout'
 
 export default async function DashboardLayout({
   children,
@@ -22,12 +23,15 @@ export default async function DashboardLayout({
     .single()
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar
-        role={profile?.role ?? 'employee'}
-        fullName={profile?.full_name ?? user.email ?? ''}
-      />
-      <main className="flex-1 p-8 overflow-auto bg-[#F0F2F5] min-h-screen max-w-7xl mx-auto w-full">{children}</main>
-    </div>
+    <ResizableLayout
+      sidebar={
+        <Sidebar
+          role={profile?.role ?? 'employee'}
+          fullName={profile?.full_name ?? user.email ?? ''}
+        />
+      }
+    >
+      {children}
+    </ResizableLayout>
   )
 }
