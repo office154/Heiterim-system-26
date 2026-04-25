@@ -524,7 +524,7 @@ function ReqTableRow({
   const [todoAdded, setTodoAdded] = useState(false)
   const [localRequirement, setLocalRequirement] = useState(req.requirement)
   const createTodo = useCreateTodo()
-  const dragHandleRef = useRef<HTMLSpanElement>(null)
+  const canDragRef = useRef(false)
 
   useEffect(() => { setLocalRequirement(req.requirement) }, [req.requirement])
 
@@ -563,10 +563,11 @@ function ReqTableRow({
         } : undefined}
         draggable
         onDragStart={(e) => {
-          if (!dragHandleRef.current?.contains(e.target as Node)) {
+          if (!canDragRef.current) {
             e.preventDefault()
             return
           }
+          canDragRef.current = false
           onDragStart?.(e)
         }}
         onDragOver={onDragOver}
@@ -576,7 +577,8 @@ function ReqTableRow({
         <td className="px-1 py-1.5 text-center print:hidden">
           <div className="flex items-center justify-center gap-0.5">
             <span
-              ref={dragHandleRef}
+              onMouseDown={() => { canDragRef.current = true }}
+              onMouseUp={() => { canDragRef.current = false }}
               className="cursor-grab text-[#cccccc] opacity-0 group-hover:opacity-100 transition-opacity select-none text-[13px] leading-none print:hidden"
               title="גרור לשינוי סדר"
             >
