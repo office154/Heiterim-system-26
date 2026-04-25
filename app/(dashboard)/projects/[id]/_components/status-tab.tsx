@@ -511,7 +511,7 @@ function ReqTableRow({
   onDelete: () => Promise<void>
   isDeleting: boolean
   dragging?: boolean
-  onDragStart?: () => void
+  onDragStart?: (e: React.DragEvent) => void
   onDragOver?: (e: React.DragEvent) => void
   onDrop?: (e: React.DragEvent) => void
   onDragEnd?: () => void
@@ -687,13 +687,20 @@ function RequirementsSection({
     if (!isDraggingActive.current) setLocalReqs(requirements)
   }, [requirements])
 
-  function handleDragStart(idx: number) {
+  function handleDragStart(idx: number, e: React.DragEvent, text: string) {
     draggingIdx.current = idx
     isDraggingActive.current = true
+    const ghost = document.createElement('div')
+    ghost.textContent = text || `שורה ${idx + 1}`
+    ghost.style.cssText = 'position:fixed;top:-9999px;right:0;background:#EBF1F9;color:#3D6A9E;padding:4px 12px;border-radius:6px;font-size:13px;font-family:Rubik,sans-serif;white-space:nowrap;max-width:320px;overflow:hidden;text-overflow:ellipsis;border:1px solid #3D6A9E;'
+    document.body.appendChild(ghost)
+    e.dataTransfer.setDragImage(ghost, ghost.offsetWidth / 2, 16)
+    setTimeout(() => document.body.removeChild(ghost), 0)
   }
 
   function handleDragOver(e: React.DragEvent, overIdx: number) {
     e.preventDefault()
+    e.stopPropagation()
     if (draggingIdx.current === null || draggingIdx.current === overIdx) return
     const newReqs = [...localReqs]
     const [moved] = newReqs.splice(draggingIdx.current, 1)
@@ -704,6 +711,7 @@ function RequirementsSection({
 
   function handleDrop(e: React.DragEvent) {
     e.preventDefault()
+    e.stopPropagation()
   }
 
   function handleDragEnd() {
@@ -775,7 +783,7 @@ function RequirementsSection({
               }}
               isDeleting={deleteReq.isPending}
               dragging={draggingIdx.current === idx}
-              onDragStart={() => handleDragStart(idx)}
+              onDragStart={(e) => handleDragStart(idx, e, req.requirement)}
               onDragOver={(e) => handleDragOver(e, idx)}
               onDrop={handleDrop}
               onDragEnd={handleDragEnd}
