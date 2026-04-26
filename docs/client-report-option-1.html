@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>דוח לקוח — לפי דחיפות</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Rubik', sans-serif; background: #F0F2F5; color: #1a1a1a; }
+  .page { max-width: 800px; margin: 32px auto; padding: 0 16px 48px; }
+
+  /* Header */
+  .header { background: white; border: 1px solid #E5E7EB; border-radius: 8px; padding: 22px 24px; margin-bottom: 14px; display: flex; align-items: flex-start; justify-content: space-between; }
+  .firm-label { font-size: 10px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: #9CA3AF; margin-bottom: 5px; }
+  .proj-title { font-size: 20px; font-weight: 700; color: #1a1a1a; }
+  .proj-sub { font-size: 12px; color: #6B7280; margin-top: 2px; }
+  .header-meta { text-align: left; }
+  .view-label { font-size: 10px; color: #9CA3AF; margin-bottom: 4px; text-align: left; }
+  .view-pill { background: #EBF1F9; color: #3D6A9E; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 5px; }
+  .report-date { font-size: 11px; color: #9CA3AF; margin-top: 6px; text-align: left; }
+
+  /* Group */
+  .group { background: white; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+
+  /* Group headers */
+  .group-header { display: flex; align-items: center; gap: 10px; padding: 11px 16px; border-bottom: 1px solid #E5E7EB; }
+  .group-badge { font-size: 10px; font-weight: 700; color: white; padding: 3px 10px; border-radius: 5px; white-space: nowrap; }
+  .group-header-info { flex: 1; min-width: 0; }
+  .group-header-title { font-size: 13px; font-weight: 600; }
+  .group-header-sub { font-size: 10px; opacity: 0.65; margin-top: 1px; }
+  .group-status-pill { font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 5px; background: white; border: 1px solid #E5E7EB; color: #374151; white-space: nowrap; }
+
+  /* Urgency: today */
+  .urg-today-header { background: #FCEBEB; }
+  .urg-today-header .group-header-title { color: #7B1A1A; }
+  .urg-today-header .group-header-sub { color: #7B1A1A; }
+  .badge-today { background: #C0392B; }
+
+  /* Urgency: week */
+  .urg-week-header { background: #FAEEDA; }
+  .urg-week-header .group-header-title { color: #412402; }
+  .urg-week-header .group-header-sub { color: #412402; }
+  .badge-week { background: #854F0B; }
+
+  /* Urgency: later */
+  .urg-later-header { background: #F3F4F6; }
+  .urg-later-header .group-header-title { color: #374151; }
+  .urg-later-header .group-header-sub { color: #374151; }
+  .badge-later { background: #6B7280; }
+
+  /* Task rows */
+  .task-row { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-bottom: 1px solid #F3F4F6; font-size: 12px; }
+  .task-row:last-child { border-bottom: none; }
+  .task-row.urgent-bg { background: #FEF7F6; }
+  .check-circle { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid #D1D5DB; flex-shrink: 0; }
+  .task-text { flex: 1; color: #374151; font-weight: 500; }
+  .task-desc { font-size: 10px; color: #9CA3AF; margin-top: 2px; }
+  .task-owner { font-size: 11px; color: #9CA3AF; white-space: nowrap; }
+  .task-date { font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .date-today { color: #C0392B; }
+  .date-week { color: #D4820A; }
+  .date-later { color: #9CA3AF; }
+  .done-btn { font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 5px; border: 1px solid #D1D5DB; background: white; color: #6B7280; white-space: nowrap; }
+  .done-btn.primary { background: #EBF1F9; border-color: #85B7EB; color: #185FA5; }
+
+  /* Tag chip */
+  .tag-chip { font-size: 9px; font-weight: 500; padding: 1px 6px; border-radius: 4px; background: #F3F4F6; color: #6B7280; border: 1px solid #E5E7EB; }
+
+  /* Contacts */
+  .contacts-card { background: white; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; margin-top: 10px; }
+  .card-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; background: #F9FAFB; border-bottom: 1px solid #E5E7EB; }
+  .card-title { font-size: 12px; font-weight: 600; color: #374151; }
+  .card-count { font-size: 11px; color: #9CA3AF; }
+  .contact-row { display: flex; align-items: center; gap: 11px; padding: 10px 16px; border-bottom: 1px solid #F3F4F6; }
+  .contact-row:last-child { border-bottom: none; }
+  .contact-avatar { width: 30px; height: 30px; border-radius: 50%; background: #EBF1F9; color: #0C447C; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .contact-name { font-size: 12px; font-weight: 500; color: #1a1a1a; }
+  .contact-role { font-size: 10px; color: #9CA3AF; }
+  .contact-phone { font-size: 11px; color: #3D6A9E; direction: ltr; margin-right: auto; }
+
+  .footer { display: flex; justify-content: space-between; font-size: 11px; color: #9CA3AF; padding-top: 20px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="firm-label">היתרים IL · דוח משימות</div>
+      <div class="proj-title">DREAM 9-10, 150 קומות</div>
+      <div class="proj-sub">מנחם בגין 150, תל אביב · היתר בנייה</div>
+    </div>
+    <div class="header-meta">
+      <div class="view-label">תצוגה נבחרת</div>
+      <div class="view-pill">לפי דחיפות</div>
+      <div class="report-date">26.04.2026</div>
+    </div>
+  </div>
+
+  <!-- Today -->
+  <div class="group">
+    <div class="group-header urg-today-header">
+      <div class="group-badge badge-today">היום</div>
+      <div class="group-header-info">
+        <div class="group-header-title">דחוף להיום</div>
+        <div class="group-header-sub">טעון טיפול מיידי · 2 משימות</div>
+      </div>
+      <div class="group-status-pill">דחוף</div>
+    </div>
+    <div class="task-row urgent-bg">
+      <div class="check-circle"></div>
+      <div style="flex:1;">
+        <div class="task-text">הגשת נספח בינוי מעודכן לוועדה</div>
+        <div class="task-desc">קונסטרוקציה + אדריכלות — גרסה סופית</div>
+      </div>
+      <div class="task-owner">יוסי לוי</div>
+      <div class="task-date date-today">היום</div>
+      <div class="done-btn primary">בוצע ✓</div>
+    </div>
+    <div class="task-row urgent-bg">
+      <div class="check-circle"></div>
+      <div style="flex:1;">
+        <div class="task-text">שליחת חוות דעת מפקח לוועדה</div>
+      </div>
+      <div class="task-owner">מיכל כהן</div>
+      <div class="task-date date-today">היום</div>
+      <div class="done-btn primary">בוצע ✓</div>
+    </div>
+  </div>
+
+  <!-- This week -->
+  <div class="group">
+    <div class="group-header urg-week-header">
+      <div class="group-badge badge-week">השבוע</div>
+      <div class="group-header-info">
+        <div class="group-header-title">עד סוף השבוע</div>
+        <div class="group-header-sub">2 משימות</div>
+      </div>
+      <div class="group-status-pill">בטיפול</div>
+    </div>
+    <div class="task-row">
+      <div class="check-circle"></div>
+      <div style="flex:1;">
+        <div class="task-text">אישור לקוח לשינוי חזית קומה 8</div>
+        <div style="display:flex;gap:4px;margin-top:4px;">
+          <span class="tag-chip">החלטת לקוח</span>
+          <span class="tag-chip">עיצוב</span>
+        </div>
+      </div>
+      <div class="task-owner">לקוח</div>
+      <div class="task-date date-week">28.04</div>
+      <div class="done-btn">בוצע ✓</div>
+    </div>
+    <div class="task-row">
+      <div class="check-circle"></div>
+      <div style="flex:1;">
+        <div class="task-text">תיאום ביקור מפקח עירייה באתר</div>
+      </div>
+      <div class="task-owner">מיכל כהן</div>
+      <div class="task-date date-week">02.05</div>
+      <div class="done-btn">בוצע ✓</div>
+    </div>
+  </div>
+
+  <!-- Later -->
+  <div class="group">
+    <div class="group-header urg-later-header">
+      <div class="group-badge badge-later">בהמשך</div>
+      <div class="group-header-info">
+        <div class="group-header-title">בהמשך הדרך</div>
+        <div class="group-header-sub">1 משימה</div>
+      </div>
+      <div class="group-status-pill">ממתין</div>
+    </div>
+    <div class="task-row">
+      <div class="check-circle"></div>
+      <div style="flex:1;">
+        <div class="task-text">הכנת תיק מדידות לשלב ב'</div>
+      </div>
+      <div class="task-owner">—</div>
+      <div class="task-date date-later">בהמשך</div>
+      <div class="done-btn">בוצע ✓</div>
+    </div>
+  </div>
+
+  <!-- Contacts -->
+  <div class="contacts-card">
+    <div class="card-header">
+      <span class="card-title">אנשי קשר</span>
+      <span class="card-count">3</span>
+    </div>
+    <div class="contact-row">
+      <div class="contact-avatar">י</div>
+      <div style="flex:1;"><div class="contact-name">יוסי לוי</div><div class="contact-role">אדריכל ראשי</div></div>
+      <div class="contact-phone">050-111-2233</div>
+    </div>
+    <div class="contact-row">
+      <div class="contact-avatar">מ</div>
+      <div style="flex:1;"><div class="contact-name">מיכל כהן</div><div class="contact-role">מנהלת פרויקט</div></div>
+      <div class="contact-phone">052-444-5566</div>
+    </div>
+    <div class="contact-row">
+      <div class="contact-avatar">ד</div>
+      <div style="flex:1;"><div class="contact-name">דוד גרין</div><div class="contact-role">קבלן מבצע</div></div>
+      <div class="contact-phone">054-777-8899</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>היתרים IL — ניהול פרויקטי היתרי בנייה</span>
+    <span>הופק: 26.04.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

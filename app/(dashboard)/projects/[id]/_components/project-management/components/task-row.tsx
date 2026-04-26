@@ -15,6 +15,7 @@ interface TaskRowProps {
   onToggleDone: (taskId: string) => void
   onToggleSubtask: (taskId: string, index: number) => void
   onClick?: (taskId: string) => void
+  onDelete?: (taskId: string) => void
 }
 
 export function TaskRow({
@@ -24,6 +25,7 @@ export function TaskRow({
   onToggleDone,
   onToggleSubtask,
   onClick,
+  onDelete,
 }: TaskRowProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -40,9 +42,9 @@ export function TaskRow({
   const rowBg = isUrgent ? "bg-[#FCEBEB]" : ""
 
   return (
-    <div className={`px-4 py-3 border-b border-stone-200 last:border-b-0 text-xs ${rowBg}`}>
+    <div className={`group px-4 py-3 border-b border-stone-200 last:border-b-0 text-xs ${rowBg}`}>
       {/* שורה ראשית */}
-      <div className="grid grid-cols-[auto_1fr_auto_auto_auto] gap-3 items-center">
+      <div className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-3 items-center">
         <Checkbox
           checked={isDone}
           onCheckedChange={() => onToggleDone(task.id)}
@@ -70,6 +72,28 @@ export function TaskRow({
         >
           בוצע ✓
         </button>
+
+        {/* כפתורי עריכה/מחיקה — מופיעים על hover */}
+        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          {onClick && (
+            <button
+              onClick={() => onClick(task.id)}
+              className="px-1.5 py-1 rounded text-[10px] text-stone-500 hover:text-[#3D6A9E] hover:bg-[#EBF1F9] transition-colors"
+              title="עריכה"
+            >
+              ✎
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={() => onDelete(task.id)}
+              className="px-1.5 py-1 rounded text-[10px] text-stone-500 hover:text-[#C0392B] hover:bg-[#fdf0ef] transition-colors"
+              title="מחיקה"
+            >
+              ✕
+            </button>
+          )}
+        </div>
       </div>
 
       {/* שורת מטא-דאטה */}

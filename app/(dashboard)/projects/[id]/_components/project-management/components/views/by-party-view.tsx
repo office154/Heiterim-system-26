@@ -59,6 +59,7 @@ export function ByPartyView({
   onToggleDone,
   onToggleSubtask,
   onTaskClick,
+  onTaskDelete,
 }: ViewProps) {
   return (
     <div>
@@ -75,6 +76,7 @@ export function ByPartyView({
             onToggleDone={onToggleDone}
             onToggleSubtask={onToggleSubtask}
             onTaskClick={onTaskClick}
+        onTaskDelete={onTaskDelete}
             header={
               <div className={`flex items-center gap-2.5 px-4 py-3 ${party.bg} border-b border-stone-200`}>
                 <div className={`w-7 h-7 ${party.iconBg} text-white rounded-md flex items-center justify-center text-base`}>

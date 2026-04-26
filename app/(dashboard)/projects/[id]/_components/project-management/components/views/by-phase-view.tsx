@@ -64,6 +64,7 @@ export function ByPhaseView({
   onToggleDone,
   onToggleSubtask,
   onTaskClick,
+  onTaskDelete,
 }: ViewProps) {
   return (
     <div>
@@ -80,6 +81,7 @@ export function ByPhaseView({
             onToggleDone={onToggleDone}
             onToggleSubtask={onToggleSubtask}
             onTaskClick={onTaskClick}
+        onTaskDelete={onTaskDelete}
             header={
               <div className={`flex items-center gap-2.5 px-4 py-3 ${phase.bg} border-b border-stone-200`}>
                 <span className={`text-[11px] ${phase.badgeBg} text-white px-2 py-0.5 rounded-md font-medium`}>

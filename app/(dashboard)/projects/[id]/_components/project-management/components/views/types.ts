@@ -6,4 +6,5 @@ export interface ViewProps {
   onToggleDone: (taskId: string) => void
   onToggleSubtask: (taskId: string, index: number) => void
   onTaskClick?: (taskId: string) => void
+  onTaskDelete?: (taskId: string) => void
 }

@@ -1,8 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { useProjectTasks, useUpdateTask, useToggleSubtask } from "./project-management/hooks/use-project-tasks"
-import { useProjectContacts } from "./project-management/hooks/use-project-contacts"
+import { useProjectTasks, useUpdateTask, useToggleSubtask, useDeleteTask } from "./project-management/hooks/use-project-tasks"
+import { useProjectContacts, useDeleteContact } from "./project-management/hooks/use-project-contacts"
+import type { ProjectTask, ProjectContact } from "./project-management/types"
 import { TaskForm } from "./project-management/components/forms/task-form"
 import { ContactForm } from "./project-management/components/forms/contact-form"
 import { ByUrgencyView } from "./project-management/components/views/by-urgency-view"
@@ -27,12 +28,16 @@ export function ProjectManagementTab({ projectId }: ProjectManagementTabProps) {
   const [currentView, setCurrentView] = useState<ViewKey>("urgency")
   const [taskFormOpen, setTaskFormOpen] = useState(false)
   const [contactFormOpen, setContactFormOpen] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<ProjectTask | undefined>()
+  const [selectedContact, setSelectedContact] = useState<ProjectContact | undefined>()
 
   const { data: tasks = [], isLoading: tasksLoading, error: tasksError } = useProjectTasks(projectId)
   const { data: contacts = [], isLoading: contactsLoading } = useProjectContacts(projectId)
 
   const updateTask = useUpdateTask()
   const toggleSubtask = useToggleSubtask()
+  const deleteTask = useDeleteTask()
+  const deleteContact = useDeleteContact()
 
   const stats = {
     today: tasks.filter((t) => t.urgency === "today" && t.status !== "done").length,
@@ -58,6 +63,28 @@ export function ProjectManagementTab({ projectId }: ProjectManagementTabProps) {
     const task = tasks.find((t) => t.id === taskId)
     if (!task) return
     toggleSubtask.mutate({ id: taskId, projectId, subtasks: task.subtasks, index })
+  }
+
+  const handleTaskEdit = (taskId: string) => {
+    const task = tasks.find((t) => t.id === taskId)
+    if (!task) return
+    setSelectedTask(task)
+    setTaskFormOpen(true)
+  }
+
+  const handleTaskDelete = (taskId: string) => {
+    if (!confirm("למחוק את המשימה?")) return
+    deleteTask.mutate({ id: taskId, projectId })
+  }
+
+  const handleContactEdit = (contact: ProjectContact) => {
+    setSelectedContact(contact)
+    setContactFormOpen(true)
+  }
+
+  const handleContactDelete = (contactId: string) => {
+    if (!confirm("למחוק את איש הקשר?")) return
+    deleteContact.mutate({ id: contactId, projectId })
   }
 
   if (tasksLoading || contactsLoading) {
@@ -120,6 +147,14 @@ export function ProjectManagementTab({ projectId }: ProjectManagementTabProps) {
             </button>
           )
         })}
+        <a
+          href={`/projects/${projectId}/report?view=${currentView}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ms-auto text-[11px] text-[#3D6A9E] border border-[#3D6A9E]/30 hover:bg-[#EBF1F9] px-2.5 py-1.5 rounded-md transition-colors whitespace-nowrap"
+        >
+          📄 דוח לקוח
+        </a>
       </div>
 
       {/* התצוגה הנוכחית */}
@@ -134,6 +169,8 @@ export function ProjectManagementTab({ projectId }: ProjectManagementTabProps) {
           contacts={contacts}
           onToggleDone={handleToggleDone}
           onToggleSubtask={handleToggleSubtask}
+          onTaskClick={handleTaskEdit}
+          onTaskDelete={handleTaskDelete}
         />
       )}
 
@@ -146,7 +183,7 @@ export function ProjectManagementTab({ projectId }: ProjectManagementTabProps) {
           </div>
           <div className="divide-y divide-stone-100">
             {contacts.map((c) => (
-              <div key={c.id} className="flex items-center gap-3 px-4 py-2.5">
+              <div key={c.id} className="group flex items-center gap-3 px-4 py-2.5">
                 <div className="w-7 h-7 rounded-full bg-[#E6F1FB] text-[#0C447C] flex items-center justify-center text-[11px] font-medium shrink-0">
                   {c.name.trim().charAt(0).toUpperCase()}
                 </div>
@@ -161,6 +198,22 @@ export function ProjectManagementTab({ projectId }: ProjectManagementTabProps) {
                     {c.phone}
                   </a>
                 )}
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => handleContactEdit(c)}
+                    className="px-1.5 py-1 rounded text-[10px] text-stone-500 hover:text-[#3D6A9E] hover:bg-[#EBF1F9] transition-colors"
+                    title="עריכה"
+                  >
+                    ✎
+                  </button>
+                  <button
+                    onClick={() => handleContactDelete(c.id)}
+                    className="px-1.5 py-1 rounded text-[10px] text-stone-500 hover:text-[#C0392B] hover:bg-[#fdf0ef] transition-colors"
+                    title="מחיקה"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -184,15 +237,19 @@ export function ProjectManagementTab({ projectId }: ProjectManagementTabProps) {
       </div>
 
       <TaskForm
+        key={selectedTask?.id ?? "new-task"}
         projectId={projectId}
         contacts={contacts}
+        task={selectedTask}
         open={taskFormOpen}
-        onOpenChange={setTaskFormOpen}
+        onOpenChange={(open) => { setTaskFormOpen(open); if (!open) setSelectedTask(undefined) }}
       />
       <ContactForm
+        key={selectedContact?.id ?? "new-contact"}
         projectId={projectId}
+        contact={selectedContact}
         open={contactFormOpen}
-        onOpenChange={setContactFormOpen}
+        onOpenChange={(open) => { setContactFormOpen(open); if (!open) setSelectedContact(undefined) }}
       />
     </div>
   )

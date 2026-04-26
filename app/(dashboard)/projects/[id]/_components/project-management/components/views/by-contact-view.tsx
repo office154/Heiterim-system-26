@@ -18,6 +18,7 @@ export function ByContactView({
   onToggleDone,
   onToggleSubtask,
   onTaskClick,
+  onTaskDelete,
 }: ViewProps) {
   const groups: ContactGroup[] = contacts
     .map((contact) => {
@@ -60,6 +61,7 @@ export function ByContactView({
             onToggleDone={onToggleDone}
             onToggleSubtask={onToggleSubtask}
             onTaskClick={onTaskClick}
+        onTaskDelete={onTaskDelete}
             header={
               <div className={`flex items-center gap-2.5 px-4 py-3 ${headerBg} border-b border-stone-200`}>
                 <ContactAvatar contact={group.contact} size="md" />
@@ -90,6 +92,7 @@ export function ByContactView({
           onToggleDone={onToggleDone}
           onToggleSubtask={onToggleSubtask}
           onTaskClick={onTaskClick}
+        onTaskDelete={onTaskDelete}
           header={
             <div className="flex items-center gap-2.5 px-4 py-3 bg-stone-100 border-b border-stone-200">
               <span className="text-[13px] font-medium flex-1 text-stone-500">ללא איש קשר משויך</span>

@@ -9,6 +9,7 @@ export function ByUrgencyView({
   onToggleDone,
   onToggleSubtask,
   onTaskClick,
+  onTaskDelete,
 }: ViewProps) {
   const today = tasks.filter((t) => t.urgency === "today" && t.status !== "done")
   const week = tasks.filter((t) => t.urgency === "week" && t.status !== "done")
@@ -23,6 +24,7 @@ export function ByUrgencyView({
         onToggleDone={onToggleDone}
         onToggleSubtask={onToggleSubtask}
         onTaskClick={onTaskClick}
+        onTaskDelete={onTaskDelete}
         header={
           <div className="flex items-center gap-2.5 px-4 py-3 bg-[#FCEBEB] border-b border-stone-200">
             <span className="w-2.5 h-2.5 bg-[#E24B4A] rounded-full" />
@@ -38,6 +40,7 @@ export function ByUrgencyView({
         onToggleDone={onToggleDone}
         onToggleSubtask={onToggleSubtask}
         onTaskClick={onTaskClick}
+        onTaskDelete={onTaskDelete}
         header={
           <div className="flex items-center gap-2.5 px-4 py-3 bg-stone-100 border-b border-stone-200">
             <span className="w-2.5 h-2.5 bg-[#BA7517] rounded-full" />
@@ -53,6 +56,7 @@ export function ByUrgencyView({
         onToggleDone={onToggleDone}
         onToggleSubtask={onToggleSubtask}
         onTaskClick={onTaskClick}
+        onTaskDelete={onTaskDelete}
         header={
           <div className="flex items-center gap-2.5 px-4 py-3 bg-stone-100 border-b border-stone-200">
             <span className="w-2.5 h-2.5 bg-stone-400 rounded-full" />

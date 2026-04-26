@@ -11,6 +11,7 @@ interface TaskGroupProps {
   onToggleDone: (taskId: string) => void
   onToggleSubtask: (taskId: string, index: number) => void
   onTaskClick?: (taskId: string) => void
+  onTaskDelete?: (taskId: string) => void
 }
 
 export function TaskGroup({
@@ -21,6 +22,7 @@ export function TaskGroup({
   onToggleDone,
   onToggleSubtask,
   onTaskClick,
+  onTaskDelete,
 }: TaskGroupProps) {
   if (tasks.length === 0) return null
 
@@ -39,6 +41,7 @@ export function TaskGroup({
             onToggleDone={onToggleDone}
             onToggleSubtask={onToggleSubtask}
             onClick={onTaskClick}
+            onDelete={onTaskDelete}
           />
         ))}
       </div>
