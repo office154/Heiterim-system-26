@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { useProjectTasks, useUpdateTask, useToggleSubtask } from "./project-management/hooks/use-project-tasks"
 import { useProjectContacts } from "./project-management/hooks/use-project-contacts"
+import { TaskForm } from "./project-management/components/forms/task-form"
+import { ContactForm } from "./project-management/components/forms/contact-form"
 import { ByUrgencyView } from "./project-management/components/views/by-urgency-view"
 import { ByContactView } from "./project-management/components/views/by-contact-view"
 import { ByPhaseView } from "./project-management/components/views/by-phase-view"
@@ -23,6 +25,8 @@ const VIEW_OPTIONS: { key: ViewKey; label: string }[] = [
 
 export function ProjectManagementTab({ projectId }: ProjectManagementTabProps) {
   const [currentView, setCurrentView] = useState<ViewKey>("urgency")
+  const [taskFormOpen, setTaskFormOpen] = useState(false)
+  const [contactFormOpen, setContactFormOpen] = useState(false)
 
   const { data: tasks = [], isLoading: tasksLoading, error: tasksError } = useProjectTasks(projectId)
   const { data: contacts = [], isLoading: contactsLoading } = useProjectContacts(projectId)
@@ -133,21 +137,63 @@ export function ProjectManagementTab({ projectId }: ProjectManagementTabProps) {
         />
       )}
 
-      {/* כפתורי פעולה - placeholder עד שלב 7ה */}
+      {/* אנשי קשר */}
+      {contacts.length > 0 && (
+        <div className="bg-white border border-stone-200 rounded-lg overflow-hidden mt-2">
+          <div className="flex items-center justify-between px-4 py-3 bg-stone-50 border-b border-stone-200">
+            <span className="text-[13px] font-medium">אנשי קשר</span>
+            <span className="text-[11px] text-stone-500">{contacts.length}</span>
+          </div>
+          <div className="divide-y divide-stone-100">
+            {contacts.map((c) => (
+              <div key={c.id} className="flex items-center gap-3 px-4 py-2.5">
+                <div className="w-7 h-7 rounded-full bg-[#E6F1FB] text-[#0C447C] flex items-center justify-center text-[11px] font-medium shrink-0">
+                  {c.name.trim().charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13px] font-medium text-stone-900">{c.name}</div>
+                  <div className="text-[11px] text-stone-500 truncate">
+                    {[c.role, c.company].filter(Boolean).join(" · ")}
+                  </div>
+                </div>
+                {c.phone && (
+                  <a href={`tel:${c.phone}`} className="text-[11px] text-[#3D6A9E] hover:underline" dir="ltr">
+                    {c.phone}
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* כפתורי פעולה */}
       <div className="flex gap-2.5 mt-4">
         <button
-          disabled
-          className="flex-1 bg-white border border-stone-300 rounded-md py-2.5 text-xs font-medium text-stone-400 cursor-not-allowed"
+          onClick={() => setTaskFormOpen(true)}
+          className="flex-1 bg-white border border-stone-300 rounded-md py-2.5 text-xs font-medium text-stone-700 hover:bg-stone-50 transition-colors"
         >
-          + הוסף משימה (בשלב הבא)
+          + הוסף משימה
         </button>
         <button
-          disabled
-          className="flex-1 bg-white border border-stone-300 rounded-md py-2.5 text-xs font-medium text-stone-400 cursor-not-allowed"
+          onClick={() => setContactFormOpen(true)}
+          className="flex-1 bg-white border border-stone-300 rounded-md py-2.5 text-xs font-medium text-stone-700 hover:bg-stone-50 transition-colors"
         >
-          + הוסף איש קשר (בשלב הבא)
+          + הוסף איש קשר
         </button>
       </div>
+
+      <TaskForm
+        projectId={projectId}
+        contacts={contacts}
+        open={taskFormOpen}
+        onOpenChange={setTaskFormOpen}
+      />
+      <ContactForm
+        projectId={projectId}
+        open={contactFormOpen}
+        onOpenChange={setContactFormOpen}
+      />
     </div>
   )
 }
