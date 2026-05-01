@@ -310,12 +310,12 @@ export function ProjectOverview({ projectId, onNavigate }: ProjectOverviewProps)
           style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#f0f0f0]">
-            <span className="text-[12px] font-bold text-[#1a1a1a]">תשלומים</span>
+            <span className="text-[12px] font-bold text-[#1a1a1a]">שלבים</span>
             <button
               onClick={() => onNavigate('stages')}
               className="text-[11px] text-[#3D6A9E] font-semibold hover:underline cursor-pointer"
             >
-              לכל התשלומים ←
+              לכל השלבים ←
             </button>
           </div>
           {isAdmin && totalContract > 0 && (

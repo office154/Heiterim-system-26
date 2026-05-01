@@ -13,7 +13,7 @@ import { Breadcrumb } from '@/components/shared/Breadcrumb'
 import type { BreadcrumbItem } from '@/components/shared/Breadcrumb'
 
 const TAB_LABELS: Record<string, string> = {
-  stages: 'תשלומים',
+  stages: 'שלבים',
   status: 'דוח סטטוס',
   files: 'קבצים',
   management: 'ניהול פרויקט',
@@ -66,7 +66,7 @@ export default function ProjectDetailPage() {
         <TabsList className="w-full justify-start print:hidden">
           <TabsTrigger value="general">מידע כללי</TabsTrigger>
           <TabsTrigger value="status">דוח סטטוס</TabsTrigger>
-          <TabsTrigger value="stages">תשלומים</TabsTrigger>
+          <TabsTrigger value="stages">שלבים</TabsTrigger>
           <TabsTrigger value="files">קבצים</TabsTrigger>
           <TabsTrigger value="management">ניהול פרויקט</TabsTrigger>
         </TabsList>
