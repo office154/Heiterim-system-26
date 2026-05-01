@@ -41,9 +41,10 @@ export async function POST(req: NextRequest) {
   )
 
   // Invite user — Supabase sends a magic-link email
+  const origin = new URL(req.url).origin
   const { data: invited, error: inviteError } = await adminSupabase.auth.admin.inviteUserByEmail(
     email,
-    { data: { full_name, role } }
+    { data: { full_name, role }, redirectTo: `${origin}/auth/callback` }
   )
 
   if (inviteError) {
