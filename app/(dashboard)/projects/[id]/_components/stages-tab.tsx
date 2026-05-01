@@ -27,6 +27,25 @@ function formatPrice(price: number): string {
   return `₪${price.toLocaleString('he-IL')}`
 }
 
+function DateCell({
+  value,
+  onSave,
+}: {
+  value: string | null
+  onSave: (dateStr: string) => void
+}) {
+  const inputVal = value ? value.slice(0, 10) : ''
+  return (
+    <input
+      type="date"
+      value={inputVal}
+      onChange={(e) => onSave(e.target.value)}
+      className="rounded border border-transparent px-1 py-0.5 text-xs text-[#444444] hover:border-[#dddddd] focus:border-[#3D6A9E] focus:outline-none focus:ring-1 focus:ring-[#3D6A9E]/20"
+      style={{ colorScheme: 'light', direction: 'ltr' }}
+    />
+  )
+}
+
 // ─── Inline price input ───────────────────────────────────────────────────────
 function PriceInput({
   value,
@@ -140,9 +159,9 @@ function TrackSection({
 
   const [addingStage, setAddingStage] = useState(false)
 
-  const totalContract = stages.reduce((sum, s) => sum + s.price + (s.extra_payment || 0), 0)
-  const totalPaid = stages.filter((s) => s.paid).reduce((sum, s) => sum + s.price + (s.extra_payment || 0), 0)
-  const balance = totalContract - totalPaid
+  const totalContract  = stages.reduce((sum, s) => sum + s.price + (s.extra_payment || 0), 0)
+  const totalCompleted = stages.filter((s) => s.completed).reduce((sum, s) => sum + s.price + (s.extra_payment || 0), 0)
+  const balance        = totalContract - totalCompleted
 
   async function handleCheckbox(
     stage: ProjectStage,
@@ -159,6 +178,11 @@ function TrackSection({
 
   async function handleNote(stage: ProjectStage, note: string) {
     await updateStage.mutateAsync({ id: stage.id, projectId, note: note || null })
+  }
+
+  async function handleDate(stage: ProjectStage, dateStr: string) {
+    const completed_at = dateStr ? new Date(dateStr + 'T12:00:00Z').toISOString() : null
+    await updateStage.mutateAsync({ id: stage.id, projectId, completed_at })
   }
 
   async function handleExtraPayment(stage: ProjectStage, raw: string) {
@@ -295,59 +319,26 @@ function TrackSection({
                       </div>
                     </td>
                   ))}
-                  {/* Empty cell under add-stage column */}
                   <td />
                 </tr>
 
-                {/* נשלחה חשבונית */}
+                {/* תאריך */}
                 <tr className="border-b border-[#dddddd]">
                   <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#666666]">
-                    נשלחה חשבונית
+                    תאריך
                   </td>
-                  {stages.map((stage) => {
-                    const highlight = stage.price > 0 && stage.completed && !stage.invoice_sent
-                    return (
-                      <td
-                        key={stage.id}
-                        className={`px-3 py-2.5 text-center transition-colors ${highlight ? 'bg-[#FDEAEA]' : ''}`}
-                      >
-                        <div className="flex justify-center">
-                          <Checkbox
-                            checked={stage.invoice_sent}
-                            onCheckedChange={(v) => handleCheckbox(stage, 'invoice_sent', !!v)}
-                          />
-                        </div>
-                      </td>
-                    )
-                  })}
+                  {stages.map((stage) => (
+                    <td key={stage.id} className="px-3 py-2.5 text-center">
+                      <DateCell
+                        value={stage.completed_at ?? null}
+                        onSave={(dateStr) => handleDate(stage, dateStr)}
+                      />
+                    </td>
+                  ))}
                   <td />
                 </tr>
 
-                {/* שולם */}
-                <tr className="border-b border-[#dddddd]">
-                  <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#666666]">
-                    שולם
-                  </td>
-                  {stages.map((stage) => {
-                    const highlight = stage.price > 0 && stage.invoice_sent && !stage.paid
-                    return (
-                      <td
-                        key={stage.id}
-                        className={`px-3 py-2.5 text-center transition-colors ${highlight ? 'bg-[#FEF3C7]' : ''}`}
-                      >
-                        <div className="flex justify-center">
-                          <Checkbox
-                            checked={stage.paid}
-                            onCheckedChange={(v) => handleCheckbox(stage, 'paid', !!v)}
-                          />
-                        </div>
-                      </td>
-                    )
-                  })}
-                  <td />
-                </tr>
-
-                {/* מלל חופשי */}
+                {/* הערה */}
                 <tr className="border-b border-[#dddddd]">
                   <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#666666]">
                     הערה
@@ -415,10 +406,10 @@ function TrackSection({
                     </tr>
                     <tr className="bg-[#f8f8f8]">
                       <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2 text-right text-xs font-semibold text-[#1a1a1a]">
-                        סה״כ שולם
+                        סה״כ בוצע
                       </td>
                       <td colSpan={stages.length + 1} className="px-4 py-2 text-right text-sm font-black text-[#3D6A9E]">
-                        {formatPrice(totalPaid)}
+                        {formatPrice(totalCompleted)}
                       </td>
                     </tr>
                     <tr className="bg-[#f8f8f8]">
