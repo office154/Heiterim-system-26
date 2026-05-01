@@ -516,35 +516,39 @@ function SidebarWidget({
   activeProjects,
   loading,
   onNewClient,
+  isAdmin,
 }: {
   activeProjects: { id: string; title: string }[]
   loading: boolean
   onNewClient: () => void
+  isAdmin: boolean
 }) {
   const router = useRouter()
 
   return (
     <aside className="w-[220px] shrink-0 bg-[#F0F2F5] flex flex-col">
-      {/* Quick actions */}
-      <div className="p-5 border-b border-[#d4d4d4]">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa] mb-3">
-          פעולות מהירות
-        </p>
-        <div className="space-y-2">
-          <button
-            onClick={() => router.push('/projects/new')}
-            className="w-full rounded-lg bg-[#3D6A9E] hover:bg-[#2F5A8A] text-white text-[13px] font-extrabold px-3 py-2.5 transition-colors text-right"
-          >
-            + פרויקט חדש
-          </button>
-          <button
-            onClick={onNewClient}
-            className="w-full rounded-lg border border-[#E5E7EB] hover:border-[#5C7A92] hover:bg-[#ECF0F4] text-[#6B7280] hover:text-[#1a1a1a] text-[13px] font-medium px-3 py-2.5 transition-colors text-right"
-          >
-            + לקוח חדש
-          </button>
+      {/* Quick actions — admin only */}
+      {isAdmin && (
+        <div className="p-5 border-b border-[#d4d4d4]">
+          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa] mb-3">
+            פעולות מהירות
+          </p>
+          <div className="space-y-2">
+            <button
+              onClick={() => router.push('/projects/new')}
+              className="w-full rounded-lg bg-[#3D6A9E] hover:bg-[#2F5A8A] text-white text-[13px] font-extrabold px-3 py-2.5 transition-colors text-right"
+            >
+              + פרויקט חדש
+            </button>
+            <button
+              onClick={onNewClient}
+              className="w-full rounded-lg border border-[#E5E7EB] hover:border-[#5C7A92] hover:bg-[#ECF0F4] text-[#6B7280] hover:text-[#1a1a1a] text-[13px] font-medium px-3 py-2.5 transition-colors text-right"
+            >
+              + לקוח חדש
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Active projects list */}
       <div className="flex-1 flex flex-col min-h-0">
@@ -846,6 +850,7 @@ export function DashboardContent({ role, fullName }: DashboardContentProps) {
         activeProjects={loading ? [] : data.activeProjects}
         loading={loading}
         onNewClient={() => setClientModalOpen(true)}
+        isAdmin={isAdmin}
       />
 
       {/* ── Modals ── */}
