@@ -19,7 +19,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: 'דשבורד', href: '/' },
   { label: 'פרויקטים', href: '/projects' },
-  { label: 'לקוחות', href: '/clients' },
+  { label: 'לקוחות', href: '/clients', adminOnly: true },
   { label: 'תשלומים', href: '/payments', adminOnly: true },
   { label: 'דוחות', href: '/reports', adminOnly: true },
   { label: 'משימות', href: '/todos' },

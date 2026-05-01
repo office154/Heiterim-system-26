@@ -1,13 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useClients, useDeleteClient } from '@/lib/hooks/use-clients'
 import { CreateClientModal } from '@/components/create-client-modal'
 import { Input } from '@/components/ui/input'
 import { Breadcrumb } from '@/components/shared/Breadcrumb'
 import { useResizableColumns } from '@/lib/hooks/use-resizable-columns'
 import { ResizableTh } from '@/components/ui/resizable-th'
+import { useCurrentRole } from '@/lib/hooks/use-profile'
 
 function DeleteButton({ clientId }: { clientId: string }) {
   const [confirm, setConfirm] = useState(false)
@@ -45,10 +47,18 @@ function DeleteButton({ clientId }: { clientId: string }) {
 }
 
 export default function ClientsPage() {
+  const router = useRouter()
+  const { data: role, isLoading: roleLoading } = useCurrentRole()
   const { data: clients, isLoading } = useClients()
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
   const { widths, startResize } = useResizableColumns([200, 150, 150, 200, 120, 120, 40])
+
+  useEffect(() => {
+    if (!roleLoading && role === 'employee') router.replace('/')
+  }, [role, roleLoading, router])
+
+  if (roleLoading || role !== 'admin') return null
 
   const filtered = (clients ?? []).filter((c) => {
     const q = search.toLowerCase()
