@@ -30,7 +30,7 @@ export function useProject(id: string) {
       const supabase = createClient()
       const { data, error } = await supabase
         .from('projects')
-        .select('*, client:clients(*)')
+        .select('*, client:clients(*), creator:profiles!created_by(full_name), manager:profiles!manager_id(id, full_name)')
         .eq('id', id)
         .single()
       if (error) throw error

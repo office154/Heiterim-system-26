@@ -83,6 +83,7 @@ export interface Database {
           permit_submission_number: string | null
           notes: string | null
           created_by: string | null
+          manager_id: string | null
           created_at: string
         }
         Insert: {
@@ -97,6 +98,7 @@ export interface Database {
           permit_submission_number?: string | null
           notes?: string | null
           created_by?: string | null
+          manager_id?: string | null
           created_at?: string
         }
         Update: {
@@ -111,6 +113,7 @@ export interface Database {
           permit_submission_number?: string | null
           notes?: string | null
           created_by?: string | null
+          manager_id?: string | null
           created_at?: string
         }
         Relationships: []
@@ -129,6 +132,9 @@ export interface Database {
           extra_payment: number
           completed_at: string | null
           note: string | null
+          pending_completion: boolean
+          pending_completion_by: string | null
+          pending_completion_at: string | null
           created_at: string
         }
         Insert: {
@@ -144,6 +150,9 @@ export interface Database {
           extra_payment?: number
           completed_at?: string | null
           note?: string | null
+          pending_completion?: boolean
+          pending_completion_by?: string | null
+          pending_completion_at?: string | null
           created_at?: string
         }
         Update: {
@@ -159,6 +168,30 @@ export interface Database {
           extra_payment?: number
           completed_at?: string | null
           note?: string | null
+          pending_completion?: boolean
+          pending_completion_by?: string | null
+          pending_completion_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      project_assistants: {
+        Row: {
+          id: string
+          project_id: string
+          profile_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          profile_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          profile_id?: string
           created_at?: string
         }
         Relationships: []
@@ -440,9 +473,12 @@ export interface RequirementStep {
 }
 
 // Joined types used in queries
+export type ProjectAssistant = Database['public']['Tables']['project_assistants']['Row']
+
 export type ProjectWithClient = Project & {
   client: Client | null
   creator?: Pick<Profile, 'full_name'> | null
+  manager?: Pick<Profile, 'id' | 'full_name'> | null
 }
 
 export type ClientWithProjects = Client & {
