@@ -131,19 +131,18 @@ function downloadCredentialsPDF(name: string, email: string, password: string, o
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Rubik', Arial, sans-serif;
-      background: #F0F2F5;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      padding: 48px 24px;
+      background: white;
+      padding: 0;
+      margin: 0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
     .page {
       background: white;
-      border-radius: 16px;
-      width: 480px;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
       overflow: hidden;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.12);
     }
     .header {
       background: #3D6A9E;
@@ -251,26 +250,7 @@ function downloadCredentialsPDF(name: string, email: string, password: string, o
       text-decoration: none;
     }
     @media print {
-      html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: white !important;
-        display: block !important;
-        width: 100% !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      .page {
-        box-shadow: none !important;
-        border-radius: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-      }
-      .header, .cred-value.password, .login-btn, .credentials-box {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
+      .page { max-width: 100%; }
     }
   </style>
 </head>
