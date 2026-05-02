@@ -119,6 +119,203 @@ function UserActions({ profile, currentUserId }: { profile: Profile; currentUser
   )
 }
 
+function downloadCredentialsPDF(name: string, email: string, password: string, origin: string) {
+  const logoUrl = `${origin}/logo.png`
+  const html = `<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8">
+  <title>פרטי כניסה — ${name}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Rubik', Arial, sans-serif;
+      background: #F0F2F5;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 48px 24px;
+    }
+    .page {
+      background: white;
+      border-radius: 16px;
+      width: 480px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    }
+    .header {
+      background: #3D6A9E;
+      padding: 32px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header img {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+    }
+    .header-text { color: white; }
+    .header-title {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+    .header-sub {
+      font-size: 12px;
+      opacity: 0.75;
+      margin-top: 2px;
+    }
+    .body { padding: 36px 40px; }
+    .welcome-line {
+      font-size: 22px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .welcome-sub {
+      font-size: 13px;
+      color: #6B7280;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .credentials-box {
+      background: #F8FAFC;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .cred-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .cred-row:last-child { border-bottom: none; }
+    .cred-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6B7280;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .cred-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1a1a;
+      direction: ltr;
+      text-align: left;
+    }
+    .cred-value.password {
+      background: #EBF1F9;
+      color: #3D6A9E;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+    }
+    .login-btn {
+      display: block;
+      background: #3D6A9E;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+    .footer {
+      border-top: 1px solid #E5E7EB;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-note {
+      font-size: 11px;
+      color: #9CA3AF;
+      line-height: 1.5;
+    }
+    .footer-contact {
+      font-size: 11px;
+      color: #3D6A9E;
+      text-decoration: none;
+    }
+    @media print {
+      body { background: white; padding: 0; align-items: flex-start; }
+      .page { box-shadow: none; border-radius: 0; width: 100%; }
+      .header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .cred-value.password { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .login-btn { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <img src="${logoUrl}" alt="הייתרים" onerror="this.style.display='none'">
+      <div class="header-text">
+        <div class="header-title">הייתרים ארכיטקטים</div>
+        <div class="header-sub">מערכת ניהול פרויקטים</div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="welcome-line">ברוכה הבאה, ${name}!</div>
+      <p class="welcome-sub">
+        נוספת למערכת הניהול של הייתרים ארכיטקטים.<br>
+        להלן פרטי הכניסה שלך — שמרי אותם במקום בטוח.
+      </p>
+      <div class="credentials-box">
+        <div class="cred-row">
+          <span class="cred-label">שם מלא</span>
+          <span class="cred-value">${name}</span>
+        </div>
+        <div class="cred-row">
+          <span class="cred-label">אימייל</span>
+          <span class="cred-value">${email}</span>
+        </div>
+        <div class="cred-row">
+          <span class="cred-label">סיסמה</span>
+          <span class="cred-value password">${password}</span>
+        </div>
+      </div>
+      <a href="${origin}/login" class="login-btn">כניסה למערכת ←</a>
+    </div>
+    <div class="footer">
+      <span class="footer-note">מומלץ להחליף סיסמה לאחר הכניסה הראשונה.</span>
+      <a href="mailto:office@heiterim.co.il" class="footer-contact">office@heiterim.co.il</a>
+    </div>
+  </div>
+  <script>
+    window.onload = function() {
+      setTimeout(function() { window.print(); }, 500);
+    };
+  </script>
+</body>
+</html>`
+
+  const win = window.open('', '_blank', 'width=600,height=800')
+  if (win) {
+    win.document.write(html)
+    win.document.close()
+  }
+}
+
+interface InviteResult {
+  name: string
+  email: string
+  password: string
+}
+
 export default function SettingsUsersPage() {
   const router = useRouter()
   const { data: role, isLoading: roleLoading } = useCurrentRole()
@@ -134,7 +331,7 @@ export default function SettingsUsersPage() {
   const [showInvitePassword, setShowInvitePassword] = useState(false)
   const [inviting, setInviting] = useState(false)
   const [inviteError, setInviteError] = useState('')
-  const [inviteSuccess, setInviteSuccess] = useState(false)
+  const [inviteResult, setInviteResult] = useState<InviteResult | null>(null)
 
   useEffect(() => {
     if (!roleLoading && role === 'employee') router.replace('/')
@@ -151,7 +348,6 @@ export default function SettingsUsersPage() {
   async function handleInvite() {
     setInviting(true)
     setInviteError('')
-    setInviteSuccess(false)
     try {
       const res = await fetch('/api/admin/invite', {
         method: 'POST',
@@ -162,7 +358,7 @@ export default function SettingsUsersPage() {
       if (!res.ok) {
         setInviteError(json.error ?? 'שגיאה בהזמנה')
       } else {
-        setInviteSuccess(true)
+        setInviteResult({ name: inviteName, email: inviteEmail, password: invitePassword })
         setInviteEmail('')
         setInviteName('')
         setInviteRole('employee')
@@ -183,16 +379,56 @@ export default function SettingsUsersPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-[20px] font-bold text-[#0F172A] tracking-tight">ניהול משתמשים</h1>
         <button
-          onClick={() => { setShowInvite(true); setInviteSuccess(false) }}
+          onClick={() => { setShowInvite(true); setInviteResult(null) }}
           className="inline-flex items-center px-4 py-2 bg-[#3D6A9E] text-white text-[13px] font-semibold rounded-md hover:bg-[#2F5A8A] transition-colors"
         >
           + הזמן משתמש
         </button>
       </div>
 
-      {inviteSuccess && (
-        <div className="border border-emerald-200 bg-emerald-50 text-emerald-700 rounded-lg px-4 py-3 text-[13px]">
-          המשתמש נוצר בהצלחה — הוא יכול להיכנס עם האימייל והסיסמה שהגדרת
+      {/* Success card with credentials */}
+      {inviteResult && (
+        <div className="bg-white border border-emerald-200 rounded-lg overflow-hidden shadow-sm">
+          <div className="bg-emerald-600 px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-white text-lg">✓</span>
+              <span className="text-white font-semibold text-[14px]">המשתמש נוצר בהצלחה</span>
+            </div>
+            <button
+              onClick={() => setInviteResult(null)}
+              className="text-white/70 hover:text-white text-[18px] leading-none"
+            >
+              ×
+            </button>
+          </div>
+          <div className="px-6 py-5">
+            <p className="text-[13px] text-[#6B7280] mb-4">
+              שמרי את פרטי הכניסה ושלחי לעובד. לחצי על &quot;הורד PDF&quot; לקבלת דף מסודר עם פרטי הכניסה.
+            </p>
+            <div className="bg-[#F8FAFC] border border-[#E5E7EB] rounded-lg overflow-hidden mb-5">
+              <div className="flex justify-between items-center px-4 py-3 border-b border-[#E5E7EB]">
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280]">שם</span>
+                <span className="text-[13px] font-semibold text-[#0F172A]">{inviteResult.name}</span>
+              </div>
+              <div className="flex justify-between items-center px-4 py-3 border-b border-[#E5E7EB]">
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280]">אימייל</span>
+                <span className="text-[13px] font-semibold text-[#0F172A]" dir="ltr">{inviteResult.email}</span>
+              </div>
+              <div className="flex justify-between items-center px-4 py-3">
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-[#6B7280]">סיסמה</span>
+                <span className="text-[13px] font-bold bg-[#EBF1F9] text-[#3D6A9E] px-3 py-1 rounded-md font-mono" dir="ltr">
+                  {inviteResult.password}
+                </span>
+              </div>
+            </div>
+            <button
+              onClick={() => downloadCredentialsPDF(inviteResult.name, inviteResult.email, inviteResult.password, window.location.origin)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#3D6A9E] text-white text-[13px] font-semibold rounded-md hover:bg-[#2F5A8A] transition-colors"
+            >
+              <span>↓</span>
+              הורד PDF לשליחה לעובד
+            </button>
+          </div>
         </div>
       )}
 
