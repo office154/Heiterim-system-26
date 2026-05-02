@@ -1,6 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import nodemailer from 'nodemailer'
+
+async function sendCredentialsEmail(email: string, full_name: string, password: string, origin: string) {
+  const user = process.env.SMTP_USER
+  const pass = process.env.SMTP_PASS
+  if (!user || !pass) return // skip silently if not configured
+
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: { user, pass },
+  })
+
+  await transporter.sendMail({
+    from: `"הייתרים - ארכיטקטים" <${user}>`,
+    to: email,
+    subject: 'פרטי כניסה למערכת הייתרים',
+    html: `
+      <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
+        <h2 style="color: #1a1a1a;">שלום ${full_name},</h2>
+        <p style="color: #444;">נוסף/ת למערכת הניהול של הייתרים ארכיטקטים.</p>
+        <p style="color: #444;">להלן פרטי הכניסה שלך:</p>
+        <div style="background: #F0F2F5; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="margin: 4px 0;"><strong>אימייל:</strong> ${email}</p>
+          <p style="margin: 4px 0;"><strong>סיסמה:</strong> ${password}</p>
+        </div>
+        <a href="${origin}/login" style="display: inline-block; background: #3D6A9E; color: white; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">כניסה למערכת</a>
+        <p style="color: #999; font-size: 12px; margin-top: 24px;">מומלץ להחליף סיסמה לאחר הכניסה הראשונה.</p>
+      </div>
+    `,
+  })
+}
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -50,7 +83,6 @@ export async function POST(req: NextRequest) {
   }
 
   // Step 2: immediately set the admin-chosen password and confirm the email
-  // so the employee can log in right away without clicking the invite link
   const { error: updateError } = await adminSupabase.auth.admin.updateUserById(
     invited.user.id,
     { password, email_confirm: true }
@@ -69,6 +101,9 @@ export async function POST(req: NextRequest) {
   if (profileError) {
     return NextResponse.json({ error: profileError.message }, { status: 500 })
   }
+
+  // Step 4: send credentials email via Gmail SMTP
+  await sendCredentialsEmail(email, full_name, password, origin)
 
   return NextResponse.json({ success: true })
 }
