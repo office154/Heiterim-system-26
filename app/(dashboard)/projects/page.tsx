@@ -557,12 +557,14 @@ export default function ProjectsPage() {
       <Breadcrumb items={[{ label: 'דשבורד', href: '/' }, { label: 'פרויקטים' }]} />
       <div className="flex items-center justify-between">
         <h1 className="text-[20px] font-black text-[#1a1a1a] tracking-tight">פרויקטים</h1>
-        <Link
-          href="/projects/new"
-          className="inline-flex items-center px-4 py-2 bg-[#3D6A9E] text-white text-[13px] font-extrabold rounded-lg hover:bg-[#2F5A8A] transition-colors"
-        >
-          + פרויקט חדש
-        </Link>
+        {role === 'admin' && (
+          <Link
+            href="/projects/new"
+            className="inline-flex items-center px-4 py-2 bg-[#3D6A9E] text-white text-[13px] font-extrabold rounded-lg hover:bg-[#2F5A8A] transition-colors"
+          >
+            + פרויקט חדש
+          </Link>
+        )}
       </div>
 
       {/* Alert banner */}
