@@ -38,24 +38,34 @@ export async function POST(req: NextRequest) {
     serviceRoleKey
   )
 
-  const { data: created, error: createError } = await adminSupabase.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: true,
-    user_metadata: { full_name, role },
-  })
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(req.url).origin
 
-  if (createError) {
-    return NextResponse.json({ error: createError.message }, { status: 500 })
+  // Step 1: send invite email via Supabase (uses configured SMTP)
+  const { data: invited, error: inviteError } = await adminSupabase.auth.admin.inviteUserByEmail(
+    email,
+    { data: { full_name, role }, redirectTo: `${origin}/auth/callback` }
+  )
+  if (inviteError) {
+    return NextResponse.json({ error: inviteError.message }, { status: 500 })
   }
 
+  // Step 2: immediately set the admin-chosen password and confirm the email
+  // so the employee can log in right away without clicking the invite link
+  const { error: updateError } = await adminSupabase.auth.admin.updateUserById(
+    invited.user.id,
+    { password, email_confirm: true }
+  )
+  if (updateError) {
+    return NextResponse.json({ error: updateError.message }, { status: 500 })
+  }
+
+  // Step 3: upsert profile row
   const { error: profileError } = await adminSupabase.from('profiles').upsert({
-    id: created.user.id,
+    id: invited.user.id,
     full_name,
     role,
     email,
   })
-
   if (profileError) {
     return NextResponse.json({ error: profileError.message }, { status: 500 })
   }
