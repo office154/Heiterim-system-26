@@ -159,9 +159,9 @@ function TrackSection({
 
   const [addingStage, setAddingStage] = useState(false)
 
-  const totalContract  = stages.reduce((sum, s) => sum + s.price + (s.extra_payment || 0), 0)
-  const totalCompleted = stages.filter((s) => s.completed).reduce((sum, s) => sum + s.price + (s.extra_payment || 0), 0)
-  const balance        = totalContract - totalCompleted
+  const totalContract = stages.reduce((sum, s) => sum + s.price + (s.extra_payment || 0), 0)
+  const totalPaid     = stages.filter((s) => s.paid).reduce((sum, s) => sum + s.price + (s.extra_payment || 0), 0)
+  const balance       = totalContract - totalPaid
 
   async function handleCheckbox(
     stage: ProjectStage,
@@ -322,6 +322,58 @@ function TrackSection({
                   <td />
                 </tr>
 
+                {/* נשלחה חשבונית — admin only */}
+                {showPrices && stages.map((stage) => stage).length >= 0 && (
+                  <tr className="border-b border-[#dddddd]">
+                    <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#666666]">
+                      נשלחה חשבונית
+                    </td>
+                    {stages.map((stage) => {
+                      const highlight = stage.price > 0 && stage.completed && !stage.invoice_sent
+                      return (
+                        <td
+                          key={stage.id}
+                          className={`px-3 py-2.5 text-center transition-colors ${highlight ? 'bg-[#FDEAEA]' : ''}`}
+                        >
+                          <div className="flex justify-center">
+                            <Checkbox
+                              checked={stage.invoice_sent}
+                              onCheckedChange={(v) => handleCheckbox(stage, 'invoice_sent', !!v)}
+                            />
+                          </div>
+                        </td>
+                      )
+                    })}
+                    <td />
+                  </tr>
+                )}
+
+                {/* שולם — admin only */}
+                {showPrices && (
+                  <tr className="border-b border-[#dddddd]">
+                    <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#666666]">
+                      שולם
+                    </td>
+                    {stages.map((stage) => {
+                      const highlight = stage.price > 0 && stage.invoice_sent && !stage.paid
+                      return (
+                        <td
+                          key={stage.id}
+                          className={`px-3 py-2.5 text-center transition-colors ${highlight ? 'bg-[#FEF3C7]' : ''}`}
+                        >
+                          <div className="flex justify-center">
+                            <Checkbox
+                              checked={stage.paid}
+                              onCheckedChange={(v) => handleCheckbox(stage, 'paid', !!v)}
+                            />
+                          </div>
+                        </td>
+                      )
+                    })}
+                    <td />
+                  </tr>
+                )}
+
                 {/* תאריך */}
                 <tr className="border-b border-[#dddddd]">
                   <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#666666]">
@@ -406,10 +458,10 @@ function TrackSection({
                     </tr>
                     <tr className="bg-[#f8f8f8]">
                       <td className="sticky right-0 z-10 bg-[#f8f8f8] px-4 py-2 text-right text-xs font-semibold text-[#1a1a1a]">
-                        סה״כ בוצע
+                        סה״כ שולם
                       </td>
                       <td colSpan={stages.length + 1} className="px-4 py-2 text-right text-sm font-black text-[#3D6A9E]">
-                        {formatPrice(totalCompleted)}
+                        {formatPrice(totalPaid)}
                       </td>
                     </tr>
                     <tr className="bg-[#f8f8f8]">
