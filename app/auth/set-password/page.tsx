@@ -37,6 +37,7 @@ export default function SetPasswordPage() {
       return
     }
 
+    sessionStorage.setItem('tab_session', '1')
     router.push('/')
     router.refresh()
   }
