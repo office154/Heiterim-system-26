@@ -101,7 +101,7 @@ export default function SetPasswordPage() {
                 required
                 dir="ltr"
                 placeholder="לפחות 6 תווים"
-                className="w-full px-3 py-2 text-[13px] transition-all outline-none"
+                className="w-full pl-10 pr-3 py-2 text-[13px] transition-all outline-none"
                 style={inputStyle}
                 onFocus={(e) => {
                   e.currentTarget.style.borderColor = '#3D6A9E'

@@ -239,7 +239,7 @@ export default function SettingsUsersPage() {
                   type={showInvitePassword ? 'text' : 'password'}
                   value={invitePassword}
                   onChange={(e) => setInvitePassword(e.target.value)}
-                  className="w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-[13px] text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-[#3D6A9E] bg-white"
+                  className="w-full border border-[#E5E7EB] rounded-md pl-9 pr-3 py-2 text-[13px] text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-[#3D6A9E] bg-white"
                   placeholder="לפחות 6 תווים"
                   dir="ltr"
                 />

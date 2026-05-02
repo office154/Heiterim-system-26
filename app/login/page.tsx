@@ -125,7 +125,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   dir="ltr"
-                  className="w-full px-3 py-2 text-[13px] transition-all outline-none"
+                  className="w-full pl-10 pr-3 py-2 text-[13px] transition-all outline-none"
                   style={{ background: '#ffffff', border: '1px solid #E5E7EB', borderRadius: '10px', color: '#1a1a1a' }}
                   onFocus={(e) => { e.currentTarget.style.borderColor = '#3D6A9E'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(61,106,158,0.12)' }}
                   onBlur={(e) => { e.currentTarget.style.borderColor = '#dddddd'; e.currentTarget.style.boxShadow = '' }}
