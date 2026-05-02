@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [logoError, setLogoError] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const [resetSent, setResetSent] = useState(false)
   const [resetLoading, setResetLoading] = useState(false)
 
@@ -29,7 +30,6 @@ export default function LoginPage() {
       return
     }
 
-    sessionStorage.setItem('tab_session', '1')
     router.push('/')
     router.refresh()
   }
@@ -117,18 +117,28 @@ export default function LoginPage() {
               >
                 סיסמה
               </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                dir="ltr"
-                className="w-full px-3 py-2 text-[13px] transition-all outline-none"
-                style={{ background: '#ffffff', border: '1px solid #E5E7EB', borderRadius: '10px', color: '#1a1a1a' }}
-                onFocus={(e) => { e.currentTarget.style.borderColor = '#3D6A9E'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(61,106,158,0.12)' }}
-                onBlur={(e) => { e.currentTarget.style.borderColor = '#dddddd'; e.currentTarget.style.boxShadow = '' }}
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  dir="ltr"
+                  className="w-full px-3 py-2 text-[13px] transition-all outline-none"
+                  style={{ background: '#ffffff', border: '1px solid #E5E7EB', borderRadius: '10px', color: '#1a1a1a' }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#3D6A9E'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(61,106,158,0.12)' }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = '#dddddd'; e.currentTarget.style.boxShadow = '' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#64748B] text-[13px]"
+                  tabIndex={-1}
+                >
+                  {showPassword ? '🙈' : '👁'}
+                </button>
+              </div>
             </div>
 
             {error && (

@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Sidebar from '@/components/sidebar'
 import { ResizableLayout } from '@/components/resizable-layout'
-import { SessionGuard } from '@/components/session-guard'
 
 export default async function DashboardLayout({
   children,
@@ -24,17 +23,15 @@ export default async function DashboardLayout({
     .single()
 
   return (
-    <SessionGuard>
-      <ResizableLayout
-        sidebar={
-          <Sidebar
-            role={profile?.role ?? 'employee'}
-            fullName={profile?.full_name ?? user.email ?? ''}
-          />
-        }
-      >
-        {children}
-      </ResizableLayout>
-    </SessionGuard>
+    <ResizableLayout
+      sidebar={
+        <Sidebar
+          role={profile?.role ?? 'employee'}
+          fullName={profile?.full_name ?? user.email ?? ''}
+        />
+      }
+    >
+      {children}
+    </ResizableLayout>
   )
 }

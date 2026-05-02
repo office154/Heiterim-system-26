@@ -37,8 +37,8 @@ export default function SetPasswordPage() {
       return
     }
 
-    sessionStorage.setItem('tab_session', '1')
-    router.push('/')
+    await supabase.auth.signOut()
+    router.push('/login')
     router.refresh()
   }
 
@@ -159,7 +159,7 @@ export default function SetPasswordPage() {
               onMouseEnter={(e) => { if (!loading) (e.currentTarget as HTMLElement).style.background = '#2F5A8A' }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = '#3D6A9E' }}
             >
-              {loading ? 'שומר...' : 'שמור סיסמה וכנסי'}
+              {loading ? 'שומר...' : 'שמור סיסמה'}
             </button>
           </form>
         </div>
