@@ -298,11 +298,24 @@ function downloadCredentialsPDF(name: string, email: string, password: string, o
 </body>
 </html>`
 
-  const win = window.open('', '_blank', 'width=600,height=800')
-  if (win) {
-    win.document.write(html)
-    win.document.close()
-  }
+  const iframe = document.createElement('iframe')
+  iframe.style.position = 'fixed'
+  iframe.style.top = '-9999px'
+  iframe.style.left = '-9999px'
+  iframe.style.width = '210mm'
+  iframe.style.height = '297mm'
+  document.body.appendChild(iframe)
+
+  const doc = iframe.contentDocument || iframe.contentWindow?.document
+  if (!doc) return
+  doc.open()
+  doc.write(html)
+  doc.close()
+
+  setTimeout(() => {
+    iframe.contentWindow?.print()
+    setTimeout(() => document.body.removeChild(iframe), 2000)
+  }, 600)
 }
 
 interface InviteResult {
