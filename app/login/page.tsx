@@ -33,6 +33,7 @@ export default function LoginPage() {
       return
     }
 
+    sessionStorage.setItem('tab_session', '1')
     router.push('/')
     router.refresh()
   }
