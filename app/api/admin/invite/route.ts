@@ -102,8 +102,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: profileError.message }, { status: 500 })
   }
 
-  // Step 4: send credentials email via Gmail SMTP
-  await sendCredentialsEmail(email, full_name, password, origin)
+  // Step 4: send credentials email via Gmail SMTP (non-blocking — failure doesn't prevent user creation)
+  try {
+    await sendCredentialsEmail(email, full_name, password, origin)
+  } catch {
+    // email failed but user was created successfully
+  }
 
   return NextResponse.json({ success: true })
 }
