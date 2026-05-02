@@ -251,11 +251,26 @@ function downloadCredentialsPDF(name: string, email: string, password: string, o
       text-decoration: none;
     }
     @media print {
-      body { background: white; padding: 0; align-items: flex-start; }
-      .page { box-shadow: none; border-radius: 0; width: 100%; }
-      .header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .cred-value.password { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .login-btn { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        display: block !important;
+        width: 100% !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .page {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+      }
+      .header, .cred-value.password, .login-btn, .credentials-box {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
     }
   </style>
 </head>
