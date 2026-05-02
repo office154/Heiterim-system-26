@@ -9,6 +9,7 @@ export default function SetPasswordPage() {
   const router = useRouter()
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [logoError, setLogoError] = useState(false)
@@ -91,8 +92,9 @@ export default function SetPasswordPage() {
               <label className="block text-[10px] font-bold uppercase tracking-[0.08em]" style={{ color: '#aaaaaa' }}>
                 סיסמה חדשה
               </label>
+              <div className="relative">
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -109,6 +111,15 @@ export default function SetPasswordPage() {
                   e.currentTarget.style.boxShadow = ''
                 }}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#64748B] text-[13px]"
+                tabIndex={-1}
+              >
+                {showPassword ? '🙈' : '👁'}
+              </button>
+              </div>
             </div>
 
             <div className="space-y-1.5">
@@ -116,7 +127,7 @@ export default function SetPasswordPage() {
                 אימות סיסמה
               </label>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 required

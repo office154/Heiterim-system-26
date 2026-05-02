@@ -3,11 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 
 export async function POST(req: NextRequest) {
-  // Verify caller is admin
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { data: profile } = await supabase
@@ -20,13 +17,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const { email, full_name, role } = (await req.json()) as {
+  const { email, full_name, role, password } = (await req.json()) as {
     email: string
     full_name: string
     role: 'admin' | 'employee'
+    password: string
   }
 
-  if (!email || !full_name || !role) {
+  if (!email || !full_name || !role || !password) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
   }
 
@@ -40,20 +38,19 @@ export async function POST(req: NextRequest) {
     serviceRoleKey
   )
 
-  // Invite user — Supabase sends a magic-link email
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(req.url).origin
-  const { data: invited, error: inviteError } = await adminSupabase.auth.admin.inviteUserByEmail(
+  const { data: created, error: createError } = await adminSupabase.auth.admin.createUser({
     email,
-    { data: { full_name, role }, redirectTo: `${origin}/auth/callback` }
-  )
+    password,
+    email_confirm: true,
+    user_metadata: { full_name, role },
+  })
 
-  if (inviteError) {
-    return NextResponse.json({ error: inviteError.message }, { status: 500 })
+  if (createError) {
+    return NextResponse.json({ error: createError.message }, { status: 500 })
   }
 
-  // Upsert profile row immediately so the name + role are set
   const { error: profileError } = await adminSupabase.from('profiles').upsert({
-    id: invited.user.id,
+    id: created.user.id,
     full_name,
     role,
     email,

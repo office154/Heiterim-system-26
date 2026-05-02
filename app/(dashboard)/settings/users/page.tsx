@@ -130,6 +130,8 @@ export default function SettingsUsersPage() {
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteName, setInviteName] = useState('')
   const [inviteRole, setInviteRole] = useState<UserRole>('employee')
+  const [invitePassword, setInvitePassword] = useState('')
+  const [showInvitePassword, setShowInvitePassword] = useState(false)
   const [inviting, setInviting] = useState(false)
   const [inviteError, setInviteError] = useState('')
   const [inviteSuccess, setInviteSuccess] = useState(false)
@@ -154,7 +156,7 @@ export default function SettingsUsersPage() {
       const res = await fetch('/api/admin/invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: inviteEmail, full_name: inviteName, role: inviteRole }),
+        body: JSON.stringify({ email: inviteEmail, full_name: inviteName, role: inviteRole, password: invitePassword }),
       })
       const json = await res.json()
       if (!res.ok) {
@@ -164,6 +166,7 @@ export default function SettingsUsersPage() {
         setInviteEmail('')
         setInviteName('')
         setInviteRole('employee')
+        setInvitePassword('')
         setShowInvite(false)
       }
     } catch {
@@ -189,14 +192,14 @@ export default function SettingsUsersPage() {
 
       {inviteSuccess && (
         <div className="border border-emerald-200 bg-emerald-50 text-emerald-700 rounded-lg px-4 py-3 text-[13px]">
-          הזמנה נשלחה בהצלחה — המשתמש יקבל מייל עם קישור להגדרת סיסמה
+          המשתמש נוצר בהצלחה — הוא יכול להיכנס עם האימייל והסיסמה שהגדרת
         </div>
       )}
 
       {showInvite && (
         <div className="bg-white border border-[#E5E7EB] rounded-lg p-6 space-y-4">
           <p className="text-[13px] font-semibold text-[#0F172A]">הזמנת משתמש חדש</p>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-4 gap-4">
             <div>
               <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-1.5">שם מלא</label>
               <input
@@ -219,7 +222,7 @@ export default function SettingsUsersPage() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-1.5">תפקיד</label>
+              <label className="block text-[11px] font-semibold uppercase tracking-widests text-[#64748B] mb-1.5">תפקיד</label>
               <select
                 value={inviteRole}
                 onChange={(e) => setInviteRole(e.target.value as UserRole)}
@@ -229,12 +232,33 @@ export default function SettingsUsersPage() {
                 <option value="admin">מנהל</option>
               </select>
             </div>
+            <div>
+              <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-1.5">סיסמה</label>
+              <div className="relative">
+                <input
+                  type={showInvitePassword ? 'text' : 'password'}
+                  value={invitePassword}
+                  onChange={(e) => setInvitePassword(e.target.value)}
+                  className="w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-[13px] text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-[#3D6A9E] bg-white"
+                  placeholder="לפחות 6 תווים"
+                  dir="ltr"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowInvitePassword((v) => !v)}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#64748B]"
+                  tabIndex={-1}
+                >
+                  {showInvitePassword ? '🙈' : '👁'}
+                </button>
+              </div>
+            </div>
           </div>
           {inviteError && <p className="text-[13px] text-red-600">{inviteError}</p>}
           <div className="flex gap-3 pt-1">
             <button
               onClick={handleInvite}
-              disabled={inviting || !inviteEmail || !inviteName}
+              disabled={inviting || !inviteEmail || !inviteName || invitePassword.length < 6}
               className="px-4 py-2 bg-[#3D6A9E] text-white text-[13px] font-semibold rounded-md hover:bg-[#2F5A8A] disabled:opacity-40 transition-colors"
             >
               {inviting ? 'שולח...' : 'שלח הזמנה'}
