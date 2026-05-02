@@ -101,7 +101,7 @@ export default function SetPasswordPage() {
                 required
                 dir="ltr"
                 placeholder="לפחות 6 תווים"
-                className="w-full pl-10 pr-3 py-2 text-[13px] transition-all outline-none"
+                className="w-full px-3 pr-10 py-2 text-[13px] transition-all outline-none"
                 style={inputStyle}
                 onFocus={(e) => {
                   e.currentTarget.style.borderColor = '#3D6A9E'
@@ -115,7 +115,7 @@ export default function SetPasswordPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#64748B] text-[13px]"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#64748B] text-[13px]"
                 tabIndex={-1}
               >
                 {showPassword ? '🙈' : '👁'}
