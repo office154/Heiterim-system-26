@@ -156,21 +156,41 @@ export default function LoginPage() {
               {loading ? 'מתחבר...' : 'התחברות'}
             </button>
 
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              disabled={resetLoading}
-              className="w-full text-[13px] text-center pt-2 transition-colors"
-              style={{
-                color: resetSent ? '#16A34A' : '#3D6A9E',
-                cursor: resetLoading ? 'default' : 'pointer',
-                textDecoration: 'underline',
-                background: 'none',
-                border: 'none',
-              }}
-            >
-              {resetLoading ? 'שולח...' : resetSent ? `קישור נשלח אל ${email} ✓` : 'שכחתי סיסמה'}
-            </button>
+            {resetSent ? (
+              <div className="text-center space-y-2 pt-2">
+                <p className="text-[13px] font-semibold" style={{ color: '#16A34A' }}>
+                  {`קישור נשלח אל ${email} ✓`}
+                </p>
+                <p className="text-[12px]" style={{ color: '#9CA3AF' }}>לא קיבלת?</p>
+                <button
+                  type="button"
+                  onClick={() => { setResetSent(false); handleForgotPassword() }}
+                  disabled={resetLoading}
+                  className="text-[13px] transition-colors"
+                  style={{ color: '#3D6A9E', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}
+                >
+                  {resetLoading ? 'שולח...' : 'שלח שוב'}
+                </button>
+                <span className="text-[12px]" style={{ color: '#9CA3AF' }}> | </span>
+                <a
+                  href="mailto:office@heiterim.co.il"
+                  className="text-[13px]"
+                  style={{ color: '#3D6A9E', textDecoration: 'underline' }}
+                >
+                  צרי קשר עם המנהל
+                </a>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={resetLoading}
+                className="w-full text-[13px] text-center pt-2 transition-colors"
+                style={{ color: '#3D6A9E', cursor: resetLoading ? 'default' : 'pointer', textDecoration: 'underline', background: 'none', border: 'none' }}
+              >
+                {resetLoading ? 'שולח...' : 'שכחתי סיסמה'}
+              </button>
+            )}
           </form>
         </div>
       </div>
