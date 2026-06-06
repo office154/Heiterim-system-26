@@ -1,6 +1,8 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useCurrentRole } from '@/lib/hooks/use-profile'
 import { Breadcrumb } from '@/components/shared/Breadcrumb'
 import {
   usePayments,
@@ -373,6 +375,14 @@ function Legend() {
 
 export default function PaymentsPage() {
   const { data, isLoading } = usePayments()
+  const router = useRouter()
+  const { data: role, isLoading: roleLoading } = useCurrentRole()
+
+  useEffect(() => {
+    if (!roleLoading && role === 'employee') router.replace('/')
+  }, [role, roleLoading, router])
+
+  if (roleLoading || role !== 'admin') return null
 
   const noProjects   = !isLoading && data && data.projects.length === 0
   const allPaid      =
