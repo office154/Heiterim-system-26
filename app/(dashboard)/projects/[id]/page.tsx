@@ -30,11 +30,11 @@ export default function ProjectDetailPage() {
   })
 
   if (isLoading) {
-    return <div className="py-12 text-center text-[#aaaaaa]">טוען פרויקט...</div>
+    return <div className="py-12 text-center text-[var(--text-muted)]">טוען פרויקט...</div>
   }
 
   if (error || !project) {
-    return <div className="py-12 text-center text-[#C0392B]">שגיאה בטעינת הפרויקט</div>
+    return <div className="py-12 text-center text-[var(--danger-text)]">שגיאה בטעינת הפרויקט</div>
   }
 
   const breadcrumbItems: BreadcrumbItem[] =
@@ -56,9 +56,9 @@ export default function ProjectDetailPage() {
       <Breadcrumb items={breadcrumbItems} />
 
       <div className="print:hidden">
-        <h1 className="text-2xl font-black text-[#1a1a1a] tracking-tight">{project.title}</h1>
+        <h1 className="text-2xl font-black text-[var(--text-primary)] tracking-tight">{project.title}</h1>
         {project.location && (
-          <p className="mt-1 text-sm text-[#666666]">{project.location}</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">{project.location}</p>
         )}
       </div>
 
