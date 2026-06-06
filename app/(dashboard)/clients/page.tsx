@@ -10,6 +10,7 @@ import { Breadcrumb } from '@/components/shared/Breadcrumb'
 import { useResizableColumns } from '@/lib/hooks/use-resizable-columns'
 import { ResizableTh } from '@/components/ui/resizable-th'
 import { useCurrentRole } from '@/lib/hooks/use-profile'
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
 
 function DeleteButton({ clientId }: { clientId: string }) {
   const [confirm, setConfirm] = useState(false)
@@ -21,13 +22,13 @@ function DeleteButton({ clientId }: { clientId: string }) {
         <button
           onClick={() => deleteClient.mutate(clientId)}
           disabled={deleteClient.isPending}
-          className="rounded px-1.5 py-0.5 text-[10px] font-bold bg-[#C0392B] text-white hover:bg-[#a93226] disabled:opacity-50"
+          className="rounded px-1.5 py-0.5 text-[10px] font-bold bg-[var(--danger-text)] text-white hover:bg-[var(--danger-bg)] disabled:opacity-50"
         >
           {deleteClient.isPending ? '...' : 'מחק'}
         </button>
         <button
           onClick={() => setConfirm(false)}
-          className="rounded px-1.5 py-0.5 text-[10px] text-[#888] hover:text-[#333]"
+          className="rounded px-1.5 py-0.5 text-[10px] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
         >
           ביטול
         </button>
@@ -38,7 +39,7 @@ function DeleteButton({ clientId }: { clientId: string }) {
   return (
     <button
       onClick={(e) => { e.preventDefault(); setConfirm(true) }}
-      className="opacity-0 group-hover:opacity-100 text-[#cccccc] hover:text-[#C0392B] transition-all text-[11px] px-1 rounded hover:bg-[#fdf0ef]"
+      className="opacity-0 group-hover:opacity-100 text-[var(--text-muted)] hover:text-[var(--danger-text)] transition-all text-[11px] px-1 rounded hover:bg-[var(--danger-bg)]"
       title="מחק לקוח"
     >
       ✕
@@ -72,10 +73,10 @@ export default function ClientsPage() {
     <div className="space-y-5">
       <Breadcrumb items={[{ label: 'דשבורד', href: '/' }, { label: 'לקוחות' }]} />
       <div className="flex items-center justify-between">
-        <h1 className="text-[20px] font-black text-[#1a1a1a] tracking-tight">לקוחות</h1>
+        <h1 className="text-[20px] font-black text-[var(--text-primary)] tracking-tight">לקוחות</h1>
         <button
           onClick={() => setShowModal(true)}
-          className="inline-flex items-center px-4 py-2 bg-[#3D6A9E] text-white text-[13px] font-extrabold rounded-lg hover:bg-[#2F5A8A] transition-colors"
+          className="inline-flex items-center px-4 py-2 bg-[var(--accent-primary)] text-white text-[13px] font-extrabold rounded-lg hover:bg-[var(--accent-primary-hover)] transition-colors"
         >
           + לקוח חדש
         </button>
@@ -85,57 +86,54 @@ export default function ClientsPage() {
         placeholder="חיפוש לפי שם או חברה..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="max-w-xs h-9 text-[13px] border-[#dddddd] bg-white text-[#1a1a1a] placeholder:text-[#aaaaaa] focus-visible:ring-[#3D6A9E]"
+        className="max-w-xs h-9 text-[13px] border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus-visible:ring-[var(--accent-primary)]"
       />
 
       {isLoading ? (
-        <div className="py-16 text-center text-[13px] text-[#666666]">טוען...</div>
+        <div className="py-16 text-center text-[13px] text-[var(--text-secondary)]">טוען...</div>
       ) : filtered.length === 0 ? (
-        <div className="py-16 text-center text-[13px] text-[#666666]">
+        <div className="py-16 text-center text-[13px] text-[var(--text-secondary)]">
           {clients?.length === 0 ? 'אין לקוחות עדיין' : 'לא נמצאו תוצאות'}
         </div>
       ) : (
-        <div
-          className="bg-white border border-[#dddddd] rounded-lg overflow-hidden"
-          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
-        >
-          <table className="w-full text-[13px]" style={{ tableLayout: 'fixed' }}>
-            <thead>
-              <tr className="border-b border-[#dddddd] bg-[#f8f8f8]">
-                <ResizableTh width={widths[0]} onResizeStart={startResize(0)} className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">שם</ResizableTh>
-                <ResizableTh width={widths[1]} onResizeStart={startResize(1)} className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">מספר חברה</ResizableTh>
-                <ResizableTh width={widths[2]} onResizeStart={startResize(2)} className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">טלפון</ResizableTh>
-                <ResizableTh width={widths[3]} onResizeStart={startResize(3)} className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">אימייל</ResizableTh>
-                <ResizableTh width={widths[4]} onResizeStart={startResize(4)} className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">מקור</ResizableTh>
-                <ResizableTh width={widths[5]} onResizeStart={startResize(5)} className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[#aaaaaa]">תאריך</ResizableTh>
-                <th style={{ width: widths[6] }} className="px-3 py-3" />
-              </tr>
-            </thead>
-            <tbody>
+        <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg overflow-hidden shadow-card">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-0 hover:bg-transparent">
+                <ResizableTh width={widths[0]} onResizeStart={startResize(0)} className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--text-muted)]">שם</ResizableTh>
+                <ResizableTh width={widths[1]} onResizeStart={startResize(1)} className="px-5 py-3 text-right text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--text-muted)]">מספר חברה</ResizableTh>
+                <ResizableTh width={widths[2]} onResizeStart={startResize(2)} className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--text-muted)]">טלפון</ResizableTh>
+                <ResizableTh width={widths[3]} onResizeStart={startResize(3)} className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--text-muted)]">אימייל</ResizableTh>
+                <ResizableTh width={widths[4]} onResizeStart={startResize(4)} className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--text-muted)]">מקור</ResizableTh>
+                <ResizableTh width={widths[5]} onResizeStart={startResize(5)} className="px-5 py-3 text-center text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--text-muted)]">תאריך</ResizableTh>
+                <TableHead style={{ width: widths[6] }} className="px-3 py-3" />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {filtered.map((client) => (
-                <tr key={client.id} className="group border-b border-[#f4f4f4] last:border-0 hover:bg-[#f8f8f8] transition-colors">
-                  <td className="px-5 py-3.5">
+                <TableRow key={client.id} className="group last:border-0">
+                  <TableCell className="px-5 py-3.5">
                     <Link
                       href={`/clients/${client.id}`}
-                      className="font-semibold text-[#1a1a1a] hover:text-[#3D6A9E] transition-colors"
+                      className="font-semibold text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors"
                     >
                       {client.name}
                     </Link>
-                  </td>
-                  <td className="px-5 py-3.5 text-[#666666]">{client.company ?? '—'}</td>
-                  <td className="px-5 py-3.5 text-[#666666] text-center" dir="ltr">{client.phone ?? '—'}</td>
-                  <td className="px-5 py-3.5 text-[#666666] text-center" dir="ltr">{client.email ?? '—'}</td>
-                  <td className="px-5 py-3.5 text-[#666666] text-center">{client.lead_source ?? '—'}</td>
-                  <td className="px-5 py-3.5 text-[#666666] text-center">
+                  </TableCell>
+                  <TableCell className="px-5 py-3.5 text-[var(--text-secondary)]">{client.company ?? '—'}</TableCell>
+                  <TableCell className="px-5 py-3.5 text-[var(--text-secondary)] text-center" dir="ltr">{client.phone ?? '—'}</TableCell>
+                  <TableCell className="px-5 py-3.5 text-[var(--text-secondary)] text-center" dir="ltr">{client.email ?? '—'}</TableCell>
+                  <TableCell className="px-5 py-3.5 text-[var(--text-secondary)] text-center">{client.lead_source ?? '—'}</TableCell>
+                  <TableCell className="px-5 py-3.5 text-[var(--text-secondary)] text-center">
                     {new Date(client.created_at).toLocaleDateString('he-IL')}
-                  </td>
-                  <td className="px-3 py-3.5 text-center">
+                  </TableCell>
+                  <TableCell className="px-3 py-3.5 text-center">
                     <DeleteButton clientId={client.id} />
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       )}
 
