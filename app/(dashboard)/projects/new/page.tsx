@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useProfiles } from '@/lib/hooks/use-users'
 import type { TrackValue, Client } from '@/types/database'
 import { Breadcrumb } from '@/components/shared/Breadcrumb'
 
@@ -25,6 +26,7 @@ export default function NewProjectPage() {
   const router = useRouter()
   const createProject = useCreateProject()
   const { data: clients, refetch: refetchClients } = useClients()
+  const { data: profiles } = useProfiles()
 
   const [title, setTitle] = useState('')
   const [location, setLocation] = useState('')
@@ -34,6 +36,7 @@ export default function NewProjectPage() {
   const [notes, setNotes] = useState('')
   const [error, setError] = useState('')
   const [showClientModal, setShowClientModal] = useState(false)
+  const [managerId, setManagerId] = useState('')
 
   function toggleTrack(track: TrackValue) {
     setTracks((prev) =>
@@ -60,6 +63,7 @@ export default function NewProjectPage() {
         location: location || null,
         client_id: clientId || null,
         tracks,
+        manager_id: managerId || null,
         contract_date: contractDate || null,
         notes: notes || null,
       })
@@ -131,6 +135,25 @@ export default function NewProjectPage() {
               + לקוח חדש
             </Button>
           </div>
+        </div>
+
+        {/* Manager */}
+        <div className="space-y-1">
+          <Label>מנהל פרויקט</Label>
+          <Select value={managerId} onValueChange={(v) => setManagerId(v ?? '')}>
+            <SelectTrigger className="flex-1">
+              <SelectValue placeholder="בחר מנהל פרויקט..." />
+            </SelectTrigger>
+            <SelectContent>
+              {(profiles ?? [])
+                .filter((p) => p.role === 'pm' || p.role === 'admin')
+                .map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    {p.full_name}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Tracks */}

@@ -17,7 +17,7 @@ import { useResizableColumns } from '@/lib/hooks/use-resizable-columns'
 import { ResizableTh } from '@/components/ui/resizable-th'
 
 interface DashboardContentProps {
-  role: 'admin' | 'employee'
+  role: 'admin' | 'employee' | 'pm'
   fullName: string
 }
 
