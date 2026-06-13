@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   const { email, full_name, role, password } = (await req.json()) as {
     email: string
     full_name: string
-    role: 'admin' | 'employee'
+    role: 'admin' | 'employee' | 'pm'
     password: string
   }
 
