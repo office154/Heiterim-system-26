@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'employee'
+export type UserRole = 'admin' | 'employee' | 'pm'
 export type ProjectStatus = 'active' | 'completed' | 'on_hold'
 export type TrackValue = 'permit' | 'design' | 'interior_design' | 'business_license' | 'claim' | 'other'
 export type LeadSource = 'טלפון' | 'מייל' | 'קמפיין' | 'אחר'

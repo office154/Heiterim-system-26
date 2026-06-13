@@ -21,6 +21,7 @@ function RoleSelect({ profile }: { profile: Profile }) {
     >
       <option value="admin">מנהל</option>
       <option value="employee">עובד</option>
+      <option value="pm">מנהל פרויקט</option>
     </select>
   )
 }
@@ -474,6 +475,7 @@ export default function SettingsUsersPage() {
               >
                 <option value="employee">עובד</option>
                 <option value="admin">מנהל</option>
+                <option value="pm">מנהל פרויקט</option>
               </select>
             </div>
             <div>
