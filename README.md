@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Heiterim System 26
 
-## Getting Started
+מערכת ניהול פרויקטים לתכנון ואדריכלות — פנימית למשרד.
 
-First, run the development server:
+## Stack
+
+- Next.js 14 App Router
+- Supabase (Auth + DB)
+- TanStack Query v5
+- Tailwind v4
+- shadcn/ui
+- TypeScript
+
+## התקנה
 
 ```bash
+# 1. שכפול
+git clone https://github.com/office154/Heiterim-system-26.git
+cd Heiterim-system-26
+
+# 2. התקנת תלויות
+npm install
+
+# 3. משתני סביבה
+cp .env.example .env.local
+# ערכי הסביבה האמיתיים נמצאים ב-Vercel Dashboard → Settings → Environment Variables
+
+# 4. הרצה
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+פתחי [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## משתני סביבה
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+ראי `.env.example` לרשימה המלאה. הערכים האמיתיים שמורים ב:
+- **Vercel Dashboard** → Project → Settings → Environment Variables
+- **Supabase Dashboard** → Project → Settings → API
 
-## Learn More
+## ענפים
 
-To learn more about Next.js, take a look at the following resources:
+| ענף | מטרה |
+|-----|------|
+| `master` | Production — Vercel מפרסם אוטומטית |
+| `develop` | פיתוח — Vercel בונה Preview URL |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+כל שינוי עובר דרך PR מ-`develop` ל-`master`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## תפקידים
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| תפקיד | הרשאות |
+|--------|---------|
+| `admin` | גישה מלאה כולל נתונים פיננסיים |
+| `employee` | גישה לפרויקטים, ללא נתונים פיננסיים |
+| `pm` | גישה לפרויקטים מוקצים בלבד |
