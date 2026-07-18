@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
-const INACTIVITY_MS = 10 * 60 * 1000
+const INACTIVITY_MS = 60 * 60 * 1000
 const WARNING_BEFORE_MS = 60 * 1000
 
 export function useInactivityTimeout() {
