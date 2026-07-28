@@ -1,10 +1,16 @@
 import type { Metadata } from 'next'
+import * as Sentry from '@sentry/nextjs'
 import './globals.css'
 import { Providers } from '@/lib/providers'
 
-export const metadata: Metadata = {
-  title: 'Heiterim Architects',
-  description: 'מערכת לניהול פרויקטים ומשימות',
+export function generateMetadata(): Metadata {
+  return {
+    title: 'Heiterim Architects',
+    description: 'מערכת לניהול פרויקטים ומשימות',
+    other: {
+      ...Sentry.getTraceData(),
+    },
+  }
 }
 
 export default function RootLayout({
